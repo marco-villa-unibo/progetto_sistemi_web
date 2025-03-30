@@ -1,5 +1,7 @@
 import express, { Application } from 'express';
 
+import { PORT } from './util/config';
+
 const app: Application = express();
 
 // BODY-PARSE
@@ -16,4 +18,4 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(8080);
+app.listen(PORT);

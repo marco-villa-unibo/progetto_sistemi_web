@@ -17,3 +17,6 @@ node_modules/
 
 # TSC compiled files
 be/dist
+
+# ENV
+.env

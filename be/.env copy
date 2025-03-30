@@ -1,0 +1,9 @@
+# .env
+NODE_ENV=dev
+PORT=8080
+
+# Database
+DATABASE_HOST=localhost
+DATABASE_NAME=shop
+DATABASE_USER=
+DATABASE_PASS=
