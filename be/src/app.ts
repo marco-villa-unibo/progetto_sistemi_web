@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 
-import { PORT } from './util/config';
+import { PORT } from './configs/envConfig';
 
 const app: Application = express();
 
@@ -18,4 +18,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(PORT);
+// MIDDLEWARES
+
+app.listen(PORT, () => {
+  console.log(`Example app listening at http://localhost:${PORT}`);
+});
