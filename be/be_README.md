@@ -2,7 +2,7 @@ ciao Leo,
 
 # LANCIARE SERVER
 
-Per lanciare il server ti basta posizionarti nel folder "progetto_sistemi_web/be" e lanciare il comando "tsc" seguito dal comando "npm start-server".
+Per lanciare il server ti basta posizionarti nel folder "progetto_sistemi_web/be" e lanciare il comando "tsc" seguito dal comando "npm run start-server".
 
 Il back-end si attiva sulla porta 8080 e per funzionare ha bisogno di un DB mysql.
 
