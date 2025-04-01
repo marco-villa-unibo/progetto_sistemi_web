@@ -20,3 +20,7 @@ be/dist
 
 # ENV
 .env
+
+# Generated schemas
+be/src/schemas/index.d.ts
+be/src/schemas/openapi.json

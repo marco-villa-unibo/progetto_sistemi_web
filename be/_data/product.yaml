@@ -1,0 +1,36 @@
+components:
+  schemas:
+    Product:
+      description: Product Model
+      type: object
+      required:
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: Penna
+        description:
+          type: string
+          example: Penna multicolore BIC
+        category:
+          type: string
+          enum:
+            - 'ORTOFRUTTA'
+            - 'SURGELATI'
+            - 'BANCO'
+          description: Product category
+          example: 'ORTOFRUTTA'
+        price:
+          type: number
+          format: double
+          example: 9.99
+        quantity:
+          type: integer
+          format: int64
+          example: 10
+        imageUrl:
+          type: string
+          example: https://localohost:8080/img/img1.jpg
