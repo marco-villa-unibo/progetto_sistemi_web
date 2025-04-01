@@ -1,7 +1,7 @@
 openapi: 3.0.4
 
 info:
-  title: On-Line Shop - Sistemi Web
+  title: On-Line Shop | Sistemi Web
   description: |-
     Back-End per lo store- progetto Sistemi web
 

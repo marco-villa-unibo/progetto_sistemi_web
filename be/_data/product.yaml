@@ -4,6 +4,7 @@ components:
       description: Product Model
       type: object
       required:
+        - id
       properties:
         id:
           type: integer
@@ -12,7 +13,7 @@ components:
         title:
           type: string
           example: Penna
-        description:
+        pDescription:
           type: string
           example: Penna multicolore BIC
         category:

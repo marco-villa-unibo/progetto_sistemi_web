@@ -4,6 +4,7 @@ components:
       description: User Model
       type: object
       required:
+        - id
       properties:
         id:
           type: integer
