@@ -1,0 +1,20 @@
+openapi: 3.0.4
+
+info:
+  title: On-Line Shop - Sistemi Web
+  description: |-
+    Back-End per lo store- progetto Sistemi web
+
+    Approccio "Design first" per favorire la divisione di ruoli tra back-end e front-end
+
+    Link utili:
+    - [Repository progetto](https://github.com/marco-villa-unibo/progetto_sistemi_web)
+  contact:
+    email: marco.villa13@studio.unibo.it
+  version: 1.0.0
+
+tags:
+  - name: product
+    description: gestione dei prodotti
+  - name: user
+    description: gestione degli user
