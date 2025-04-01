@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon dist/app.js",
-    "start-server": "node dist/app.js",
     "dev": "npm run schemas && npm run copyfiles & tsc -w & nodemon dist/app.js",
     "dev:win": "npm run schemas && npm run copyfiles && start /b tsc -w & nodemon --config nodemon.win.json dist/app.js",
     "schemas": "npm run schemas:openapi && npm run schemas:types",
