@@ -1,11 +1,21 @@
 import express, { Application } from 'express';
 
 import { PORT } from './configs/envConfig';
+import {
+  addTimestamp,
+  errorHandler,
+  logger,
+  openApiValidator,
+} from './middlewares';
+import { apiDocsRouter } from './routes';
 
 const app: Application = express();
 
-// BODY-PARSE
+// MIDDLEWARES
 app.use(express.json());
+app.use(addTimestamp);
+app.use(logger);
+app.use(openApiValidator);
 
 // CORS - REST-API setting
 app.use((req, res, next) => {
@@ -18,7 +28,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// MIDDLEWARES
+// ROUTES
+app.use('/api-docs', apiDocsRouter);
+
+// ERROR
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);
