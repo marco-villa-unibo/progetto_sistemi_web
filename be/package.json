@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "dev": "npm run schemas && npm run copyfiles & tsc -w & nodemon dist/app.js",
+    "dev": "npm run schemas && npm run copyfiles && tsc -w & nodemon dist/app.js",
     "dev:win": "npm run schemas && npm run copyfiles && start /b tsc -w & nodemon --config nodemon.win.json dist/app.js",
     "schemas": "npm run schemas:openapi && npm run schemas:types",
     "schemas:openapi": "swagger-jsdoc -d ./_data/definition.yaml src/routes/*.ts \"./_data/!(definition).yaml\" -o src/schemas/openapi.json",
     "schemas:types": "openapi-typescript src/schemas/openapi.json -o src/schemas/index.d.ts",
     "copyfiles": "copyfiles -u 1 src/schemas/*.json dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-server": "tsc && node dist/app.js",
+    "clean": "node _scripts/clean.js"
   },
   "author": "MV",
   "license": "ISC",
@@ -21,6 +23,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "copyfiles": "^2.4.1",
     "dotenv": "^16.4.7",
+    "fs-extra": "^11.3.0",
     "nodemon": "^3.1.9",
     "openapi-typescript": "^7.6.1",
     "swagger-jsdoc": "^6.2.8",

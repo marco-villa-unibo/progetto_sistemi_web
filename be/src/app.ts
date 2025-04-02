@@ -37,5 +37,5 @@ app.use('/api/v1/product', productRouter);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Example app listening at http://localhost:${PORT}`);
+  console.log(`Shop api listening at http://localhost:${PORT}`);
 });
