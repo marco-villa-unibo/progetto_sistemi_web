@@ -22,7 +22,9 @@ npm run dev:win
 
 npm run dev
 
-Il back-end si attiva sulla porta 8080 e per funzionare ha bisogno di un DB mysql.
+- Il back-end si attiva sulla porta 8080 e per funzionare ha bisogno di un DB mysql.
+
+- [swagger](http://localhost:8080/api/v1/api-docs/)
 
 ### CONNETTERE IL DATABASE
 
@@ -39,7 +41,7 @@ nei prossimi giorni lavoro ad una procedura di inizializzazione così ti puoi co
 
 # TODO:
 
-ok - utilizzo variabili ambiente per connessione DB
+    ok - utilizzo variabili ambiente per connessione DB
 
 - procedura inizializzazione DB (dati)
   ok - implementare documentazione swagger da yaml

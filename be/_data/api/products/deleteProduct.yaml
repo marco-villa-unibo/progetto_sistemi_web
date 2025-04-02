@@ -4,7 +4,7 @@ paths:
       tags:
         - product
       summary: Deletes a product.
-      description: Delete a product.
+      description: Delete a product (safe).
       operationId: deleteProduct
       parameters:
         - name: productId
@@ -15,7 +15,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        '204':
           description: Product deleted
         '400':
           description: Invalid ID supplied
