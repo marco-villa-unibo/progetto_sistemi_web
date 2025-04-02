@@ -7,7 +7,7 @@ import {
   logger,
   openApiValidator,
 } from './middlewares';
-import { apiDocsRouter } from './routes';
+import { apiDocsRouter, healthRouter, productRouter } from './routes';
 
 const app: Application = express();
 
@@ -30,6 +30,8 @@ app.use((req, res, next) => {
 
 // ROUTES
 app.use('/api-docs', apiDocsRouter);
+app.use('/health', healthRouter);
+app.use('/product', productRouter);
 
 // ERROR
 app.use(errorHandler);
