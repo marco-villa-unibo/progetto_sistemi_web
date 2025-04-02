@@ -4,7 +4,12 @@ components:
       description: User Model
       type: object
       required:
-        - id
+        - username
+        - firstName
+        - lastName
+        - email
+        - password
+        - address
       properties:
         id:
           type: integer
@@ -39,3 +44,6 @@ components:
             - 'ADMIN'
           description: User role
           example: 'CUSTOMER'
+        deleted:
+          type: boolean
+          example: true

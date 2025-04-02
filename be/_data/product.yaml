@@ -4,12 +4,14 @@ components:
       description: Product Model
       type: object
       required:
-        - id
+        - title
+        - price
+        - quantity
       properties:
         id:
           type: integer
           format: int64
-          example: 1
+          example: 0
         title:
           type: string
           example: Penna
@@ -35,3 +37,6 @@ components:
         imageUrl:
           type: string
           example: https://localohost:8080/img/img1.jpg
+        deleted:
+          type: boolean
+          example: true
