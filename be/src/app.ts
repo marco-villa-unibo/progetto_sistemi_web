@@ -29,9 +29,9 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
-app.use('/api-docs', apiDocsRouter);
-app.use('/health', healthRouter);
-app.use('/product', productRouter);
+app.use('/api/v1/api-docs', apiDocsRouter);
+app.use('/api/v1/health', healthRouter);
+app.use('/api/v1/product', productRouter);
 
 // ERROR
 app.use(errorHandler);
