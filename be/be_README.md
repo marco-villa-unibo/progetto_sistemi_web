@@ -35,6 +35,11 @@ Per connettere il DB:
 
 Una volta fatto questo la connessione dovrebbe essere impostata correttamente.
 
+## GENERAZIONE RISORSE FRONT-END
+
+Per generare le risorse per il front-end puoi utilizzare il file "be/\_data/front-end/shop.yaml".
+Puoi tranquillamente ignorare tutti gli altri file .yaml nella cartella.
+
 # Prossimi passi
 
 nei prossimi giorni lavoro ad una procedura di inizializzazione così ti puoi concentrare solo su front-end.
