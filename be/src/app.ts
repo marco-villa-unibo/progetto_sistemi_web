@@ -8,6 +8,7 @@ import {
   openApiValidator,
 } from './middlewares';
 import { apiDocsRouter, healthRouter, productRouter } from './routes';
+import { sequelize } from './utils/db';
 
 const app: Application = express();
 
@@ -36,6 +37,13 @@ app.use('/api/v1/product', productRouter);
 // ERROR
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Shop api listening at http://localhost:${PORT}`);
-});
+sequelize
+  .sync({ force: true })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Shop api listening at http://localhost:${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.log('SEQUELIZE ERROR :>> ', err);
+  });
