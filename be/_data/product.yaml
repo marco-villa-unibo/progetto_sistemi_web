@@ -37,6 +37,3 @@ components:
         imageUrl:
           type: string
           example: https://localohost:8080/img/img1.jpg
-        deleted:
-          type: boolean
-          example: true

@@ -44,6 +44,3 @@ components:
             - 'ADMIN'
           description: User role
           example: 'CUSTOMER'
-        deleted:
-          type: boolean
-          example: true

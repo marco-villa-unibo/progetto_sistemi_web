@@ -4,7 +4,7 @@ paths:
       tags:
         - product
       summary: Deletes a product.
-      description: Delete a product (safe).
+      description: Delete a product.
       operationId: deleteProduct
       parameters:
         - name: productId

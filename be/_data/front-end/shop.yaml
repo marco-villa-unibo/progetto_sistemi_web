@@ -12,7 +12,10 @@ info:
   contact:
     email: marco.villa13@studio.unibo.it
   version: 1.0.0
-  
+
+servers:
+  - url: http://localhost:8080/api/v1
+
 tags:
   - name: health
     description: Health check
@@ -145,7 +148,7 @@ paths:
       tags:
         - product
       summary: Deletes a product.
-      description: Delete a product (safe).
+      description: Delete a product.
       operationId: deleteProduct
       parameters:
         - name: productId
@@ -217,9 +220,6 @@ components:
         imageUrl:
           type: string
           example: https://localohost:8080/img/img1.jpg
-        deleted:
-          type: boolean
-          example: true
     User:
       description: User Model
       type: object
@@ -264,9 +264,6 @@ components:
             - 'ADMIN'
           description: User role
           example: 'CUSTOMER'
-        deleted:
-          type: boolean
-          example: true
     ErrorModel:
       type: object
       required:
