@@ -46,8 +46,14 @@ nei prossimi giorni lavoro ad una procedura di inizializzazione così ti puoi co
 
 # TODO:
 
-    ok - utilizzo variabili ambiente per connessione DB
+ok - utilizzo variabili ambiente per connessione DB
+ok - implementare documentazione swagger da yaml
+ok - implementare generazione modelli da yaml
 
 - procedura inizializzazione DB (dati)
-  ok - implementare documentazione swagger da yaml
-  ok - implementare generazione modelli da yaml
+- implementare ORM
+- autenticazione JWT
+- images (upload / download)
+- ? pagination
+- user sign-up
+- mail service

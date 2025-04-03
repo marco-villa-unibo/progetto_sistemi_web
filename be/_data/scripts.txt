@@ -6,7 +6,10 @@
     // "schemas:types": "openapi-typescript src/schemas/openapi.json -o src/schemas/index.d.ts",
     // "copyfiles": "copyfiles -u 1 src/schemas/*.json dist","
 
-    ok - /FIXME - controllare scripts -i -o path 
-    ok - /REVIEW - funzionamento dei singoli script
-    // TODO - implementare strutture yaml corrette 
-    // TODO - aggiungere restrizioni input per campi (es. username not empty..)
+    ok - FIXME: controllare scripts -i -o path 
+    ok - REVIEW: funzionamento dei singoli script
+    ok - NOTE: product: schema, path
+    ok - NOTE: user: schema, path
+    // TODO: implementare strutture yaml corrette 
+    // TODO: aggiungere restrizioni input per campi (es. username not empty..)
+    // TODO: script generazione automatica "shop.yaml" per front-end
