@@ -2,9 +2,7 @@ import { Product } from '../models';
 import { pool } from '../utils/db';
 
 export const fetchAllProducts = async (): Promise<Product[]> => {
-  const [rows] = await pool
-    .promise()
-    .query<Product[]>('SELECT * FROM products');
+  const [rows] = await pool.query<Product[]>('SELECT * FROM products');
   return rows;
 };
 
