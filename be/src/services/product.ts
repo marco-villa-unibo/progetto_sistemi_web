@@ -11,12 +11,9 @@ export const fetchAllProducts = (): Promise<ProductModel[]> => {
 //   return rows;
 // };
 
-// export const findProductById = (id: number) => {
-//   return pool.execute(
-//     'SELECT * FROM products WHERE products.id = ? AND products.deleted = FALSE',
-//     [id]
-//   );
-// };
+export const findProductById = (id: number): Promise<ProductModel | null> => {
+  return Product.findByPk(id);
+};
 
 // export const createProduct = (p: Product) => {
 //   return pool.execute(
