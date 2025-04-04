@@ -5,8 +5,11 @@ components:
       type: object
       required:
         - title
+        - pDescription
+        - category
         - price
         - quantity
+        - imageUrl
       properties:
         id:
           type: integer

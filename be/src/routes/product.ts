@@ -1,6 +1,6 @@
 import { Request, Router } from 'express';
 import { ProductDto } from '../types';
-import { getAllProducts, getProductById } from '../controllers';
+import { getAllProducts, getProductById, insertProduct } from '../controllers';
 
 export const router = Router();
 
@@ -61,18 +61,7 @@ router.get('/', getAllProducts);
  *        description: Unexpected server error
  *        $ref: '#/components/responses/InternalServerError'
  */
-router.post('/', (req: Request<ProductDto, ProductDto>, res) => {
-  const p: ProductDto = {
-    id: 1,
-    category: 'ORTOFRUTTA',
-    imageUrl: 'img',
-    pDescription: 'zucca',
-    title: 'zucca',
-    price: 2.99,
-    quantity: 20,
-  };
-  res.status(200).send(p);
-});
+router.post('/', insertProduct);
 
 /**
  * @openapi
@@ -181,7 +170,7 @@ router.get('/:id', getProductById);
  *          description: Product deleted
  *        '400':
  *          description: Invalid ID supplied
- *         $ref: '#/components/responses/BadRequestError'
+ *          $ref: '#/components/responses/BadRequestError'
  *        '500':
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
