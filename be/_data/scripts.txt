@@ -10,6 +10,9 @@
     ok - REVIEW: funzionamento dei singoli script
     ok - NOTE: product: schema, path
     ok - NOTE: user: schema, path
-    // TODO: implementare strutture yaml corrette 
+    ok-  TODO: implementare strutture yaml corrette 
+    // TODO: aggiungere USER
+    // TODO: aggiungere CART
+    // TODO: aggiungere ORDER
     // TODO: aggiungere restrizioni input per campi (es. username not empty..)
     // TODO: script generazione automatica "shop.yaml" per front-end

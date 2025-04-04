@@ -22,8 +22,10 @@ paths:
                 $ref: '#/components/schemas/Product'
         '400':
           description: Invalid input
+          $ref: '#/components/responses/BadRequestError'
         '422':
           description: Validation exception
+          $ref: '#/components/responses/UnprocessableEntityError'
         '500':
           description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'

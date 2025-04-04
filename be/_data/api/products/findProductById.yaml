@@ -23,8 +23,10 @@ paths:
                 $ref: '#/components/schemas/Product'
         '400':
           description: Invalid ID supplied
+          $ref: '#/components/responses/BadRequestError'
         '404':
           description: Product not found
+          $ref: '#/components/responses/NotFoundError'
         '500':
           description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'

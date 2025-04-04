@@ -1,6 +1,6 @@
 import { Request, Router } from 'express';
 import { ProductDto } from '../types';
-import { getAllProducts } from '../controllers';
+import { getAllProducts, getProductById } from '../controllers';
 
 export const router = Router();
 
@@ -53,8 +53,10 @@ router.get('/', getAllProducts);
  *              $ref: '#/components/schemas/Product'
  *      '400':
  *        description: Invalid input
+ *        $ref: '#/components/responses/BadRequestError'
  *      '422':
  *        description: Validation exception
+ *        $ref: '#/components/responses/UnprocessableEntityError'
  *      '500':
  *        description: Unexpected server error
  *        $ref: '#/components/responses/InternalServerError'
@@ -97,10 +99,13 @@ router.post('/', (req: Request<ProductDto, ProductDto>, res) => {
  *               $ref: '#/components/schemas/Product'
  *       '400':
  *         description: Invalid ID supplied
+ *         $ref: '#/components/responses/BadRequestError'
  *       '404':
  *         description: Product not found
+ *         $ref: '#/components/responses/NotFoundError'
  *       '422':
  *         description: Validation exception
+ *         $ref: '#/components/responses/UnprocessableEntityError'
  *       '500':
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
@@ -144,24 +149,15 @@ router.put('/', (req: Request<ProductDto, ProductDto>, res) => {
  *                $ref: '#/components/schemas/Product'
  *        '400':
  *          description: Invalid ID supplied
+ *          $ref: '#/components/responses/BadRequestError'
  *        '404':
  *          description: Product not found
+ *          $ref: '#/components/responses/NotFoundError'
  *        '500':
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-router.get('/:id', (req: Request<{ id: number }, ProductDto>, res) => {
-  const p: ProductDto = {
-    id: 1,
-    category: 'ORTOFRUTTA',
-    imageUrl: 'img',
-    pDescription: 'zucca',
-    title: 'zucca',
-    price: 2.99,
-    quantity: 20,
-  };
-  res.status(200).send(p);
-});
+router.get('/:id', getProductById);
 
 /**
  * @openapi
@@ -170,7 +166,7 @@ router.get('/:id', (req: Request<{ id: number }, ProductDto>, res) => {
  *      tags:
  *        - product
  *      summary: Deletes a product.
- *      description: Delete a product (safe).
+ *      description: Delete a product.
  *      operationId: deleteProduct
  *      parameters:
  *        - name: productId
@@ -185,6 +181,7 @@ router.get('/:id', (req: Request<{ id: number }, ProductDto>, res) => {
  *          description: Product deleted
  *        '400':
  *          description: Invalid ID supplied
+ *         $ref: '#/components/responses/BadRequestError'
  *        '500':
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
