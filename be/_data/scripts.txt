@@ -16,3 +16,4 @@
     // TODO: aggiungere ORDER
     // TODO: aggiungere restrizioni input per campi (es. username not empty..)
     // TODO: script generazione automatica "shop.yaml" per front-end
+    // TODO: trasformare categoria in schema enum separato per endpoint ricercaPerCategoria

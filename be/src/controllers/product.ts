@@ -4,6 +4,7 @@ import {
   deleteProduct,
   fetchAllProducts,
   findProductById,
+  updateProductById,
 } from '../services';
 import { ProductModel } from '../models';
 import {
@@ -53,19 +54,9 @@ export const insertProduct = async (
 ) => {
   const { title, pDescription, category, price, quantity, imageUrl } = req.body;
 
-  if (
-    !title ||
-    !pDescription ||
-    !category ||
-    !price ||
-    !quantity ||
-    !imageUrl
-  ) {
-    return next(
-      new BadRequestError(`Product model is missing required fields`)
-    );
-  }
+  // 400 BAD REQUEST gestita dalla validazione openapi
 
+  // TODO: gestire validazione lato DB
   if (price <= 0 || quantity <= 0) {
     return next(new UnprocessableEntityError(`Product model fields not valid`));
   }
@@ -82,9 +73,9 @@ export const insertProduct = async (
   const p: ProductModel = await createProduct(prod);
   console.log('p :>> ', p.toJSON());
 
-  if (!p) {
-    return next(new ServiceUnavailableError('Database connection Error'));
-  }
+  // if (!p) {
+  //   return next(new ServiceUnavailableError('Database connection Error'));
+  // }
   res.status(200).send(p);
 };
 
@@ -106,4 +97,42 @@ export const removeProduct = async (
   }
 
   res.status(204).end();
+};
+
+export const modifyProduct = async (
+  req: ProdRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id, title, pDescription, category, price, quantity, imageUrl } =
+    req.body;
+
+  // 400 BAD REQUEST gestita dalla validazione openapi
+
+  // TODO: trasferire controllo a validazione yaml
+  if (!id || isNaN(id) || id <= 0) {
+    return next(new BadRequestError(`Product ID must be positive integer`));
+  }
+
+  // TODO: gestire validazione lato DB
+  // if (price <= 0 || quantity <= 0) {
+  //   return next(new UnprocessableEntityError(`Product model fields not valid`));
+  // }
+
+  const prod: ProductDto = {
+    title,
+    pDescription,
+    category,
+    price,
+    quantity,
+    imageUrl,
+  };
+
+  const [p] = await updateProductById(id, prod);
+  if (p === 0) {
+    return next(new NotFoundError(`Product not found for ID ${id}`));
+  }
+
+  const r = await findProductById(+id);
+  res.status(200).send(r);
 };

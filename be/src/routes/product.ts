@@ -4,6 +4,7 @@ import {
   getAllProducts,
   getProductById,
   insertProduct,
+  modifyProduct,
   removeProduct,
 } from '../controllers';
 
@@ -104,18 +105,7 @@ router.post('/', insertProduct);
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.put('/', (req: Request<ProductDto, ProductDto>, res) => {
-  const p: ProductDto = {
-    id: 1,
-    category: 'ORTOFRUTTA',
-    imageUrl: 'img',
-    pDescription: 'zucca',
-    title: 'zucca',
-    price: 2.99,
-    quantity: 20,
-  };
-  res.status(200).send(p);
-});
+router.put('/', modifyProduct);
 
 /**
  * @openapi
