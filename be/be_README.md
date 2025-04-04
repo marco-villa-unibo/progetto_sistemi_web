@@ -49,11 +49,12 @@ nei prossimi giorni lavoro ad una procedura di inizializzazione così ti puoi co
 ok - utilizzo variabili ambiente per connessione DB
 ok - implementare documentazione swagger da yaml
 ok - implementare generazione modelli da yaml
+ok - mail service
 
+- aggiornare shop.yaml per front-end
 - procedura inizializzazione DB (dati)
 - implementare ORM
 - autenticazione JWT
 - images (upload / download)
 - ? pagination
 - user sign-up
-- mail service
