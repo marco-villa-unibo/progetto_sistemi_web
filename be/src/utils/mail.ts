@@ -11,6 +11,7 @@ import { SG_API_KEY } from '../configs/envConfig';
 // );
 
 const transporter = nodemailer.createTransport();
+
 // Fattorizzata per poter usare in tutta l'applicazione (es. Sign-In)
 export const mailingService = (
   to: string,
