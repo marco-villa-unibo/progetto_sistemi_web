@@ -34,11 +34,11 @@ app.use('/api/v1/api-docs', apiDocsRouter);
 app.use('/api/v1/health', healthRouter);
 app.use('/api/v1/product', productRouter);
 
-// ERROR
+// ERROR HANDLER
 app.use(errorHandler);
 
 sequelize
-  .sync({ force: true })
+  .sync()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Shop api listening at http://localhost:${PORT}`);
