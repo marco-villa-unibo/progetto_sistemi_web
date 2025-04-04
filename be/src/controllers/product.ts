@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { createProduct, fetchAllProducts, findProductById } from '../services';
+import {
+  createProduct,
+  deleteProduct,
+  fetchAllProducts,
+  findProductById,
+} from '../services';
 import { ProductModel } from '../models';
 import {
   BadRequestError,
@@ -27,7 +32,6 @@ export const getProductById = async (
   res: Response<ProductModel>,
   next: NextFunction
 ) => {
-  console.log('controller');
   const { id } = req.params;
 
   // TODO: trasferire controllo a validazione yaml
@@ -82,4 +86,24 @@ export const insertProduct = async (
     return next(new ServiceUnavailableError('Database connection Error'));
   }
   res.status(200).send(p);
+};
+
+export const removeProduct = async (
+  req: ProdRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  // TODO: trasferire controllo a validazione yaml
+  if (isNaN(+id) || +id <= 0) {
+    return next(new BadRequestError(`Product ID must be positive integer`));
+  }
+
+  const p = await deleteProduct(+id);
+  if (!p) {
+    return next(new NotFoundError(`Product not found for ID ${id}`));
+  }
+
+  res.status(204).end();
 };

@@ -1,6 +1,11 @@
 import { Request, Router } from 'express';
 import { ProductDto } from '../types';
-import { getAllProducts, getProductById, insertProduct } from '../controllers';
+import {
+  getAllProducts,
+  getProductById,
+  insertProduct,
+  removeProduct,
+} from '../controllers';
 
 export const router = Router();
 
@@ -171,10 +176,11 @@ router.get('/:id', getProductById);
  *        '400':
  *          description: Invalid ID supplied
  *          $ref: '#/components/responses/BadRequestError'
+ *        '404':
+ *          description: Product not found
+ *          $ref: '#/components/responses/NotFoundError'
  *        '500':
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-router.delete('/:id', (req: Request<{ id: number }>, res) => {
-  res.status(204).end();
-});
+router.delete('/:id', removeProduct);

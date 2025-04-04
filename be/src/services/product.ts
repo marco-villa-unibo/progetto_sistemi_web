@@ -20,9 +20,12 @@ export const createProduct = (p: ProductDto): Promise<ProductModel> => {
 //   ]);
 // };
 
-// export const safeDeleteProduct = (id: number) => {
-//   return pool.execute(
-//     'UPDATE products SET products.deleted = TRUE WHERE id = ?',
-//     [id]
-//   );
-// };
+export const deleteProduct = (id: number): Promise<any> => {
+  return Product.findByPk(id)
+    .then(p => {
+      return p?.destroy();
+    })
+    .catch(e => {
+      return e;
+    });
+};
