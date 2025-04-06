@@ -22,13 +22,7 @@ components:
           type: string
           example: Penna multicolore BIC
         category:
-          type: string
-          enum:
-            - 'ORTOFRUTTA'
-            - 'SURGELATI'
-            - 'BANCO'
-          description: Product category
-          example: 'ORTOFRUTTA'
+          $ref: '#/components/schemas/Category'
         price:
           type: number
           format: double

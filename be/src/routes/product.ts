@@ -1,5 +1,4 @@
-import { Request, Router } from 'express';
-import { ProductDto } from '../types';
+import { Router } from 'express';
 import {
   getAllProducts,
   getProductById,
