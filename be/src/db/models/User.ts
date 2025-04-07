@@ -36,7 +36,7 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       autoIncrement: true,
       allowNull: false,
       primaryKey: true,
@@ -82,9 +82,3 @@ User.init(
 );
 
 export default User;
-
-// Tipo per il modello, che rappresenta tutte le proprietà, incluso id
-// export interface UserModel
-//   extends UserDTO,
-//     RowDataPacket,
-//     Model<UserDTO, UserCreationAttributes> {}

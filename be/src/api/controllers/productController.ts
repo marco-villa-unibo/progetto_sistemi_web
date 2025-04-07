@@ -13,6 +13,7 @@ import {
 } from '../error';
 import { ProductDTO } from '../types';
 import { ProductInput, ProductOutput } from '../../db/models/Product';
+import { findUserById } from '../../db/services/userService';
 
 interface ProdRequest extends Request {
   body: ProductDTO;
@@ -35,7 +36,7 @@ export const insertProduct = async (
   }
 
   // retrieve User
-  const user = await getUserById(userId);
+  const user = await findUserById(userId);
   if (!user) {
     return next(
       new UnprocessableEntityError(`User not found for ID ${userId}`)

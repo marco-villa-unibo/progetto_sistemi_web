@@ -1,4 +1,4 @@
-import { Dialect, Sequelize } from 'sequelize';
+import { Dialect, Sequelize, ConnectionError } from 'sequelize';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -18,4 +18,7 @@ export const sequelizeConnection = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
   host: DB_HOST,
   dialect: DB_DRIVER,
   logging: true, // differenziare ambienti dev - test
+  retry: {
+    max: 3,
+  },
 });
