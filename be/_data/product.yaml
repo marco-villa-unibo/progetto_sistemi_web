@@ -9,7 +9,6 @@ components:
         - category
         - price
         - quantity
-        - imageUrl
       properties:
         id:
           type: integer
