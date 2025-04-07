@@ -1,0 +1,20 @@
+paths:
+  /user:
+    get:
+      tags:
+        - user
+      summary: Finds all users in the store.
+      description: Finds all users in the store.
+      operationId: findAllUsers
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Unexpected server error
+          $ref: '#/components/responses/InternalServerError'

@@ -1,0 +1,34 @@
+paths:
+  /user:
+    put:
+      tags:
+        - user
+      summary: Update an existing user.
+      description: Update an existing user by ID.
+      operationId: updateUser
+      requestBody:
+        description: Update an existing user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid ID supplied
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: User not found
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          description: Validation exception
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          description: Unexpected server error
+          $ref: '#/components/responses/InternalServerError'

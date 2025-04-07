@@ -36,35 +36,35 @@ productRouter.get('/', getAllProducts);
 /**
  * @openapi
  * /product:
- *  post:
- *    tags:
- *      - product
- *    summary: Add a new product to the store.
- *    description: Add a new product to the store.
- *    operationId: addProduct
- *    requestBody:
- *      description: Create a new product in the store
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/Product'
- *      required: true
- *    responses:
- *      '200':
- *        description: Successful operation
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/Product'
- *      '400':
- *        description: Invalid input
- *        $ref: '#/components/responses/BadRequestError'
- *      '422':
- *        description: Validation exception
- *        $ref: '#/components/responses/UnprocessableEntityError'
- *      '500':
- *        description: Unexpected server error
- *        $ref: '#/components/responses/InternalServerError'
+ *   post:
+ *     tags:
+ *       - product
+ *     summary: Add a new product to the store.
+ *     description: Add a new product to the store.
+ *     operationId: addProduct
+ *     requestBody:
+ *       description: Create a new product in the store
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *       required: true
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       '400':
+ *         description: Invalid input
+ *         $ref: '#/components/responses/BadRequestError'
+ *       '422':
+ *         description: Validation exception
+ *         $ref: '#/components/responses/UnprocessableEntityError'
+ *       '500':
+ *         description: Unexpected server error
+ *         $ref: '#/components/responses/InternalServerError'
  */
 productRouter.post('/', insertProduct);
 

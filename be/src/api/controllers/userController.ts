@@ -23,7 +23,14 @@ export const insertUser = async (
   // FIXME - username unico - cercare se esiste o gestire l'eventuale errore di creazione
   // ipotesi fixme ok
 
-  const u: UserOutput = await createUser(req.body);
+  // forzo il ruolo a customer
+  // in caso di utenza diversa usare endpoint apposito
+  const user: UserDTO = {
+    ...req.body,
+    userRole: 'CUSTOMER',
+  };
+
+  const u: UserOutput = await createUser(user);
 
   res.status(200).send(u);
 };
