@@ -1,49 +1,49 @@
-// import { pool } from '../utils/db';
-import { ModelCtor } from 'sequelize/types/model';
 import Product, { ProductInput, ProductOutput } from '../models/Product';
-import { ProductDTO, UserDTO } from '../../api/types';
 
 export const createProduct = async (
-  p: ProductInput
+  payload: ProductInput
 ): Promise<ProductOutput> => {
-  return Product.create(p);
+  return await Product.create(payload);
 };
 
-export const fetchAllProducts = (): Promise<ProductOutput[]> => {
+export const updateProductById = async (
+  id: number,
+  payload: Partial<ProductInput>
+): Promise<ProductOutput | null> => {
+  const prod = await Product.findByPk(id);
+
+  if (!prod) return null;
+
+  return await prod.update(payload);
+};
+
+export const findProductById = async (
+  id: number
+): Promise<ProductOutput | null> => {
+  return await Product.findByPk(id);
+};
+
+export const deleteProductById = async (id: number): Promise<boolean> => {
+  const numDeletedProducts = await Product.destroy({
+    where: { id },
+  });
+
+  return !!numDeletedProducts;
+};
+
+export const fetchAllProducts = async (): Promise<ProductOutput[]> => {
   return Product.findAll();
 };
 
-export const findProductById = (id: number): Promise<ProductOutput | null> => {
-  return Product.findByPk(id);
-};
+// export const fetchAllProducts = async (
+//   filters: GetAllProductFilters
+// ): Promise<ProductOutput[]> => {
+//   return Product.findAll({
+//     where: {
+//       ...(filters?.isDeleted && { deletedAt: { [Op.not]: null } }),
+//     },
+//     ...((filters?.isDeleted || filters?.includeDeleted) && { paranoid: true }),
+//   });
+// };
 
-export const updateProductById = (
-  id: number,
-  p: ProductDTO
-): Promise<[affectedCount: number]> => {
-  return Product.update(
-    {
-      title: p.title,
-      pDescription: p.pDescription,
-      category: p.category,
-      price: p.price,
-      quantity: p.quantity,
-      imageUrl: p.imageUrl,
-    },
-    { where: { id: id } }
-  );
-};
-
-// REVIEW
-export const deleteProduct = (id: number): Promise<any> => {
-  return Product.findByPk(id)
-    .then((p: any) => {
-      return p?.destroy();
-    })
-    .catch((e: any) => {
-      return e;
-    });
-};
-
-// TODO - cerca per categoria
 // TODO - update di più prodotti in una sola volta

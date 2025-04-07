@@ -6,9 +6,10 @@ import { CategoryDTO, CategoryEnum } from '../../api/types/categoryDto';
 import { UserInput } from './User';
 
 /**
+ * ProductAttributes -> defines all the possible attributes of our model
  * Product -> Sequelize Model Creator (per interagire con il DB)
- * ProductInput ->
- * ProductOutput ->
+ * ProductInput -> defines the type of the object passed to Sequelize’s model.create
+ * ProductOutput -> defines the returned object from model.create...
  */
 
 interface ProductAttributes extends ProductDTO {}
@@ -40,7 +41,7 @@ class Product
 Product.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       autoIncrement: true,
       allowNull: false,
       primaryKey: true,
@@ -77,21 +78,3 @@ Product.init(
 );
 
 export default Product;
-
-// Tipo per i dati di creazione: solo le proprietà che sono obbligatorie per la creazione del prodotto
-// interface ProductCreationAttributes extends Optional<ProductDTO, 'id'> {
-//   title: string;
-//   pDescription: string;
-//   category: CategoryDTO;
-//   price: number;
-//   quantity: number;
-// }
-
-// // Tipo per il modello, che rappresenta tutte le proprietà, incluso id
-// export interface ProductModel
-//   extends ProductDTO,
-//     RowDataPacket,
-//     Model<ProductDTO, ProductCreationAttributes> {}
-
-// export const Product = sequelize.define<ProductModel>('product', {});
-////////////////////////////////////////////////////////////////////////////

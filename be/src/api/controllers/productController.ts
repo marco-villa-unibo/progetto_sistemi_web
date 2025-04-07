@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import {
   createProduct,
-  deleteProduct,
+  deleteProductById,
   fetchAllProducts,
   findProductById,
   updateProductById,
@@ -10,12 +10,8 @@ import {
   BadRequestError,
   NotFoundError,
   UnprocessableEntityError,
-  ServiceUnavailableError,
 } from '../error';
 import { ProductDTO } from '../types';
-import { ModelCtor } from 'sequelize';
-import { UserOutput } from '../../db/models/User';
-import { findUserById } from '../../db/services/userService';
 import { ProductInput, ProductOutput } from '../../db/models/Product';
 
 interface ProdRequest extends Request {
@@ -39,7 +35,7 @@ export const insertProduct = async (
   }
 
   // retrieve User
-  const user = await findUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return next(
       new UnprocessableEntityError(`User not found for ID ${userId}`)
@@ -47,21 +43,12 @@ export const insertProduct = async (
   }
 
   const prod: ProductInput = {
-    title,
-    pDescription,
-    category,
-    price,
-    quantity,
-    imageUrl,
+    ...req.body,
     user,
   };
 
-  const p: ProductDTO = await createProduct(prod);
-  console.log('p :>> ', p);
+  const p: ProductOutput = await createProduct(prod);
 
-  // if (!p) {
-  //   return next(new ServiceUnavailableError('Database connection Error'));
-  // }
   res.status(200).send(p);
 };
 
@@ -69,7 +56,7 @@ export const getAllProducts = async (
   req: ProdRequest,
   res: Response<ProductDTO[]>
 ) => {
-  const p: ProductDTO[] = await fetchAllProducts();
+  const p: ProductOutput[] = await fetchAllProducts();
   res.status(200).send(p);
 };
 
@@ -104,7 +91,7 @@ export const removeProduct = async (
     return next(new BadRequestError(`Product ID must be positive integer`));
   }
 
-  const p = await deleteProduct(+id);
+  const p = await deleteProductById(+id);
   if (!p) {
     return next(new NotFoundError(`Product not found for ID ${id}`));
   }
@@ -117,8 +104,7 @@ export const modifyProduct = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id, title, pDescription, category, price, quantity, imageUrl } =
-    req.body;
+  const { id, price, quantity } = req.body;
 
   // 400 BAD REQUEST gestita dalla validazione openapi
 
@@ -128,24 +114,14 @@ export const modifyProduct = async (
   }
 
   // TODO: gestire validazione lato DB
-  // if (price <= 0 || quantity <= 0) {
-  //   return next(new UnprocessableEntityError(`Product model fields not valid`));
-  // }
+  if (price <= 0 || quantity <= 0) {
+    return next(new BadRequestError(`Product model fields not valid`));
+  }
 
-  const prod: ProductDTO = {
-    title,
-    pDescription,
-    category,
-    price,
-    quantity,
-    imageUrl,
-  };
-
-  const [p] = await updateProductById(id, prod);
-  if (p === 0) {
+  const p = await updateProductById(id, req.body);
+  if (!p) {
     return next(new NotFoundError(`Product not found for ID ${id}`));
   }
 
-  const r = await findProductById(+id);
-  res.status(200).send(r);
+  res.status(200).send(p);
 };
