@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { ErrorDto } from '../types';
+import { ErrorDTO } from '../types';
 import { HttpError } from '../error/http';
 
 export function errorHandler(
   err: any,
   req: Request,
-  res: Response<ErrorDto>,
+  res: Response<ErrorDTO>,
   next: NextFunction
 ) {
   console.error(err.stack);

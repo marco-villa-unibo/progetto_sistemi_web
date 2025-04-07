@@ -6,9 +6,9 @@
     "dev": "npm run schemas && npm run copyfiles && tsc -w & nodemon dist/app.js",
     "dev:win": "npm run schemas && npm run copyfiles && start /b tsc -w & nodemon --config nodemon.win.json dist/app.js",
     "schemas": "npm run schemas:openapi && npm run schemas:types",
-    "schemas:openapi": "swagger-jsdoc -d ./_data/definition.yaml src/routes/*.ts \"./_data/!(definition).yaml\" -o src/schemas/openapi.json",
-    "schemas:types": "openapi-typescript src/schemas/openapi.json -o src/schemas/index.d.ts",
-    "copyfiles": "copyfiles -u 1 src/schemas/*.json dist",
+    "schemas:openapi": "swagger-jsdoc -d ./_data/definition.yaml src/api/routes/*.ts \"./_data/!(definition).yaml\" -o src/api/schemas/openapi.json",
+    "schemas:types": "openapi-typescript src/api/schemas/openapi.json -o src/api/schemas/index.d.ts",
+    "copyfiles": "copyfiles -u 1 src/api/schemas/*.json dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start-server": "tsc && node dist/app.js",
     "clean": "node _scripts/clean.js"

@@ -30,7 +30,7 @@ npm run dev
 
 Per connettere il DB:
 1 - assicurati di avere installato mysql e di aver attivo il processo mysql.
-2 - nel folder "be" rinomina il ".env copy" in ".env"
+2 - nel folder "be" rinomina il ".env.example" in ".env"
 3 - completalo con username e password per il database
 
 Una volta fatto questo la connessione dovrebbe essere impostata correttamente.

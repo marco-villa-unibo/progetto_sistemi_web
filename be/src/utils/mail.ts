@@ -1,5 +1,9 @@
 import nodemailer, { SentMessageInfo } from 'nodemailer';
-import { SG_API_KEY } from '../configs/envConfig';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const SG_API_KEY = process.env.SENDGRID_API_KEY as string;
 
 // NOTE: mail provider settings
 // const transporter = nodemailer.createTransport(

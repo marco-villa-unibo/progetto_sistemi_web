@@ -7,7 +7,7 @@ import {
   removeProduct,
 } from '../controllers';
 
-export const router = Router();
+export const productRouter = Router();
 
 /**
  * @openapi
@@ -31,7 +31,7 @@ export const router = Router();
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get('/', getAllProducts);
+productRouter.get('/', getAllProducts);
 
 /**
  * @openapi
@@ -66,7 +66,7 @@ router.get('/', getAllProducts);
  *        description: Unexpected server error
  *        $ref: '#/components/responses/InternalServerError'
  */
-router.post('/', insertProduct);
+productRouter.post('/', insertProduct);
 
 /**
  * @openapi
@@ -104,7 +104,7 @@ router.post('/', insertProduct);
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.put('/', modifyProduct);
+productRouter.put('/', modifyProduct);
 
 /**
  * @openapi
@@ -140,7 +140,7 @@ router.put('/', modifyProduct);
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-router.get('/:id', getProductById);
+productRouter.get('/:id', getProductById);
 
 /**
  * @openapi
@@ -172,4 +172,4 @@ router.get('/:id', getProductById);
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-router.delete('/:id', removeProduct);
+productRouter.delete('/:id', removeProduct);

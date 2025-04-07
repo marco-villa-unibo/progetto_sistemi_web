@@ -1,22 +1,25 @@
 // import { pool } from '../utils/db';
-import { Product, ProductModel } from '../models';
-import { ProductDto } from '../types';
+import { ModelCtor } from 'sequelize/types/model';
+import Product, { ProductInput, ProductOutput } from '../models/Product';
+import { ProductDTO, UserDTO } from '../../api/types';
 
-export const fetchAllProducts = (): Promise<ProductModel[]> => {
+export const createProduct = async (
+  p: ProductInput
+): Promise<ProductOutput> => {
+  return Product.create(p);
+};
+
+export const fetchAllProducts = (): Promise<ProductOutput[]> => {
   return Product.findAll();
 };
 
-export const findProductById = (id: number): Promise<ProductModel | null> => {
+export const findProductById = (id: number): Promise<ProductOutput | null> => {
   return Product.findByPk(id);
-};
-
-export const createProduct = (p: ProductDto): Promise<ProductModel> => {
-  return Product.create(p);
 };
 
 export const updateProductById = (
   id: number,
-  p: ProductDto
+  p: ProductDTO
 ): Promise<[affectedCount: number]> => {
   return Product.update(
     {
@@ -31,12 +34,13 @@ export const updateProductById = (
   );
 };
 
+// REVIEW
 export const deleteProduct = (id: number): Promise<any> => {
   return Product.findByPk(id)
-    .then(p => {
+    .then((p: any) => {
       return p?.destroy();
     })
-    .catch(e => {
+    .catch((e: any) => {
       return e;
     });
 };

@@ -1,40 +1,84 @@
 import express, { Application } from 'express';
 
-import { PORT } from './configs/envConfig';
 import {
   addTimestamp,
   cors,
   errorHandler,
   logger,
   openApiValidator,
-} from './middlewares';
-import { apiDocsRouter, healthRouter, productRouter } from './routes';
-import { sequelize } from './utils/db';
+} from './api/middlewares';
+import routes from './api/routes';
 
-const app: Application = express();
+import dbInit from './db/init';
+import dotenv from 'dotenv';
 
-// MIDDLEWARES
-app.use(express.json());
-app.use(addTimestamp);
-app.use(logger);
-app.use(openApiValidator);
-app.use(cors);
+dotenv.config();
 
-// ROUTES
-app.use('/api/v1/api-docs', apiDocsRouter);
-app.use('/api/v1/health', healthRouter);
-app.use('/api/v1/product', productRouter);
+dbInit();
 
-// ERROR HANDLER
-app.use(errorHandler);
+const PORT = process.env.PORT;
 
-sequelize
-  .sync()
-  .then(() => {
+export const get = () => {
+  const app: Application = express();
+
+  // MIDDLEWARES
+  app.use(express.json());
+  app.use(addTimestamp);
+  app.use(logger);
+  app.use(openApiValidator);
+  app.use(cors);
+
+  // V1 ROUTES
+  app.use('/api/v1', routes);
+
+  // ERROR HANDLER
+  app.use(errorHandler);
+
+  return app;
+};
+
+export const start = () => {
+  const app = get();
+
+  try {
     app.listen(PORT, () => {
       console.log(`Shop api listening at http://localhost:${PORT}`);
     });
-  })
-  .catch(err => {
-    console.log('SEQUELIZE ERROR :>> ', err);
-  });
+  } catch (error) {
+    console.log('ERROR OCCURRED :>> ', error);
+  }
+};
+
+start();
+
+//
+
+//
+
+// SEQUELIZE
+// User.hasMany(Product);
+// Product.belongsTo(User);
+
+// sequelize
+//   // .sync({force:true})
+//   .sync()
+//   .then(r => {
+//     return User.findByPk(1);
+//   })
+//   .then(user => {
+//     if (!user)
+//       return User.create({
+//         username: 'Prova',
+//         firstName: 'Marco',
+//         lastName: 'Villa',
+//         email: 'prova@prova.com',
+//         password: '12345678',
+//         address: 'address',
+//         userRole: 'ADMIN',
+//       });
+//     return user;
+//   })
+//   .then(user => {
+//     // console.log('user :>> ', user);
+//   })
+//   .catch(err => {});

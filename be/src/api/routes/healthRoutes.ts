@@ -1,7 +1,7 @@
 import { Request, Router } from 'express';
-import { HealthResponseDto } from '../types';
+import { HealthResponseDTO } from '../types';
 
-export const router = Router();
+export const healthRouter = Router();
 
 /**
  * @openapi
@@ -21,6 +21,6 @@ export const router = Router();
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get('/', (req: Request<{}, HealthResponseDto>, res) => {
+healthRouter.get('/', (req: Request<{}, HealthResponseDTO>, res) => {
   res.send({ status: 'OK', timestamp: req.timestamp! });
 });
