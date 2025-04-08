@@ -50,35 +50,3 @@ export const start = () => {
 };
 
 start();
-
-//
-
-//
-
-// SEQUELIZE
-// User.hasMany(Product);
-// Product.belongsTo(User);
-
-// sequelize
-//   // .sync({force:true})
-//   .sync()
-//   .then(r => {
-//     return User.findByPk(1);
-//   })
-//   .then(user => {
-//     if (!user)
-//       return User.create({
-//         username: 'Prova',
-//         firstName: 'Marco',
-//         lastName: 'Villa',
-//         email: 'prova@prova.com',
-//         password: '12345678',
-//         address: 'address',
-//         userRole: 'ADMIN',
-//       });
-//     return user;
-//   })
-//   .then(user => {
-//     // console.log('user :>> ', user);
-//   })
-//   .catch(err => {});

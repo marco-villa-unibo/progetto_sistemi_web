@@ -26,6 +26,7 @@ export const insertProduct = async (
   next: NextFunction
 ) => {
   const { title, pDescription, category, price, quantity, imageUrl } = req.body;
+  //REVIEW - : prendere lo user id dall'utente loggato (e verificare permessi)
   const userId: number = req.userId! | 1;
 
   // 400 BAD REQUEST gestita dalla validazione openapi
@@ -45,7 +46,7 @@ export const insertProduct = async (
 
   const prod: ProductInput = {
     ...req.body,
-    user,
+    UserId: user.id,
   };
 
   const p: ProductOutput = await createProduct(prod);
