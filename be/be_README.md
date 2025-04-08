@@ -52,11 +52,13 @@ ok - implementare generazione modelli da yaml
 ok - mail service
 ok - aggiornare shop.yaml per front-end
 ok - implementare ORM
+ok - procedura inizializzazione DB (dati)
 
-- procedura inizializzazione DB (dati)
 - images (upload / download)
 - ? pagination
 - test unitari
 - tet integrazione
+- carrello
+- ordini
 - autenticazione JWT
 - user sign-up
