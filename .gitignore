@@ -20,7 +20,3 @@ be/dist
 
 # ENV
 .env
-
-# Generated schemas
-be/src/api/schemas/*.ts
-be/src/api/schemas/*.json
