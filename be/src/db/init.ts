@@ -5,7 +5,7 @@ import { Product, User } from './models';
 
 dotenv.config();
 
-const isDev = process.env.NODE_ENV === 'dev';
+const isDev = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
 
 User.hasMany(Product);

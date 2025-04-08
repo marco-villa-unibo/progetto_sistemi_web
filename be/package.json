@@ -10,8 +10,10 @@
     "schemas:types": "openapi-typescript src/api/schemas/openapi.json -o src/api/schemas/index.d.ts",
     "copyfiles": "copyfiles -u 1 src/api/schemas/*.json dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-server": "tsc && node dist/app.js",
-    "clean": "node _scripts/clean.js"
+    "start:server": "tsc && node dist/app.js",
+    "clean": "node _scripts/clean.js",
+    "seed": "",
+    "seed:undo": ""
   },
   "author": "MV",
   "license": "ISC",
@@ -19,7 +21,7 @@
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
     "@types/express": "^5.0.1",
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.14.0",
     "@types/nodemailer": "^6.4.17",
     "@types/swagger-ui-express": "^4.1.8",
     "copyfiles": "^2.4.1",
@@ -27,8 +29,10 @@
     "fs-extra": "^11.3.0",
     "nodemon": "^3.1.9",
     "openapi-typescript": "^7.6.1",
+    "sequelize-cli": "^6.6.2",
     "swagger-jsdoc": "^6.2.8",
-    "typescript": "^5.8.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "body-parser": "^2.2.0",

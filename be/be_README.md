@@ -51,10 +51,12 @@ ok - implementare documentazione swagger da yaml
 ok - implementare generazione modelli da yaml
 ok - mail service
 ok - aggiornare shop.yaml per front-end
+ok - implementare ORM
 
 - procedura inizializzazione DB (dati)
-  ok - implementare ORM
-- autenticazione JWT
 - images (upload / download)
 - ? pagination
+- test unitari
+- tet integrazione
+- autenticazione JWT
 - user sign-up
