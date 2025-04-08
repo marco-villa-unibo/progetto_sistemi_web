@@ -12,8 +12,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:server": "tsc && node dist/app.js",
     "clean": "node _scripts/clean.js",
-    "seed": "",
-    "seed:undo": ""
+    "seed": "npx sequelize-cli db:seed:all",
+    "seed:undo": "npx sequelize-cli db:seed:undo"
   },
   "author": "MV",
   "license": "ISC",
