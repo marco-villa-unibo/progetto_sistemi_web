@@ -20,7 +20,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/ProductOutput'
         '400':
           description: Invalid ID supplied
           $ref: '#/components/responses/BadRequestError'

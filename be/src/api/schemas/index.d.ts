@@ -33,14 +33,10 @@ export interface paths {
          * @description Finds all products in the store.
          */
         get: operations["findAllProducts"];
-        /**
-         * Update an existing product.
-         * @description Update an existing product by ID.
-         */
-        put: operations["updateProduct"];
+        put?: never;
         /**
          * Add a new product to the store.
-         * @description Add a new product to the store.
+         * @description Add a new product to the store, including image.
          */
         post: operations["addProduct"];
         delete?: never;
@@ -61,7 +57,11 @@ export interface paths {
          * @description Returns a single product.
          */
         get: operations["findProductById"];
-        put?: never;
+        /**
+         * Update an existing product.
+         * @description Update an existing product by ID.
+         */
+        put: operations["updateProduct"];
         post?: never;
         /**
          * Deletes a product.
@@ -149,29 +149,31 @@ export interface components {
         };
         /** @description Product Model */
         Product: {
-            /**
-             * Format: int64
-             * @example 0
-             */
-            id?: number;
             /** @example Penna */
             title: string;
             /** @example Penna multicolore BIC */
             pDescription: string;
             category: components["schemas"]["Category"];
-            /**
-             * Format: double
-             * @example 9.99
-             */
-            price: number;
-            /**
-             * Format: int64
-             * @example 10
-             */
-            quantity: number;
-            /** @example https://localohost:8080/img/img1.jpg */
-            imageUrl?: string;
+            /** @example 9.99 */
+            price: string;
+            /** @example 10 */
+            quantity: string;
         };
+        /** @description Product Model Input */
+        ProductInput: {
+            /**
+             * Format: binary
+             * @description Image file for the product
+             */
+            image?: string;
+        } & components["schemas"]["Product"];
+        /** @description Product Model Output */
+        ProductOutput: {
+            /** @example 0 */
+            id: number;
+            /** @description Image path for the product */
+            imageUrl: string;
+        } & components["schemas"]["Product"];
         /** @description User Model */
         User: {
             /**
@@ -282,42 +284,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Product"][];
+                    "application/json": components["schemas"]["ProductOutput"][];
                 };
             };
-            /** @description Unexpected server error */
-            500: components["responses"]["InternalServerError"];
-        };
-    };
-    updateProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Update an existing product in the store */
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Product"];
-            };
-        };
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Product"];
-                };
-            };
-            /** @description Invalid ID supplied */
-            400: components["responses"]["BadRequestError"];
-            /** @description Product not found */
-            404: components["responses"]["NotFoundError"];
-            /** @description Validation exception */
-            422: components["responses"]["UnprocessableEntityError"];
             /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
@@ -332,17 +301,17 @@ export interface operations {
         /** @description Create a new product in the store */
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Product"];
+                "multipart/form-data": components["schemas"]["ProductInput"];
             };
         };
         responses: {
-            /** @description Successful operation */
-            200: {
+            /** @description Product created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Product"];
+                    "application/json": components["schemas"]["ProductOutput"];
                 };
             };
             /** @description Invalid input */
@@ -371,13 +340,46 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Product"];
+                    "application/json": components["schemas"]["ProductOutput"];
                 };
             };
             /** @description Invalid ID supplied */
             400: components["responses"]["BadRequestError"];
             /** @description Product not found */
             404: components["responses"]["NotFoundError"];
+            /** @description Unexpected server error */
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    updateProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Update an existing product in the store */
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductInput"];
+            };
+        };
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOutput"];
+                };
+            };
+            /** @description Invalid ID supplied */
+            400: components["responses"]["BadRequestError"];
+            /** @description Product not found */
+            404: components["responses"]["NotFoundError"];
+            /** @description Validation exception */
+            422: components["responses"]["UnprocessableEntityError"];
             /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
@@ -478,8 +480,8 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Successful operation */
-            200: {
+            /** @description Product created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

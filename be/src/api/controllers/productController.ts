@@ -14,7 +14,10 @@ import {
 import { ProductDTO } from '../types';
 import { ProductInput, ProductOutput } from '../../db/models/Product';
 import { findUserById } from '../../db/services/userService';
+import { sanitizeFilename } from '../../utils/helpers';
+import dotenv from 'dotenv';
 
+dotenv.config();
 interface ProdRequest extends Request {
   body: ProductDTO;
   params: { id: string };
@@ -25,14 +28,22 @@ export const insertProduct = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { title, pDescription, category, price, quantity, imageUrl } = req.body;
+  const { price, quantity } = req.body;
+
   //REVIEW - : prendere lo user id dall'utente loggato (e verificare permessi)
   const userId: number = req.userId! | 1;
+
+  // costruisco il percorso del file
+  if (!req.file) {
+    return next(new UnprocessableEntityError(`Product image not provided`));
+  }
+  const imagePath =
+    process.env.IMAGE_UPLOAD_FOLDER + sanitizeFilename(req.file.filename);
 
   // 400 BAD REQUEST gestita dalla validazione openapi
 
   // TODO: gestire validazione lato DB
-  if (price <= 0 || quantity <= 0) {
+  if (Number(price) <= 0 || Number(quantity) <= 0) {
     return next(new UnprocessableEntityError(`Product model fields not valid`));
   }
 
@@ -46,12 +57,13 @@ export const insertProduct = async (
 
   const prod: ProductInput = {
     ...req.body,
+    imageUrl: imagePath,
     UserId: user.id,
   };
 
   const p: ProductOutput = await createProduct(prod);
 
-  res.status(200).send(p);
+  res.status(201).send(p);
 };
 
 export const getAllProducts = async (
@@ -106,24 +118,20 @@ export const modifyProduct = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id, price, quantity } = req.body;
-
-  // 400 BAD REQUEST gestita dalla validazione openapi
-
-  // TODO: trasferire controllo a validazione yaml
-  if (!id || isNaN(id) || id <= 0) {
-    return next(new BadRequestError(`Product ID must be positive integer`));
-  }
-
-  // TODO: gestire validazione lato DB
-  if (price <= 0 || quantity <= 0) {
-    return next(new BadRequestError(`Product model fields not valid`));
-  }
-
-  const p = await updateProductById(id, req.body);
-  if (!p) {
-    return next(new NotFoundError(`Product not found for ID ${id}`));
-  }
-
-  res.status(200).send(p);
+  // const { id } = req.params;
+  // const { price, quantity } = req.body;
+  // // 400 BAD REQUEST gestita dalla validazione openapi
+  // // TODO: trasferire controllo a validazione yaml
+  // if (!id || isNaN(+id) || +id <= 0) {
+  //   return next(new BadRequestError(`Product ID must be positive integer`));
+  // }
+  // // TODO: gestire validazione lato DB
+  // if (price <= 0 || quantity <= 0) {
+  //   return next(new BadRequestError(`Product model fields not valid`));
+  // }
+  // const p = await updateProductById(+id, req.body);
+  // if (!p) {
+  //   return next(new NotFoundError(`Product not found for ID ${id}`));
+  // }
+  // res.status(200).send(p);
 };

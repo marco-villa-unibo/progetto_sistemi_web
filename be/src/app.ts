@@ -11,6 +11,8 @@ import routes from './api/routes';
 
 import dbInit from './db/init';
 import dotenv from 'dotenv';
+import upload from './api/middlewares/upload';
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -22,7 +24,10 @@ export const get = () => {
   const app: Application = express();
 
   // MIDDLEWARES
-  app.use(express.json());
+  app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.text());
+  app.use(upload.single('image'));
   app.use(addTimestamp);
   app.use(logger);
   app.use(openApiValidator);

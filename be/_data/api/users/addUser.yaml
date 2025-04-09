@@ -14,8 +14,8 @@ paths:
               $ref: '#/components/schemas/User'
         required: true
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description: User created successfully
           content:
             application/json:
               schema:

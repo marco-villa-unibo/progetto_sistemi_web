@@ -14,7 +14,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Product'
+                  $ref: '#/components/schemas/ProductOutput'
         '500':
           description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'

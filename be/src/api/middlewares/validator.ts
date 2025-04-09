@@ -7,4 +7,5 @@ export const openApiValidator = OpenApiValidator.middleware({
   validateResponses: true,
   validateApiSpec: true,
   ignorePaths: /\/api-docs/,
+  fileUploader: false,
 });

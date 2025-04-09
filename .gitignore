@@ -20,3 +20,6 @@ be/dist
 
 # ENV
 .env
+
+# Image folder
+be/uploads

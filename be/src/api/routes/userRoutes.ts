@@ -9,6 +9,8 @@ import {
 
 export const userRouter = Router();
 
+// FIXME - refactor (in vista di signup login e jwt)
+
 /**
  * @openapi
  *  /user:
@@ -50,8 +52,8 @@ userRouter.get('/', getAllUsers);
  *              $ref: '#/components/schemas/User'
  *        required: true
  *      responses:
- *        '200':
- *          description: Successful operation
+ *        '201':
+ *          description: Product created successfully
  *          content:
  *            application/json:
  *              schema:

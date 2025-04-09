@@ -10,10 +10,6 @@ components:
         - price
         - quantity
       properties:
-        id:
-          type: integer
-          format: int64
-          example: 0
         title:
           type: string
           example: Penna
@@ -23,13 +19,35 @@ components:
         category:
           $ref: '#/components/schemas/Category'
         price:
-          type: number
-          format: double
+          type: string
           example: 9.99
         quantity:
-          type: integer
-          format: int64
+          type: string
           example: 10
+
+    ProductInput:
+      description: Product Model Input
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Product'
+      properties:
+        image:
+          type: string
+          format: binary
+          description: Image file for the product
+
+    ProductOutput:
+      description: Product Model Output
+      type: object
+      required:
+        - id
+        - imageUrl
+      allOf:
+        - $ref: '#/components/schemas/Product'
+      properties:
+        id:
+          type: number
+          example: 0
         imageUrl:
           type: string
-          example: https://localohost:8080/img/img1.jpg
+          description: Image path for the product

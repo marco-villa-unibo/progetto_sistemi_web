@@ -1,5 +1,5 @@
 paths:
-  /product:
+  /product/{productId}:
     put:
       tags:
         - product
@@ -11,7 +11,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/ProductInput'
         required: true
       responses:
         '200':
@@ -19,7 +19,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/ProductOutput'
         '400':
           description: Invalid ID supplied
           $ref: '#/components/responses/BadRequestError'

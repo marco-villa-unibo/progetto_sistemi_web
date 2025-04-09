@@ -4,22 +4,22 @@ paths:
       tags:
         - product
       summary: Add a new product to the store.
-      description: Add a new product to the store.
+      description: Add a new product to the store, including image.
       operationId: addProduct
       requestBody:
         description: Create a new product in the store
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/ProductInput'
         required: true
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description: Product created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/ProductOutput'
         '400':
           description: Invalid input
           $ref: '#/components/responses/BadRequestError'

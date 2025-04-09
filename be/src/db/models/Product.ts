@@ -12,16 +12,21 @@ import { User } from '.';
  */
 
 interface ProductAttributes extends ProductDTO {
+  id?: number;
+  imageUrl: string;
   UserId: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export interface ProductInput extends Optional<ProductAttributes, 'id'> {
+  // imageUrl: string;
   UserId: number;
 }
 
-export interface ProductOutput extends Required<ProductAttributes> {}
+export interface ProductOutput extends Required<ProductAttributes> {
+  imageUrl: string;
+}
 
 class Product
   extends Model<ProductAttributes, ProductInput>
@@ -31,8 +36,8 @@ class Product
   public title!: string;
   public pDescription!: string;
   public category!: CategoryDTO;
-  public price!: number;
-  public quantity!: number;
+  public price!: string;
+  public quantity!: string;
   public imageUrl!: string;
   public UserId!: number;
 
@@ -100,7 +105,7 @@ Product.init(
   {
     sequelize: sequelizeConnection,
     paranoid: true,
-    tableName: 'Products'
+    tableName: 'Products',
   }
 );
 
