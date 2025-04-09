@@ -118,20 +118,40 @@ export const modifyProduct = async (
   res: Response,
   next: NextFunction
 ) => {
-  // const { id } = req.params;
-  // const { price, quantity } = req.body;
-  // // 400 BAD REQUEST gestita dalla validazione openapi
-  // // TODO: trasferire controllo a validazione yaml
-  // if (!id || isNaN(+id) || +id <= 0) {
-  //   return next(new BadRequestError(`Product ID must be positive integer`));
-  // }
-  // // TODO: gestire validazione lato DB
-  // if (price <= 0 || quantity <= 0) {
-  //   return next(new BadRequestError(`Product model fields not valid`));
-  // }
-  // const p = await updateProductById(+id, req.body);
-  // if (!p) {
-  //   return next(new NotFoundError(`Product not found for ID ${id}`));
-  // }
-  // res.status(200).send(p);
+  const { id } = req.params;
+  const { price, quantity } = req.body;
+
+  //REVIEW - : prendere lo user id dall'utente loggato (e verificare permessi)
+  const userId: number = req.userId! | 1;
+
+  // 400 BAD REQUEST gestita dalla validazione openapi
+
+  // TODO: trasferire controllo a validazione yaml
+  if (!id || isNaN(+id) || +id <= 0) {
+    return next(new BadRequestError(`Product ID must be positive integer`));
+  }
+
+  // TODO: gestire validazione lato DB
+  if (Number(price) <= 0 || Number(quantity) <= 0) {
+    return next(new BadRequestError(`Product model fields not valid`));
+  }
+
+  const prod: Partial<ProductInput> = {
+    ...req.body,
+    UserId: userId,
+  };
+
+  // costruisco il percorso del file
+  if (req.file) {
+    const imagePath =
+      process.env.IMAGE_UPLOAD_FOLDER + sanitizeFilename(req.file.filename);
+    prod.imageUrl = imagePath;
+  }
+
+  const p = await updateProductById(+id, prod);
+  if (!p) {
+    return next(new NotFoundError(`Product not found for ID ${id}`));
+  }
+
+  res.status(200).send(p);
 };

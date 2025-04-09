@@ -355,13 +355,16 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description ID of product to return */
+                productId: number;
+            };
             cookie?: never;
         };
         /** @description Update an existing product in the store */
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ProductInput"];
+                "multipart/form-data": components["schemas"]["ProductInput"];
             };
         };
         responses: {
