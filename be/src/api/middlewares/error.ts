@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { ErrorDTO } from '../types';
-import { HttpError } from '../error/http';
 
 export function errorHandler(
   err: any,

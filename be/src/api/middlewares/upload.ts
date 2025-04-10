@@ -55,4 +55,4 @@ const upload = multer({
   // limits: { fileSize: 10 * 1024 * 1024 }, // Opzionale: limita la dimensione del file (es. 10MB)
 });
 
-export default upload;
+export  {upload};

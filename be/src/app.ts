@@ -6,12 +6,12 @@ import {
   errorHandler,
   logger,
   openApiValidator,
+  upload,
 } from './api/middlewares';
 import routes from './api/routes';
 
 import dbInit from './db/init';
 import dotenv from 'dotenv';
-import upload from './api/middlewares/upload';
 import bodyParser from 'body-parser';
 import path from 'path';
 
@@ -37,9 +37,7 @@ export const get = () => {
   // STATIC SERVING
   app.use(
     '/images',
-    express.static(
-      path.join(__dirname, process.env.IMAGE_UPLOAD_FOLDER!)
-    )
+    express.static(path.join(__dirname, process.env.IMAGE_UPLOAD_FOLDER!))
   );
 
   // V1 ROUTES
