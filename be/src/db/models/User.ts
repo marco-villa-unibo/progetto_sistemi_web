@@ -5,19 +5,32 @@ import { UserRoleDTO, UserRoleEnum } from '../../api/types';
 import { Product } from '.';
 
 /**
+ * UserAttributes -> defines all the possible attributes of our model
  * User -> Sequelize Model Creator (per interagire con il DB)
- * UserInput ->
- * UserOutput ->
+ * UserInput -> defines the type of the object passed to Sequelize’s model.create
+ * UserOutput -> defines the returned object from model.create...
  */
 
 interface UserAttributes extends UserDTO {
+  id?: number;
+  passwordHash?: string;
+  // imageUrl: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface UserInput extends Optional<UserAttributes, 'id'> {}
+export interface UserInput extends Optional<UserAttributes, 'id'> {
+  password: string;
+}
 
-export interface UserOutput extends Required<UserAttributes> {}
+export interface UserOutput
+  extends Omit<
+    Required<UserAttributes>,
+    'passwordHash' | 'createdAt' | 'updatedAt'
+  > {
+  passwordHash?: string;
+  token?: string; // TODO: gestire il login al momento della registrazione
+}
 
 class User extends Model<UserAttributes, UserInput> implements UserAttributes {
   public id!: number;
@@ -25,16 +38,17 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
   public firstName!: string;
   public lastName!: string;
   public email!: string;
-  public password!: string;
+  public passwordHash!: string;
   public phone!: string;
   public address!: string;
   public userRole!: UserRoleDTO;
 
   // timestamps!
-  public createdAt!: Date;
-  public updatedAt!: Date;
-  public deletedAt!: Date;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 
+  // Associazione con Product
   public readonly products?: Product[]; // "products" sarà un array di Product istanze
   public static associate(models: any) {
     User.hasMany(models.Product, {
@@ -72,7 +86,7 @@ User.init(
       allowNull: false,
       unique: true,
     },
-    password: {
+    passwordHash: {
       type: DataTypes.STRING,
       allowNull: false,
     },

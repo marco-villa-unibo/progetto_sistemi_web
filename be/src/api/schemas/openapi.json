@@ -28,6 +28,92 @@
     }
   ],
   "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register a new user.",
+        "description": "Register a new user with CUSTOMER role.",
+        "operationId": "register",
+        "requestBody": {
+          "description": "Create a new user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "422": {
+            "description": "Validation exception",
+            "$ref": "#/components/responses/UnprocessableEntityError"
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login an existing user and get a JWT token.",
+        "description": "Login a user.",
+        "operationId": "login",
+        "requestBody": {
+          "description": "Login an existing user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOutput"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "$ref": "#/components/responses/InvalidCredentialsError"
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "description": "Health check endpoint for Shop API",
@@ -87,6 +173,11 @@
         "summary": "Add a new product to the store.",
         "description": "Add a new product to the store, including image.",
         "operationId": "addProduct",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "description": "Create a new product in the store",
           "content": {
@@ -132,6 +223,11 @@
         "summary": "Update an existing product.",
         "description": "Update an existing product by ID.",
         "operationId": "updateProduct",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "productId",
@@ -235,6 +331,11 @@
         "summary": "Deletes a product.",
         "description": "Delete a product.",
         "operationId": "deleteProduct",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "productId",
@@ -591,15 +692,9 @@
           "firstName",
           "lastName",
           "email",
-          "password",
           "address"
         ],
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 1
-          },
           "username": {
             "type": "string",
             "example": "theUser"
@@ -616,10 +711,6 @@
             "type": "string",
             "example": "john@email.com"
           },
-          "password": {
-            "type": "string",
-            "example": "Password1!"
-          },
           "phone": {
             "type": "string",
             "example": "12345"
@@ -630,6 +721,68 @@
           },
           "userRole": {
             "$ref": "#/components/schemas/UserRole"
+          }
+        }
+      },
+      "UserInput": {
+        "description": "User Model Input",
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          }
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "Password1!"
+          }
+        }
+      },
+      "UserOutput": {
+        "description": "User Model Input",
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "token": {
+            "type": "string",
+            "example": "token"
+          }
+        }
+      },
+      "UserLogin": {
+        "description": "User Login Model",
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "theUser"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@email.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Password1!"
           }
         }
       },
@@ -664,6 +817,16 @@
           }
         }
       },
+      "InvalidCredentialsError": {
+        "description": "Invalid credentials error (401)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorModel"
+            }
+          }
+        }
+      },
       "NotFoundError": {
         "description": "Not found error (404)",
         "content": {
@@ -683,6 +846,13 @@
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

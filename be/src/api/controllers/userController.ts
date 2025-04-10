@@ -22,25 +22,22 @@ export const insertUser = async (
 ) => {
   // FIXME - username unico - cercare se esiste o gestire l'eventuale errore di creazione
   // ipotesi fixme ok
-
   // forzo il ruolo a customer
   // in caso di utenza diversa usare endpoint apposito
-  const user: UserDTO = {
-    ...req.body,
-    userRole: 'CUSTOMER',
-  };
-
-  const u: UserOutput = await createUser(user);
-
-  res.status(200).send(u);
+  //   const user: UserDTO = {
+  //     ...req.body,
+  //     userRole: 'CUSTOMER',
+  //   };
+  //   const u: UserOutput = await createUser(user);
+  //   res.status(200).send(u);
 };
 
 export const getAllUsers = async (
   req: UserRequest,
   res: Response<UserDTO[]>
 ) => {
-  const u: UserDTO[] = await fetchAllUsers();
-  res.status(200).send(u);
+  //   const u: UserDTO[] = await fetchAllUsers();
+  //   res.status(200).send(u);
 };
 
 export const getUserById = async (
@@ -87,22 +84,17 @@ export const modifyUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.body;
-
-  // 400 BAD REQUEST gestita dalla validazione openapi
-
-  // TODO: trasferire controllo a validazione yaml
-  if (!id || isNaN(id) || id <= 0) {
-    return next(new BadRequestError(`User ID must be positive integer`));
-  }
-
-  // FIXME - username unico - cercare se esiste o gestire l'eventuale errore di creazione
-  // ipotesi fixme ok
-
-  const u = await updateUserById(id, req.body);
-  if (!u) {
-    return next(new NotFoundError(`User not found for ID ${id}`));
-  }
-
-  res.status(200).send(u);
+  // const { id } = req.body;
+  // // 400 BAD REQUEST gestita dalla validazione openapi
+  // // TODO: trasferire controllo a validazione yaml
+  // if (!id || isNaN(id) || id <= 0) {
+  //   return next(new BadRequestError(`User ID must be positive integer`));
+  // }
+  // // FIXME - username unico - cercare se esiste o gestire l'eventuale errore di creazione
+  // // ipotesi fixme ok
+  // const u = await updateUserById(id, req.body);
+  // if (!u) {
+  //   return next(new NotFoundError(`User not found for ID ${id}`));
+  // }
+  // res.status(200).send(u);
 };

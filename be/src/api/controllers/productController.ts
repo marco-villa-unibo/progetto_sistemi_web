@@ -19,7 +19,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 dotenv.config();
+
 interface ProdRequest extends Request {
+  // user: IUserJwtPayload;
   body: ProductDTO;
   params: { id: string };
 }
@@ -32,7 +34,7 @@ export const insertProduct = async (
   const { price, quantity } = req.body;
 
   //REVIEW - : prendere lo user id dall'utente loggato (e verificare permessi)
-  const userId: number = req.userId! | 1;
+  const userId: number = req.user!.userId | 1;
 
   // costruisco il percorso del file
   if (!req.file) {
@@ -125,7 +127,7 @@ export const modifyProduct = async (
   const { price, quantity } = req.body;
 
   //REVIEW - : prendere lo user id dall'utente loggato (e verificare permessi)
-  const userId: number = req.userId! | 1;
+  const userId: number = req.user!.userId | 1;
 
   // 400 BAD REQUEST gestita dalla validazione openapi
 

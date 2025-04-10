@@ -20,6 +20,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorModel'
+    InvalidCredentialsError:
+      description: Invalid credentials error (401)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
     NotFoundError:
       description: Not found error (404)
       content:

@@ -6,6 +6,8 @@ paths:
       summary: Update an existing product.
       description: Update an existing product by ID.
       operationId: updateProduct
+      security:
+        - bearerAuth: []
       parameters:
         - name: productId
           in: path

@@ -4,6 +4,46 @@
  */
 
 export interface paths {
+    "/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register a new user.
+         * @description Register a new user with CUSTOMER role.
+         */
+        post: operations["register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Login an existing user and get a JWT token.
+         * @description Login a user.
+         */
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -176,11 +216,6 @@ export interface components {
         } & components["schemas"]["Product"];
         /** @description User Model */
         User: {
-            /**
-             * Format: int64
-             * @example 1
-             */
-            id?: number;
             /** @example theUser */
             username: string;
             /** @example John */
@@ -189,13 +224,35 @@ export interface components {
             lastName: string;
             /** @example john@email.com */
             email: string;
-            /** @example Password1! */
-            password: string;
             /** @example 12345 */
             phone?: string;
             /** @example via Roma, 1 - Roma */
             address: string;
             userRole?: components["schemas"]["UserRole"];
+        };
+        /** @description User Model Input */
+        UserInput: {
+            /** @example Password1! */
+            password: string;
+        } & components["schemas"]["User"];
+        /** @description User Model Input */
+        UserOutput: {
+            /**
+             * Format: int64
+             * @example 1
+             */
+            id: number;
+            /** @example token */
+            token?: string;
+        } & components["schemas"]["User"];
+        /** @description User Login Model */
+        UserLogin: {
+            /** @example theUser */
+            username?: string;
+            /** @example john@email.com */
+            email?: string;
+            /** @example Password1! */
+            password: string;
         };
         /**
          * @description User Role Model
@@ -215,6 +272,15 @@ export interface components {
         };
         /** @description Bad request error (400) */
         BadRequestError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorModel"];
+            };
+        };
+        /** @description Invalid credentials error (401) */
+        InvalidCredentialsError: {
             headers: {
                 [name: string]: unknown;
             };
@@ -248,6 +314,66 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    register: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Create a new user */
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserInput"];
+            };
+        };
+        responses: {
+            /** @description User registered successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+            /** @description Invalid input */
+            400: components["responses"]["BadRequestError"];
+            /** @description Validation exception */
+            422: components["responses"]["UnprocessableEntityError"];
+            /** @description Unexpected server error */
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Login an existing user */
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserLogin"];
+            };
+        };
+        responses: {
+            /** @description User logged in successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOutput"];
+                };
+            };
+            /** @description Invalid credentials */
+            401: components["responses"]["InvalidCredentialsError"];
+            /** @description Unexpected server error */
+            500: components["responses"]["InternalServerError"];
+        };
+    };
     healthCheck: {
         parameters: {
             query?: never;

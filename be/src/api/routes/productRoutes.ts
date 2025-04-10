@@ -6,6 +6,7 @@ import {
   modifyProduct,
   removeProduct,
 } from '../controllers/productController';
+import { authenticate } from '../middlewares/auth';
 
 export const productRouter = Router();
 
@@ -36,37 +37,39 @@ productRouter.get('/', getAllProducts);
 /**
  * @openapi
  * /product:
- *  post:
- *    tags:
- *      - product
- *    summary: Add a new product to the store.
- *    description: Add a new product to the store, including image.
- *    operationId: addProduct
- *    requestBody:
- *      description: Create a new product in the store
- *      content:
- *        multipart/form-data:
- *          schema:
- *            $ref: '#/components/schemas/ProductInput'
- *      required: true
- *    responses:
- *      '201':
- *        description: Product created successfully
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/ProductOutput'
- *      '400':
- *        description: Invalid input
- *        $ref: '#/components/responses/BadRequestError'
- *      '422':
- *        description: Validation exception
- *        $ref: '#/components/responses/UnprocessableEntityError'
- *      '500':
- *        description: Unexpected server error
- *        $ref: '#/components/responses/InternalServerError'
+ *   post:
+ *     tags:
+ *       - product
+ *     summary: Add a new product to the store.
+ *     description: Add a new product to the store, including image.
+ *     operationId: addProduct
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Create a new product in the store
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductInput'
+ *       required: true
+ *     responses:
+ *       '201':
+ *         description: Product created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProductOutput'
+ *       '400':
+ *         description: Invalid input
+ *         $ref: '#/components/responses/BadRequestError'
+ *       '422':
+ *         description: Validation exception
+ *         $ref: '#/components/responses/UnprocessableEntityError'
+ *       '500':
+ *         description: Unexpected server error
+ *         $ref: '#/components/responses/InternalServerError'
  */
-productRouter.post('/', insertProduct);
+productRouter.post('/', authenticate, insertProduct);
 
 /**
  * @openapi
@@ -77,6 +80,8 @@ productRouter.post('/', insertProduct);
  *     summary: Update an existing product.
  *     description: Update an existing product by ID.
  *     operationId: updateProduct
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: productId
  *         in: path
@@ -112,7 +117,7 @@ productRouter.post('/', insertProduct);
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
-productRouter.put('/:id', modifyProduct);
+productRouter.put('/:id', authenticate, modifyProduct);
 
 /**
  * @openapi
@@ -152,32 +157,34 @@ productRouter.get('/:id', getProductById);
 
 /**
  * @openapi
- *  /product/{productId}:
- *    delete:
- *      tags:
- *        - product
- *      summary: Deletes a product.
- *      description: Delete a product.
- *      operationId: deleteProduct
- *      parameters:
- *        - name: productId
- *          in: path
- *          description: ID of product to delete
- *          required: true
- *          schema:
- *            type: integer
- *            format: int64
- *      responses:
- *        '204':
- *          description: Product deleted
- *        '400':
- *          description: Invalid ID supplied
- *          $ref: '#/components/responses/BadRequestError'
- *        '404':
- *          description: Product not found
- *          $ref: '#/components/responses/NotFoundError'
- *        '500':
- *          description: Unexpected server error
- *          $ref: '#/components/responses/InternalServerError'
+ * /product/{productId}:
+ *   delete:
+ *     tags:
+ *       - product
+ *     summary: Deletes a product.
+ *     description: Delete a product.
+ *     operationId: deleteProduct
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: productId
+ *         in: path
+ *         description: ID of product to delete
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     responses:
+ *       '204':
+ *         description: Product deleted
+ *       '400':
+ *         description: Invalid ID supplied
+ *         $ref: '#/components/responses/BadRequestError'
+ *       '404':
+ *         description: Product not found
+ *         $ref: '#/components/responses/NotFoundError'
+ *       '500':
+ *         description: Unexpected server error
+ *         $ref: '#/components/responses/InternalServerError'
  */
-productRouter.delete('/:id', removeProduct);
+productRouter.delete('/:id', authenticate, removeProduct);

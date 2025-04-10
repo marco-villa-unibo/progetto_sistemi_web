@@ -1,0 +1,28 @@
+paths:
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login an existing user and get a JWT token.
+      description: Login a user.
+      operationId: login
+      requestBody:
+        description: Login an existing user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOutput'
+        '401':
+          description: Invalid credentials
+          $ref: '#/components/responses/InvalidCredentialsError'
+        '500':
+          description: Unexpected server error
+          $ref: '#/components/responses/InternalServerError'
