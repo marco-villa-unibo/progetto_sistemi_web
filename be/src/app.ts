@@ -13,6 +13,7 @@ import dbInit from './db/init';
 import dotenv from 'dotenv';
 import upload from './api/middlewares/upload';
 import bodyParser from 'body-parser';
+import path from 'path';
 
 dotenv.config();
 
@@ -32,6 +33,14 @@ export const get = () => {
   app.use(logger);
   app.use(openApiValidator);
   app.use(cors);
+
+  // STATIC SERVING
+  app.use(
+    '/images',
+    express.static(
+      path.join(__dirname, process.env.IMAGE_UPLOAD_FOLDER!)
+    )
+  );
 
   // V1 ROUTES
   app.use('/api/v1', routes);

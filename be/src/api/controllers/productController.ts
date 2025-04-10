@@ -16,6 +16,7 @@ import { ProductInput, ProductOutput } from '../../db/models/Product';
 import { findUserById } from '../../db/services/userService';
 import { sanitizeFilename } from '../../utils/helpers';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 interface ProdRequest extends Request {
@@ -37,8 +38,10 @@ export const insertProduct = async (
   if (!req.file) {
     return next(new UnprocessableEntityError(`Product image not provided`));
   }
-  const imagePath =
-    process.env.IMAGE_UPLOAD_FOLDER + sanitizeFilename(req.file.filename);
+  const imagePath = path.join(
+    process.env.IMAGE_UPLOAD_FOLDER || 'public/images/',
+    sanitizeFilename(req.file.filename)
+  );
 
   // 400 BAD REQUEST gestita dalla validazione openapi
 
@@ -143,8 +146,10 @@ export const modifyProduct = async (
 
   // costruisco il percorso del file
   if (req.file) {
-    const imagePath =
-      process.env.IMAGE_UPLOAD_FOLDER + sanitizeFilename(req.file.filename);
+    const imagePath = path.join(
+      process.env.IMAGE_UPLOAD_FOLDER || 'public/images/',
+      sanitizeFilename(req.file.filename)
+    );
     prod.imageUrl = imagePath;
   }
 

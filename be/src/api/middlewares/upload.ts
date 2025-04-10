@@ -14,7 +14,8 @@ const storage = multer.diskStorage({
     cb: (error: Error | null, name: string) => void | undefined
   ) => {
     // Specifica la cartella dove salvare i file caricati
-    const folderName: string = process.env.IMAGE_UPLOAD_FOLDER || 'uploads/';
+    const folderName: string =
+      process.env.IMAGE_UPLOAD_FOLDER + '/' || 'public/images/';
 
     const filePath = path.join(__dirname, `../../../${folderName}`);
     cb(null, filePath);

@@ -22,4 +22,4 @@ be/dist
 .env
 
 # Image folder
-be/uploads
+be/public/images
