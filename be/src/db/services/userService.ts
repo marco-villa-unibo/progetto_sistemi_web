@@ -1,9 +1,5 @@
 import User, { UserInput, UserOutput } from '../models/User';
 
-export const createUser = async (payload: UserInput): Promise<UserOutput> => {
-  return await User.create(payload);
-};
-
 export const updateUserById = async (
   id: number,
   payload: Partial<UserInput>

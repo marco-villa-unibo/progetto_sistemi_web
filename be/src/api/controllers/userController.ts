@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import {
-  createUser,
   deleteUserById,
   fetchAllUsers,
   findUserById,
@@ -9,6 +8,7 @@ import {
 import { BadRequestError, NotFoundError } from '../error';
 import { UserDTO } from '../types';
 import { UserOutput } from '../../db/models/User';
+import { IUserNoSensibleData } from '../interfaces';
 
 interface UserRequest extends Request {
   body: UserDTO;
@@ -19,8 +19,24 @@ export const getAllUsers = async (
   req: UserRequest,
   res: Response<UserDTO[]>
 ) => {
-  //   const u: UserDTO[] = await fetchAllUsers();
-  //   res.status(200).send(u);
+  const u: UserOutput[] = await fetchAllUsers();
+
+  const uRes: IUserNoSensibleData[] = u.map((user: UserOutput) => {
+    const userNoSensibleData: IUserNoSensibleData = {
+      id: user.id,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      userRole: user.userRole,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+    return userNoSensibleData;
+  });
+  res.status(200).send(uRes);
 };
 
 export const getUserById = async (

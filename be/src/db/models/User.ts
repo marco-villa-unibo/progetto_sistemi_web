@@ -32,6 +32,8 @@ export interface UserOutput
   userRole: UserRoleDTO;
   passwordHash?: string;
   token?: string; // TODO: gestire il login al momento della registrazione
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 class User extends Model<UserAttributes, UserInput> implements UserAttributes {
