@@ -44,6 +44,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves logged user's cart.
+         * @description Retrieves logged user's cart items.
+         */
+        get: operations["getCart"];
+        put?: never;
+        post?: never;
+        /**
+         * Deletes logged user's cart.
+         * @description Removes all items in user's cart.
+         */
+        delete: operations["deleteCart"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Adds an item to logged user's cart.
+         * @description Adds an item and quantity to the cart.
+         */
+        post: operations["addCartItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/items/{cartItemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Updates item's quantity in logged user's cart.
+         * @description Updates item's quantity in logged user's cart.
+         */
+        put: operations["updateCartItem"];
+        post?: never;
+        /**
+         * Deletes an item from logged user's cart.
+         * @description Deletes an item from logged user's cart.
+         */
+        delete: operations["deleteCartItem"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -125,11 +193,7 @@ export interface paths {
          * @description Finds all users in the store.
          */
         get: operations["findAllUsers"];
-        /**
-         * Update an existing user.
-         * @description Update an existing user by ID.
-         */
-        put: operations["updateUser"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -149,7 +213,11 @@ export interface paths {
          * @description Returns a single user.
          */
         get: operations["findUserById"];
-        put?: never;
+        /**
+         * Update an existing user.
+         * @description Update an existing user by ID.
+         */
+        put: operations["updateUser"];
         post?: never;
         /**
          * Deletes a user.
@@ -165,6 +233,57 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        Cart: {
+            /** @description ID univoco del carrello. */
+            readonly id?: number;
+            /** @description ID dell'utente a cui appartiene il carrello. */
+            readonly UserId: number;
+        };
+        CartItem: {
+            /** @description ID univoco dell'elemento del carrello. */
+            readonly id?: number;
+            /** @description ID del carrello a cui appartiene l'elemento. */
+            readonly CartId?: number;
+            /** @description ID del prodotto nell'elemento del carrello. */
+            ProductId: number;
+            /** @description Quantità del prodotto nell'elemento del carrello. */
+            quantity: number;
+        };
+        CartWithItems: {
+            /** @description ID univoco del carrello. */
+            readonly id?: number;
+            /** @description ID dell'utente a cui appartiene il carrello. */
+            readonly UserId: number;
+            /**
+             * Format: date-time
+             * @description Data e ora di creazione del carrello.
+             */
+            readonly createdAt?: string;
+            /**
+             * Format: date-time
+             * @description Data e ora dell'ultimo aggiornamento del carrello.
+             */
+            readonly updatedAt?: string;
+            cartItems?: components["schemas"]["CartItem"][];
+        };
+        AddItemToCartRequest: {
+            /** @description ID del prodotto da aggiungere. */
+            ProductId: number;
+            /** @description Quantità da aggiungere. */
+            quantity: number;
+        };
+        UpdateCartItemQuantityRequest: {
+            /** @description Nuova quantità. */
+            quantity: number;
+        };
+        RemoveItemFromCartResponse: {
+            /** @description Messaggio di conferma (opzionale). */
+            message?: string;
+        };
+        ClearCartResponse: {
+            /** @description Messaggio di conferma (opzionale). */
+            message?: string;
+        };
         /**
          * @description Category Model
          * @enum {string}
@@ -262,15 +381,6 @@ export interface components {
         UserRole: "CUSTOMER" | "EMPLOYEE" | "ADMIN";
     };
     responses: {
-        /** @description Internal server error (500) */
-        InternalServerError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ErrorModel"];
-            };
-        };
         /** @description Bad request error (400) */
         BadRequestError: {
             headers: {
@@ -281,7 +391,7 @@ export interface components {
             };
         };
         /** @description Invalid credentials error (401) */
-        InvalidCredentialsError: {
+        UnauthorizedError: {
             headers: {
                 [name: string]: unknown;
             };
@@ -309,6 +419,15 @@ export interface components {
         };
         /** @description Unprocessable entity error (422) */
         UnprocessableEntityError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorModel"];
+            };
+        };
+        /** @description Internal server error (500) */
+        InternalServerError: {
             headers: {
                 [name: string]: unknown;
             };
@@ -347,11 +466,8 @@ export interface operations {
                     "application/json": components["schemas"]["User"];
                 };
             };
-            /** @description Invalid input */
             400: components["responses"]["BadRequestError"];
-            /** @description Validation exception */
             422: components["responses"]["UnprocessableEntityError"];
-            /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -378,9 +494,134 @@ export interface operations {
                     "application/json": components["schemas"]["UserOutput"];
                 };
             };
-            /** @description Invalid credentials */
-            401: components["responses"]["InvalidCredentialsError"];
-            /** @description Unexpected server error */
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getCart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartWithItems"];
+                };
+            };
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    deleteCart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cart deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    addCartItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddItemToCartRequest"];
+            };
+        };
+        responses: {
+            /** @description Item added successfully. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartWithItems"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            404: components["responses"]["NotFoundError"];
+            422: components["responses"]["UnprocessableEntityError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    updateCartItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID dell'elemento del carrello da aggiornare. */
+                cartItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCartItemQuantityRequest"];
+            };
+        };
+        responses: {
+            /** @description Item quantity successfully updated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartWithItems"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            404: components["responses"]["NotFoundError"];
+            422: components["responses"]["UnprocessableEntityError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    deleteCartItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID dell'elemento del carrello da rimuovere. */
+                cartItemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Item deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["UnauthorizedError"];
+            404: components["responses"]["NotFoundError"];
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -423,7 +664,7 @@ export interface operations {
                     "application/json": components["schemas"]["ProductOutput"][];
                 };
             };
-            /** @description Unexpected server error */
+            401: components["responses"]["UnauthorizedError"];
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -450,11 +691,9 @@ export interface operations {
                     "application/json": components["schemas"]["ProductOutput"];
                 };
             };
-            /** @description Invalid input */
             400: components["responses"]["BadRequestError"];
-            /** @description Validation exception */
+            401: components["responses"]["UnauthorizedError"];
             422: components["responses"]["UnprocessableEntityError"];
-            /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -479,11 +718,8 @@ export interface operations {
                     "application/json": components["schemas"]["ProductOutput"];
                 };
             };
-            /** @description Invalid ID supplied */
             400: components["responses"]["BadRequestError"];
-            /** @description Product not found */
             404: components["responses"]["NotFoundError"];
-            /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -513,13 +749,10 @@ export interface operations {
                     "application/json": components["schemas"]["ProductOutput"];
                 };
             };
-            /** @description Invalid ID supplied */
             400: components["responses"]["BadRequestError"];
-            /** @description Product not found */
+            401: components["responses"]["UnauthorizedError"];
             404: components["responses"]["NotFoundError"];
-            /** @description Validation exception */
             422: components["responses"]["UnprocessableEntityError"];
-            /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -542,11 +775,9 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Invalid ID supplied */
             400: components["responses"]["BadRequestError"];
-            /** @description Product not found */
+            401: components["responses"]["UnauthorizedError"];
             404: components["responses"]["NotFoundError"];
-            /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -568,7 +799,34 @@ export interface operations {
                     "application/json": components["schemas"]["UserOutput"][];
                 };
             };
-            /** @description Unexpected server error */
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    findUserById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID of user to return */
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOutput"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            404: components["responses"]["NotFoundError"];
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -598,42 +856,10 @@ export interface operations {
                     "application/json": components["schemas"]["UserOutput"];
                 };
             };
-            /** @description Invalid ID supplied */
             400: components["responses"]["BadRequestError"];
-            /** @description User not found */
+            401: components["responses"]["UnauthorizedError"];
             404: components["responses"]["NotFoundError"];
-            /** @description Validation exception */
             422: components["responses"]["UnprocessableEntityError"];
-            /** @description Unexpected server error */
-            500: components["responses"]["InternalServerError"];
-        };
-    };
-    findUserById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID of user to return */
-                userId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserOutput"];
-                };
-            };
-            /** @description Invalid ID supplied */
-            400: components["responses"]["BadRequestError"];
-            /** @description User not found */
-            404: components["responses"]["NotFoundError"];
-            /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -656,11 +882,9 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Invalid ID supplied */
             400: components["responses"]["BadRequestError"];
-            /** @description User not found */
+            401: components["responses"]["UnauthorizedError"];
             404: components["responses"]["NotFoundError"];
-            /** @description Unexpected server error */
             500: components["responses"]["InternalServerError"];
         };
     };

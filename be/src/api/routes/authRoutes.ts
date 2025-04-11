@@ -28,13 +28,10 @@ export const authRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       '400':
- *         description: Invalid input
  *         $ref: '#/components/responses/BadRequestError'
  *       '422':
- *         description: Validation exception
  *         $ref: '#/components/responses/UnprocessableEntityError'
  *       '500':
- *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
 authRouter.post('/register', register);
@@ -63,10 +60,8 @@ authRouter.post('/register', register);
  *             schema:
  *               $ref: '#/components/schemas/UserOutput'
  *       '401':
- *         description: Invalid credentials
- *         $ref: '#/components/responses/InvalidCredentialsError'
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       '500':
- *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
 authRouter.post('/login', login);

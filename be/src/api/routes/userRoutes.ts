@@ -32,15 +32,16 @@ export const userRouter = Router();
  *                type: array
  *                items:
  *                  $ref: '#/components/schemas/UserOutput'
+ *        '401':
+ *          $ref: '#/components/responses/UnauthorizedError'
  *        '500':
- *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
 userRouter.get('/', authenticate, isAdmin, getAllUsers);
 
 /**
  * @openapi
- *  /user:
+ *  /user/{userId}:
  *    put:
  *      tags:
  *        - user
@@ -72,16 +73,14 @@ userRouter.get('/', authenticate, isAdmin, getAllUsers);
  *              schema:
  *                $ref: '#/components/schemas/UserOutput'
  *        '400':
- *          description: Invalid ID supplied
  *          $ref: '#/components/responses/BadRequestError'
+ *        '401':
+ *          $ref: '#/components/responses/UnauthorizedError'
  *        '404':
- *          description: User not found
  *          $ref: '#/components/responses/NotFoundError'
  *        '422':
- *          description: Validation exception
  *          $ref: '#/components/responses/UnprocessableEntityError'
  *        '500':
- *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
 userRouter.put('/', authenticate, isAdmin, modifyUser);
@@ -113,13 +112,12 @@ userRouter.put('/', authenticate, isAdmin, modifyUser);
  *              schema:
  *                $ref: '#/components/schemas/UserOutput'
  *        '400':
- *          description: Invalid ID supplied
  *          $ref: '#/components/responses/BadRequestError'
+ *        '401':
+ *          $ref: '#/components/responses/UnauthorizedError'
  *        '404':
- *          description: User not found
  *          $ref: '#/components/responses/NotFoundError'
  *        '500':
- *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
 userRouter.get('/:id', authenticate, isAdmin, getUserById);
@@ -147,13 +145,12 @@ userRouter.get('/:id', authenticate, isAdmin, getUserById);
  *        '204':
  *          description: User deleted
  *        '400':
- *          description: Invalid ID supplied
  *          $ref: '#/components/responses/BadRequestError'
+ *        '401':
+ *          $ref: '#/components/responses/UnauthorizedError'
  *        '404':
- *          description: User not found
  *          $ref: '#/components/responses/NotFoundError'
  *        '500':
- *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
 userRouter.delete('/:id', authenticate, isAdmin, removeUser);

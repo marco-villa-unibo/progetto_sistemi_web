@@ -59,15 +59,12 @@
             }
           },
           "400": {
-            "description": "Invalid input",
             "$ref": "#/components/responses/BadRequestError"
           },
           "422": {
-            "description": "Validation exception",
             "$ref": "#/components/responses/UnprocessableEntityError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -104,11 +101,219 @@
             }
           },
           "401": {
-            "description": "Invalid credentials",
-            "$ref": "#/components/responses/InvalidCredentialsError"
+            "$ref": "#/components/responses/UnauthorizedError"
           },
           "500": {
-            "description": "Unexpected server error",
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Retrieves logged user's cart.",
+        "description": "Retrieves logged user's cart items.",
+        "operationId": "getCart",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartWithItems"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Deletes logged user's cart.",
+        "description": "Removes all items in user's cart.",
+        "operationId": "deleteCart",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cart deleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/cart/items": {
+      "post": {
+        "tags": [
+          "cart items"
+        ],
+        "summary": "Adds an item to logged user's cart.",
+        "description": "Adds an item and quantity to the cart.",
+        "operationId": "addCartItem",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddItemToCartRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item added successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartWithItems"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntityError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/cart/items/{cartItemId}": {
+      "put": {
+        "tags": [
+          "cart items"
+        ],
+        "summary": "Updates item's quantity in logged user's cart.",
+        "description": "Updates item's quantity in logged user's cart.",
+        "operationId": "updateCartItem",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cartItemId",
+            "required": true,
+            "description": "ID dell'elemento del carrello da aggiornare.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCartItemQuantityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item quantity successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartWithItems"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntityError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cart items"
+        ],
+        "summary": "Deletes an item from logged user's cart.",
+        "description": "Deletes an item from logged user's cart.",
+        "operationId": "deleteCartItem",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cartItemId",
+            "required": true,
+            "description": "ID dell'elemento del carrello da rimuovere.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Item deleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -160,8 +365,10 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -201,15 +408,15 @@
             }
           },
           "400": {
-            "description": "Invalid input",
             "$ref": "#/components/responses/BadRequestError"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "422": {
-            "description": "Validation exception",
             "$ref": "#/components/responses/UnprocessableEntityError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -263,19 +470,18 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied",
             "$ref": "#/components/responses/BadRequestError"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
-            "description": "Product not found",
             "$ref": "#/components/responses/NotFoundError"
           },
           "422": {
-            "description": "Validation exception",
             "$ref": "#/components/responses/UnprocessableEntityError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -311,15 +517,12 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied",
             "$ref": "#/components/responses/BadRequestError"
           },
           "404": {
-            "description": "Product not found",
             "$ref": "#/components/responses/NotFoundError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -353,15 +556,15 @@
             "description": "Product deleted"
           },
           "400": {
-            "description": "Invalid ID supplied",
             "$ref": "#/components/responses/BadRequestError"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
-            "description": "Product not found",
             "$ref": "#/components/responses/NotFoundError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -394,12 +597,16 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
-      },
+      }
+    },
+    "/user/{userId}": {
       "put": {
         "tags": [
           "user"
@@ -447,25 +654,22 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied",
             "$ref": "#/components/responses/BadRequestError"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
-            "description": "User not found",
             "$ref": "#/components/responses/NotFoundError"
           },
           "422": {
-            "description": "Validation exception",
             "$ref": "#/components/responses/UnprocessableEntityError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
-      }
-    },
-    "/user/{userId}": {
+      },
       "get": {
         "tags": [
           "user"
@@ -502,15 +706,15 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied",
             "$ref": "#/components/responses/BadRequestError"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
-            "description": "User not found",
             "$ref": "#/components/responses/NotFoundError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -544,15 +748,15 @@
             "description": "User deleted"
           },
           "400": {
-            "description": "Invalid ID supplied",
             "$ref": "#/components/responses/BadRequestError"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
-            "description": "User not found",
             "$ref": "#/components/responses/NotFoundError"
           },
           "500": {
-            "description": "Unexpected server error",
             "$ref": "#/components/responses/InternalServerError"
           }
         }
@@ -561,6 +765,137 @@
   },
   "components": {
     "schemas": {
+      "Cart": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID univoco del carrello.",
+            "readOnly": true
+          },
+          "UserId": {
+            "type": "integer",
+            "description": "ID dell'utente a cui appartiene il carrello.",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "UserId"
+        ]
+      },
+      "CartItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID univoco dell'elemento del carrello.",
+            "readOnly": true
+          },
+          "CartId": {
+            "type": "integer",
+            "description": "ID del carrello a cui appartiene l'elemento.",
+            "readOnly": true
+          },
+          "ProductId": {
+            "type": "integer",
+            "description": "ID del prodotto nell'elemento del carrello."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Quantità del prodotto nell'elemento del carrello.",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "ProductId",
+          "quantity"
+        ]
+      },
+      "CartWithItems": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID univoco del carrello.",
+            "readOnly": true
+          },
+          "UserId": {
+            "type": "integer",
+            "description": "ID dell'utente a cui appartiene il carrello.",
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e ora di creazione del carrello.",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e ora dell'ultimo aggiornamento del carrello.",
+            "readOnly": true
+          },
+          "cartItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
+          }
+        },
+        "required": [
+          "UserId"
+        ]
+      },
+      "AddItemToCartRequest": {
+        "type": "object",
+        "properties": {
+          "ProductId": {
+            "type": "integer",
+            "description": "ID del prodotto da aggiungere."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Quantità da aggiungere.",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "ProductId",
+          "quantity"
+        ]
+      },
+      "UpdateCartItemQuantityRequest": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "description": "Nuova quantità.",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      },
+      "RemoveItemFromCartResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Messaggio di conferma (opzionale)."
+          }
+        }
+      },
+      "ClearCartResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Messaggio di conferma (opzionale)."
+          }
+        }
+      },
       "Category": {
         "description": "Category Model",
         "type": "string",
@@ -804,16 +1139,6 @@
       }
     },
     "responses": {
-      "InternalServerError": {
-        "description": "Internal server error (500)",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorModel"
-            }
-          }
-        }
-      },
       "BadRequestError": {
         "description": "Bad request error (400)",
         "content": {
@@ -824,7 +1149,7 @@
           }
         }
       },
-      "InvalidCredentialsError": {
+      "UnauthorizedError": {
         "description": "Invalid credentials error (401)",
         "content": {
           "application/json": {
@@ -856,6 +1181,16 @@
       },
       "UnprocessableEntityError": {
         "description": "Unprocessable entity error (422)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorModel"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error (500)",
         "content": {
           "application/json": {
             "schema": {

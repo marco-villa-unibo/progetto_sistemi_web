@@ -29,8 +29,9 @@ export const productRouter = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/ProductOutput'
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       '500':
- *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
 productRouter.get('/', getAllProducts);
@@ -61,13 +62,12 @@ productRouter.get('/', getAllProducts);
  *             schema:
  *               $ref: '#/components/schemas/ProductOutput'
  *       '400':
- *         description: Invalid input
  *         $ref: '#/components/responses/BadRequestError'
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       '422':
- *         description: Validation exception
  *         $ref: '#/components/responses/UnprocessableEntityError'
  *       '500':
- *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
 productRouter.post('/', authenticate, isEmployee, insertProduct);
@@ -106,16 +106,14 @@ productRouter.post('/', authenticate, isEmployee, insertProduct);
  *             schema:
  *               $ref: '#/components/schemas/ProductOutput'
  *       '400':
- *         description: Invalid ID supplied
  *         $ref: '#/components/responses/BadRequestError'
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       '404':
- *         description: Product not found
  *         $ref: '#/components/responses/NotFoundError'
  *       '422':
- *         description: Validation exception
  *         $ref: '#/components/responses/UnprocessableEntityError'
  *       '500':
- *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
 productRouter.put('/:id', authenticate, isEmployee, modifyProduct);
@@ -145,13 +143,10 @@ productRouter.put('/:id', authenticate, isEmployee, modifyProduct);
  *              schema:
  *                $ref: '#/components/schemas/ProductOutput'
  *        '400':
- *          description: Invalid ID supplied
  *          $ref: '#/components/responses/BadRequestError'
  *        '404':
- *          description: Product not found
  *          $ref: '#/components/responses/NotFoundError'
  *        '500':
- *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
 productRouter.get('/:id', getProductById);
@@ -179,13 +174,12 @@ productRouter.get('/:id', getProductById);
  *       '204':
  *         description: Product deleted
  *       '400':
- *         description: Invalid ID supplied
  *         $ref: '#/components/responses/BadRequestError'
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       '404':
- *         description: Product not found
  *         $ref: '#/components/responses/NotFoundError'
  *       '500':
- *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
 productRouter.delete('/:id', authenticate, isEmployee, removeProduct);
