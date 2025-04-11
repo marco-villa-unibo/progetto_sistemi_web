@@ -58,11 +58,11 @@ ok - autenticazione JWT
 ok - user sign-up
 ok - differenziare permessi auth per ruoli
 ok - proteggere tutte le routes mancanti
+ok - refactor Product (service/controller)
+ok - refactor User (service/controller)
 
-- refactor Product (service/controller)
-- refactor User (service/controller)
+- carrello
+- ordini
 - script e automazione primo lancio e seeding DB
 - test unitari
 - tet integrazione
-- carrello
-- ordini

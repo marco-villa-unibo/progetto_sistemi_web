@@ -1,0 +1,113 @@
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco del carrello.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente a cui appartiene il carrello.
+          readOnly: true # Di solito non viene passato direttamente nella creazione
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e ora di creazione del carrello.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data e ora dell'ultimo aggiornamento del carrello.
+          readOnly: true
+      required:
+        - UserId # Anche se di solito viene dedotto dal token
+
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'elemento del carrello.
+          readOnly: true
+        CartId:
+          type: integer
+          description: ID del carrello a cui appartiene l'elemento.
+          readOnly: true # Dedotto dal contesto del carrello
+        ProductId:
+          type: integer
+          description: ID del prodotto nell'elemento del carrello.
+        quantity:
+          type: integer
+          description: Quantità del prodotto nell'elemento del carrello.
+          minimum: 1
+      required:
+        - ProductId
+        - quantity
+
+    CartWithItems: # Rappresentazione del carrello con gli elementi inclusi
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco del carrello.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente a cui appartiene il carrello.
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e ora di creazione del carrello.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data e ora dell'ultimo aggiornamento del carrello.
+          readOnly: true
+        cartItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+      required:
+        - UserId
+
+    AddItemToCartRequest: # Richiesta per aggiungere un elemento al carrello
+      type: object
+      properties:
+        ProductId:
+          type: integer
+          description: ID del prodotto da aggiungere.
+        quantity:
+          type: integer
+          description: Quantità da aggiungere.
+          minimum: 1
+      required:
+        - ProductId
+        - quantity
+
+    UpdateCartItemQuantityRequest: # Richiesta per aggiornare la quantità di un elemento
+      type: object
+      properties:
+        quantity:
+          type: integer
+          description: Nuova quantità.
+          minimum: 1
+      required:
+        - quantity
+
+    RemoveItemFromCartResponse: # Risposta per la rimozione di un elemento (potrebbe essere vuota)
+      type: object
+      properties:
+        message:
+          type: string
+          description: Messaggio di conferma (opzionale).
+
+    ClearCartResponse: # Risposta per lo svuotamento del carrello (potrebbe essere vuota)
+      type: object
+      properties:
+        message:
+          type: string
+          description: Messaggio di conferma (opzionale).

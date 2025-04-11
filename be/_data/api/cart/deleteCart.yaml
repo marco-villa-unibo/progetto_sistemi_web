@@ -1,0 +1,17 @@
+paths:
+  /cart:
+    delete:
+      tags:
+        - cart
+      summary: Deletes logged user's cart.
+      description: Removes all items in user's cart.
+      operationId: deleteCart
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Cart deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
