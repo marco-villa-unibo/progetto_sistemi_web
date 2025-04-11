@@ -41,7 +41,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserInput"
+                "$ref": "#/components/schemas/UserRegister"
               }
             }
           },
@@ -375,6 +375,11 @@
         "summary": "Finds all users in the store.",
         "description": "Finds all users in the store.",
         "operationId": "findAllUsers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -383,54 +388,11 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/User"
+                    "$ref": "#/components/schemas/UserOutput"
                   }
                 }
               }
             }
-          },
-          "500": {
-            "description": "Unexpected server error",
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Add a new user.",
-        "description": "Add a new user with CUSTOMER role.",
-        "operationId": "addUser",
-        "requestBody": {
-          "description": "Create a new user",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Product created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input",
-            "$ref": "#/components/responses/BadRequestError"
-          },
-          "422": {
-            "description": "Validation exception",
-            "$ref": "#/components/responses/UnprocessableEntityError"
           },
           "500": {
             "description": "Unexpected server error",
@@ -445,12 +407,29 @@
         "summary": "Update an existing user.",
         "description": "Update an existing user by ID.",
         "operationId": "updateUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of user to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "requestBody": {
           "description": "Update an existing user in the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserInput"
               }
             }
           },
@@ -462,7 +441,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/UserOutput"
                 }
               }
             }
@@ -494,6 +473,11 @@
         "summary": "Finds user by ID.",
         "description": "Returns a single user.",
         "operationId": "findUserById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "userId",
@@ -512,7 +496,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/UserOutput"
                 }
               }
             }
@@ -538,6 +522,11 @@
         "summary": "Deletes a user.",
         "description": "Delete a user.",
         "operationId": "deleteUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "userId",
@@ -718,9 +707,6 @@
           "address": {
             "type": "string",
             "example": "via Roma, 1 - Roma"
-          },
-          "userRole": {
-            "$ref": "#/components/schemas/UserRole"
           }
         }
       },
@@ -739,11 +725,14 @@
           "password": {
             "type": "string",
             "example": "Password1!"
+          },
+          "userRole": {
+            "$ref": "#/components/schemas/UserRole"
           }
         }
       },
       "UserOutput": {
-        "description": "User Model Input",
+        "description": "User Model Output",
         "type": "object",
         "required": [
           "id"
@@ -762,6 +751,24 @@
           "token": {
             "type": "string",
             "example": "token"
+          }
+        }
+      },
+      "UserRegister": {
+        "description": "User Model for registration",
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          }
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "Password1!"
           }
         }
       },
@@ -819,6 +826,16 @@
       },
       "InvalidCredentialsError": {
         "description": "Invalid credentials error (401)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorModel"
+            }
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Invalid credentials error (403)",
         "content": {
           "application/json": {
             "schema": {

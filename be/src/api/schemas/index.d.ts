@@ -130,11 +130,7 @@ export interface paths {
          * @description Update an existing user by ID.
          */
         put: operations["updateUser"];
-        /**
-         * Add a new user.
-         * @description Add a new user with CUSTOMER role.
-         */
-        post: operations["addUser"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -228,14 +224,14 @@ export interface components {
             phone?: string;
             /** @example via Roma, 1 - Roma */
             address: string;
-            userRole?: components["schemas"]["UserRole"];
         };
         /** @description User Model Input */
         UserInput: {
             /** @example Password1! */
             password: string;
+            userRole?: components["schemas"]["UserRole"];
         } & components["schemas"]["User"];
-        /** @description User Model Input */
+        /** @description User Model Output */
         UserOutput: {
             /**
              * Format: int64
@@ -244,6 +240,11 @@ export interface components {
             id: number;
             /** @example token */
             token?: string;
+        } & components["schemas"]["User"];
+        /** @description User Model for registration */
+        UserRegister: {
+            /** @example Password1! */
+            password: string;
         } & components["schemas"]["User"];
         /** @description User Login Model */
         UserLogin: {
@@ -288,6 +289,15 @@ export interface components {
                 "application/json": components["schemas"]["ErrorModel"];
             };
         };
+        /** @description Invalid credentials error (403) */
+        ForbiddenError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorModel"];
+            };
+        };
         /** @description Not found error (404) */
         NotFoundError: {
             headers: {
@@ -324,7 +334,7 @@ export interface operations {
         /** @description Create a new user */
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserInput"];
+                "application/json": components["schemas"]["UserRegister"];
             };
         };
         responses: {
@@ -555,7 +565,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["User"][];
+                    "application/json": components["schemas"]["UserOutput"][];
                 };
             };
             /** @description Unexpected server error */
@@ -566,13 +576,16 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description ID of user to update */
+                userId: number;
+            };
             cookie?: never;
         };
         /** @description Update an existing user in the store */
         requestBody: {
             content: {
-                "application/json": components["schemas"]["User"];
+                "application/json": components["schemas"]["UserInput"];
             };
         };
         responses: {
@@ -582,44 +595,13 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["User"];
+                    "application/json": components["schemas"]["UserOutput"];
                 };
             };
             /** @description Invalid ID supplied */
             400: components["responses"]["BadRequestError"];
             /** @description User not found */
             404: components["responses"]["NotFoundError"];
-            /** @description Validation exception */
-            422: components["responses"]["UnprocessableEntityError"];
-            /** @description Unexpected server error */
-            500: components["responses"]["InternalServerError"];
-        };
-    };
-    addUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Create a new user */
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["User"];
-            };
-        };
-        responses: {
-            /** @description Product created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"];
-                };
-            };
-            /** @description Invalid input */
-            400: components["responses"]["BadRequestError"];
             /** @description Validation exception */
             422: components["responses"]["UnprocessableEntityError"];
             /** @description Unexpected server error */
@@ -644,7 +626,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["User"];
+                    "application/json": components["schemas"]["UserOutput"];
                 };
             };
             /** @description Invalid ID supplied */

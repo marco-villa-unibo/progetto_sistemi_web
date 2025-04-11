@@ -6,7 +6,8 @@ import {
   modifyProduct,
   removeProduct,
 } from '../controllers/productController';
-import { authenticate } from '../middlewares/auth';
+import { authenticate } from '../middlewares/authentication';
+import { isEmployee } from '../middlewares/authorization';
 
 export const productRouter = Router();
 
@@ -69,7 +70,7 @@ productRouter.get('/', getAllProducts);
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
-productRouter.post('/', authenticate, insertProduct);
+productRouter.post('/', authenticate, isEmployee, insertProduct);
 
 /**
  * @openapi
@@ -117,7 +118,7 @@ productRouter.post('/', authenticate, insertProduct);
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
-productRouter.put('/:id', authenticate, modifyProduct);
+productRouter.put('/:id', authenticate, isEmployee, modifyProduct);
 
 /**
  * @openapi
@@ -187,4 +188,4 @@ productRouter.get('/:id', getProductById);
  *         description: Unexpected server error
  *         $ref: '#/components/responses/InternalServerError'
  */
-productRouter.delete('/:id', authenticate, removeProduct);
+productRouter.delete('/:id', authenticate, isEmployee, removeProduct);

@@ -3,12 +3,12 @@ import { Op } from 'sequelize';
 import User, { UserInput, UserOutput } from '../models/User';
 import { generateToken } from '../../utils/jwt';
 import { IUserJwtPayload } from '../../api/interfaces';
-import { UserLoginDTO } from '../../api/types';
+import { UserLoginDTO, UserRegisterDTO } from '../../api/types';
 
 const SALT_ROUNDS = 10;
 
 export const register = async (
-  registerDto: UserInput
+  registerDto: UserRegisterDTO
 ): Promise<UserOutput | null> => {
   const { username, email, password } = registerDto;
 
@@ -19,7 +19,13 @@ export const register = async (
   if (existingUser) return null;
 
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const newUser = await User.create({ ...registerDto, passwordHash });
+
+  // User can register only with CUSTOMER role (it can be later updated by an admin)
+  const newUser = await User.create({
+    ...registerDto,
+    passwordHash,
+    userRole: 'CUSTOMER',
+  });
 
   const u: UserOutput = {
     id: newUser.id,
@@ -71,6 +77,7 @@ export const login = async (
     userId: user.id,
     username: user.username,
     email: user.email,
+    role: user.userRole,
   };
   const token = generateToken(payload);
   u.token = token;
