@@ -56,13 +56,13 @@ ok - procedura inizializzazione DB (dati)
 ok - images (upload / download)
 ok - autenticazione JWT
 ok - user sign-up
+ok - differenziare permessi auth per ruoli
+ok - proteggere tutte le routes mancanti
 
-- scrip e automazione primo lancio e seeding DB
-- differenziare permessi auth per ruoli
-- proteggere tutte le routes mancanti
-- ? pagination
+- refactor Product (service/controller)
+- refactor User (service/controller)
+- script e automazione primo lancio e seeding DB
 - test unitari
 - tet integrazione
 - carrello
 - ordini
-- refactor Product (service/controller)
