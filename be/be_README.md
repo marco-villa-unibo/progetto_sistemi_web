@@ -53,12 +53,16 @@ ok - mail service
 ok - aggiornare shop.yaml per front-end
 ok - implementare ORM
 ok - procedura inizializzazione DB (dati)
+ok - images (upload / download)
+ok - autenticazione JWT
+ok - user sign-up
+ok - differenziare permessi auth per ruoli
+ok - proteggere tutte le routes mancanti
+ok - refactor Product (service/controller)
+ok - refactor User (service/controller)
 
-- images (upload / download)
-- ? pagination
-- test unitari
-- tet integrazione
 - carrello
 - ordini
-- autenticazione JWT
-- user sign-up
+- script e automazione primo lancio e seeding DB
+- test unitari
+- tet integrazione

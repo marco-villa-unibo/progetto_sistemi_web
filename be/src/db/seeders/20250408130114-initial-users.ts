@@ -4,13 +4,14 @@ import { UserInput } from '../models/User';
 module.exports = {
   up: async (queryInterface: QueryInterface, Sequelize: any) => {
     try {
-      const usersToSeed: UserInput[] = [
+      const usersToSeed = [
         {
           username: '1',
           firstName: 'Marco',
           lastName: 'Villa',
           email: 'test@example.com',
-          password: 'password',
+          passwordHash:
+            '$2b$10$107d6FK6AqAtDmAyhRQ3DONAQ6v1L24y48wBPxrWvQgSXMXUuzh1q', // Password1!
           phone: '333-1234567',
           address: 'via Roma, 1 - Cesena',
           userRole: 'ADMIN',
@@ -22,7 +23,8 @@ module.exports = {
           firstName: 'Leonardo',
           lastName: 'Garuti',
           email: 'test2@example.com',
-          password: 'password',
+          passwordHash:
+            '$2b$10$107d6FK6AqAtDmAyhRQ3DONAQ6v1L24y48wBPxrWvQgSXMXUuzh1q', // Password1!
           phone: '333-7654321',
           address: 'via Roma, 1 - Cesena',
           userRole: 'ADMIN',

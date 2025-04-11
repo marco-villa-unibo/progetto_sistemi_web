@@ -1,0 +1,21 @@
+paths:
+  /cart:
+    get:
+      tags:
+        - cart
+      summary: Retrieves logged user's cart.
+      description: Retrieves logged user's cart items.
+      operationId: getCart
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartWithItems'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'

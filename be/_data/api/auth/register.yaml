@@ -1,21 +1,21 @@
 paths:
-  /user:
+  /auth/register:
     post:
       tags:
-        - user
-      summary: Add a new user.
-      description: Add a new user with CUSTOMER role.
-      operationId: addUser
+        - auth
+      summary: Register a new user.
+      description: Register a new user with CUSTOMER role.
+      operationId: register
       requestBody:
         description: Create a new user
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRegister'
         required: true
       responses:
         '201':
-          description: User created successfully
+          description: User registered successfully
           content:
             application/json:
               schema:

@@ -1,9 +1,9 @@
 import 'express';
-import { User } from './models';
+import { IUserJwtPayload } from './api/interfaces';
 
 declare module 'express' {
   interface Request {
-    userId?: number; // NOTE - provvisorio in attesa JWT
+    user?: IUserJwtPayload;
     timestamp?: number;
   }
 }

@@ -16,12 +16,26 @@ import { ProductInput, ProductOutput } from '../../db/models/Product';
 import { findUserById } from '../../db/services/userService';
 import { sanitizeFilename } from '../../utils/helpers';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
+
 interface ProdRequest extends Request {
+  // user: IUserJwtPayload;
   body: ProductDTO;
   params: { id: string };
 }
+
+// TODO --- GESTIONE IMMAGINI (middleware dedicato per User avatar ) ---
+const handleImageUpload = (req: ProdRequest): string | undefined => {
+  if (!req.file) {
+    return undefined;
+  }
+  return path.join(
+    process.env.IMAGE_UPLOAD_FOLDER || 'public/images/',
+    sanitizeFilename(req.file.filename)
+  );
+};
 
 export const insertProduct = async (
   req: ProdRequest,
@@ -29,25 +43,18 @@ export const insertProduct = async (
   next: NextFunction
 ) => {
   const { price, quantity } = req.body;
+  const userId: number = req.user!.userId;
 
-  //REVIEW - : prendere lo user id dall'utente loggato (e verificare permessi)
-  const userId: number = req.userId! | 1;
-
-  // costruisco il percorso del file
-  if (!req.file) {
-    return next(new UnprocessableEntityError(`Product image not provided`));
+  const imagePath = handleImageUpload(req);
+  if (!imagePath) {
+    return next(new UnprocessableEntityError('Product image not provided'));
   }
-  const imagePath =
-    process.env.IMAGE_UPLOAD_FOLDER + sanitizeFilename(req.file.filename);
-
-  // 400 BAD REQUEST gestita dalla validazione openapi
 
   // TODO: gestire validazione lato DB
   if (Number(price) <= 0 || Number(quantity) <= 0) {
     return next(new UnprocessableEntityError(`Product model fields not valid`));
   }
 
-  // retrieve User
   const user = await findUserById(userId);
   if (!user) {
     return next(
@@ -55,23 +62,30 @@ export const insertProduct = async (
     );
   }
 
-  const prod: ProductInput = {
+  const newProd: ProductInput = {
     ...req.body,
     imageUrl: imagePath,
     UserId: user.id,
   };
-
-  const p: ProductOutput = await createProduct(prod);
-
-  res.status(201).send(p);
+  try {
+    const p: ProductOutput = await createProduct(newProd);
+    res.status(201).send(p);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getAllProducts = async (
-  req: ProdRequest,
-  res: Response<ProductDTO[]>
+  req: Request,
+  res: Response<ProductDTO[]>,
+  next: NextFunction
 ) => {
-  const p: ProductOutput[] = await fetchAllProducts();
-  res.status(200).send(p);
+  try {
+    const p: ProductOutput[] = await fetchAllProducts();
+    res.status(200).send(p);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getProductById = async (
@@ -81,16 +95,18 @@ export const getProductById = async (
 ) => {
   const { id } = req.params;
 
-  // TODO: trasferire controllo a validazione yaml
-  if (isNaN(+id) || +id <= 0) {
-    return next(new BadRequestError(`Product ID must be positive integer`));
+  if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+    return next(new BadRequestError('Product ID must be a positive integer'));
   }
-
-  const p = await findProductById(+id);
-  if (!p) {
-    return next(new NotFoundError(`Product not found for ID ${id}`));
+  try {
+    const p = await findProductById(+id);
+    if (!p) {
+      return next(new NotFoundError(`Product not found for ID ${id}`));
+    }
+    res.status(200).send(p);
+  } catch (error) {
+    next(error);
   }
-  res.status(200).send(p);
 };
 
 export const removeProduct = async (
@@ -100,17 +116,20 @@ export const removeProduct = async (
 ) => {
   const { id } = req.params;
 
-  // TODO: trasferire controllo a validazione yaml
-  if (isNaN(+id) || +id <= 0) {
-    return next(new BadRequestError(`Product ID must be positive integer`));
+  if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+    return next(new BadRequestError('Product ID must be a positive integer'));
   }
 
-  const p = await deleteProductById(+id);
-  if (!p) {
-    return next(new NotFoundError(`Product not found for ID ${id}`));
-  }
+  try {
+    const d = await deleteProductById(+id);
+    if (!d) {
+      return next(new NotFoundError(`Product not found for ID ${id}`));
+    }
 
-  res.status(204).end();
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const modifyProduct = async (
@@ -120,20 +139,21 @@ export const modifyProduct = async (
 ) => {
   const { id } = req.params;
   const { price, quantity } = req.body;
+  const userId: number = req.user!.userId;
 
-  //REVIEW - : prendere lo user id dall'utente loggato (e verificare permessi)
-  const userId: number = req.userId! | 1;
-
-  // 400 BAD REQUEST gestita dalla validazione openapi
-
-  // TODO: trasferire controllo a validazione yaml
-  if (!id || isNaN(+id) || +id <= 0) {
-    return next(new BadRequestError(`Product ID must be positive integer`));
+  if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+    return next(new BadRequestError('Product ID must be a positive integer'));
   }
 
-  // TODO: gestire validazione lato DB
-  if (Number(price) <= 0 || Number(quantity) <= 0) {
-    return next(new BadRequestError(`Product model fields not valid`));
+  if (price !== undefined && Number(price) <= 0) {
+    return next(new BadRequestError('Price must be a positive number'));
+  }
+
+  if (
+    (quantity !== undefined && !Number.isInteger(Number(quantity))) ||
+    Number(quantity) < 0
+  ) {
+    return next(new BadRequestError('Quantity must be a non-negative integer'));
   }
 
   const prod: Partial<ProductInput> = {
@@ -141,17 +161,19 @@ export const modifyProduct = async (
     UserId: userId,
   };
 
-  // costruisco il percorso del file
-  if (req.file) {
-    const imagePath =
-      process.env.IMAGE_UPLOAD_FOLDER + sanitizeFilename(req.file.filename);
-    prod.imageUrl = imagePath;
+  const imageUrl = handleImageUpload(req);
+  if (imageUrl) {
+    prod.imageUrl = imageUrl;
   }
 
-  const p = await updateProductById(+id, prod);
-  if (!p) {
-    return next(new NotFoundError(`Product not found for ID ${id}`));
-  }
+  try {
+    const p = await updateProductById(+id, prod);
+    if (!p) {
+      return next(new NotFoundError(`Product not found for ID ${id}`));
+    }
 
-  res.status(200).send(p);
+    res.status(200).send(p);
+  } catch (error) {
+    next(error);
+  }
 };

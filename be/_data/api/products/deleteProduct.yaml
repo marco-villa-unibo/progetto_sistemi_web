@@ -6,6 +6,8 @@ paths:
       summary: Deletes a product.
       description: Delete a product.
       operationId: deleteProduct
+      security:
+        - bearerAuth: []
       parameters:
         - name: productId
           in: path

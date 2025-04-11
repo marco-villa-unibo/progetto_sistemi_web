@@ -6,6 +6,8 @@ paths:
       summary: Add a new product to the store.
       description: Add a new product to the store, including image.
       operationId: addProduct
+      security:
+        - bearerAuth: []
       requestBody:
         description: Create a new product in the store
         content:

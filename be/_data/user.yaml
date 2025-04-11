@@ -8,13 +8,8 @@ components:
         - firstName
         - lastName
         - email
-        - password
         - address
       properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
         username:
           type: string
           example: theUser
@@ -27,14 +22,67 @@ components:
         email:
           type: string
           example: john@email.com
-        password:
-          type: string
-          example: 'Password1!'
         phone:
           type: string
           example: '12345'
         address:
           type: string
           example: via Roma, 1 - Roma
+
+    UserInput:
+      description: User Model Input
+      type: object
+      required:
+        - password
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          example: 'Password1!'
         userRole:
           $ref: '#/components/schemas/UserRole'
+
+    UserOutput:
+      description: User Model Output
+      type: object
+      required:
+        - id
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        token:
+          type: string
+          example: 'token'
+
+    UserRegister:
+      description: User Model for registration
+      type: object
+      required:
+        - password
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          example: 'Password1!'
+
+    UserLogin:
+      description: User Login Model
+      type: object
+      required:
+        - password
+      properties:
+        username:
+          type: string
+          example: theUser
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: 'Password1!'
