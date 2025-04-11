@@ -2,10 +2,11 @@ import { Router } from 'express';
 import {
   getAllUsers,
   getUserById,
-  insertUser,
   modifyUser,
   removeUser,
 } from '../controllers/userController';
+import { authenticate } from '../middlewares/authentication';
+import { isAdmin } from '../middlewares/authorization';
 
 export const userRouter = Router();
 
@@ -20,6 +21,8 @@ export const userRouter = Router();
  *      summary: Finds all users in the store.
  *      description: Finds all users in the store.
  *      operationId: findAllUsers
+ *      security:
+ *        - bearerAuth: []
  *      responses:
  *        '200':
  *          description: Successful operation
@@ -28,47 +31,12 @@ export const userRouter = Router();
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/components/schemas/User'
+ *                  $ref: '#/components/schemas/UserOutput'
  *        '500':
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-userRouter.get('/', getAllUsers);
-
-/**
- * @openapi
- *  /user:
- *    post:
- *      tags:
- *        - user
- *      summary: Add a new user.
- *      description: Add a new user with CUSTOMER role.
- *      operationId: addUser
- *      requestBody:
- *        description: Create a new user
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/User'
- *        required: true
- *      responses:
- *        '201':
- *          description: Product created successfully
- *          content:
- *            application/json:
- *              schema:
- *                $ref: '#/components/schemas/User'
- *        '400':
- *          description: Invalid input
- *          $ref: '#/components/responses/BadRequestError'
- *        '422':
- *          description: Validation exception
- *          $ref: '#/components/responses/UnprocessableEntityError'
- *        '500':
- *          description: Unexpected server error
- *          $ref: '#/components/responses/InternalServerError'
- */
-userRouter.post('/', insertUser);
+userRouter.get('/', authenticate, isAdmin, getAllUsers);
 
 /**
  * @openapi
@@ -79,12 +47,22 @@ userRouter.post('/', insertUser);
  *      summary: Update an existing user.
  *      description: Update an existing user by ID.
  *      operationId: updateUser
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - name: userId
+ *          in: path
+ *          description: ID of user to update
+ *          required: true
+ *          schema:
+ *            type: integer
+ *            format: int64
  *      requestBody:
  *        description: Update an existing user in the store
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/User'
+ *              $ref: '#/components/schemas/UserInput'
  *        required: true
  *      responses:
  *        '200':
@@ -92,7 +70,7 @@ userRouter.post('/', insertUser);
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/UserOutput'
  *        '400':
  *          description: Invalid ID supplied
  *          $ref: '#/components/responses/BadRequestError'
@@ -106,7 +84,7 @@ userRouter.post('/', insertUser);
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-userRouter.put('/', modifyUser);
+userRouter.put('/', authenticate, isAdmin, modifyUser);
 
 /**
  * @openapi
@@ -117,6 +95,8 @@ userRouter.put('/', modifyUser);
  *      summary: Finds user by ID.
  *      description: Returns a single user.
  *      operationId: findUserById
+ *      security:
+ *        - bearerAuth: []
  *      parameters:
  *        - name: userId
  *          in: path
@@ -131,7 +111,7 @@ userRouter.put('/', modifyUser);
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/UserOutput'
  *        '400':
  *          description: Invalid ID supplied
  *          $ref: '#/components/responses/BadRequestError'
@@ -142,7 +122,7 @@ userRouter.put('/', modifyUser);
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-userRouter.get('/:id', getUserById);
+userRouter.get('/:id', authenticate, isAdmin, getUserById);
 
 /**
  * @openapi
@@ -153,6 +133,8 @@ userRouter.get('/:id', getUserById);
  *      summary: Deletes a user.
  *      description: Delete a user.
  *      operationId: deleteUser
+ *      security:
+ *        - bearerAuth: []
  *      parameters:
  *        - name: userId
  *          in: path
@@ -174,4 +156,4 @@ userRouter.get('/:id', getUserById);
  *          description: Unexpected server error
  *          $ref: '#/components/responses/InternalServerError'
  */
-userRouter.delete('/:id', removeUser);
+userRouter.delete('/:id', authenticate, isAdmin, removeUser);

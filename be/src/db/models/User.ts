@@ -14,6 +14,7 @@ import { Product } from '.';
 interface UserAttributes extends UserDTO {
   id?: number;
   passwordHash?: string;
+  userRole: UserRoleDTO;
   // imageUrl: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -28,6 +29,7 @@ export interface UserOutput
     Required<UserAttributes>,
     'passwordHash' | 'createdAt' | 'updatedAt'
   > {
+  userRole: UserRoleDTO;
   passwordHash?: string;
   token?: string; // TODO: gestire il login al momento della registrazione
 }

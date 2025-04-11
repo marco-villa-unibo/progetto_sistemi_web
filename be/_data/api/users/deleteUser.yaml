@@ -6,6 +6,8 @@ paths:
       summary: Deletes a user.
       description: Delete a user.
       operationId: deleteUser
+      security:
+        - bearerAuth: []
       parameters:
         - name: userId
           in: path

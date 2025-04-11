@@ -18,7 +18,7 @@ export const authRouter = Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             $ref: '#/components/schemas/UserRegister'
  *       required: true
  *     responses:
  *       '201':

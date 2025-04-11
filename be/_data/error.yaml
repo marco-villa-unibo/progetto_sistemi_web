@@ -26,6 +26,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorModel'
+    ForbiddenError:
+      description: Invalid credentials error (403)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
     NotFoundError:
       description: Not found error (404)
       content:

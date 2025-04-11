@@ -28,8 +28,6 @@ components:
         address:
           type: string
           example: via Roma, 1 - Roma
-        userRole:
-          $ref: '#/components/schemas/UserRole'
 
     UserInput:
       description: User Model Input
@@ -42,9 +40,11 @@ components:
         password:
           type: string
           example: 'Password1!'
+        userRole:
+          $ref: '#/components/schemas/UserRole'
 
     UserOutput:
-      description: User Model Input
+      description: User Model Output
       type: object
       required:
         - id
@@ -58,7 +58,19 @@ components:
         token:
           type: string
           example: 'token'
-    
+
+    UserRegister:
+      description: User Model for registration
+      type: object
+      required:
+        - password
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          example: 'Password1!'
+
     UserLogin:
       description: User Login Model
       type: object
@@ -74,4 +86,3 @@ components:
         password:
           type: string
           example: 'Password1!'
-        

@@ -19,10 +19,5 @@ const dbInit = async () => {
     console.log(' DATABASE INIT ERROR :>> ', error);
   }
 };
-// const dbInit = () =>
-//   Promise.all([
-//     Product.sync({ alter: isDev || isTest }),
-//     User.sync({ alter: isDev || isTest }),
-//   ]);
 
 export default dbInit;

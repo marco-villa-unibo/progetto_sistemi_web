@@ -6,6 +6,8 @@ paths:
       summary: Finds all users in the store.
       description: Finds all users in the store.
       operationId: findAllUsers
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: Successful operation
@@ -14,7 +16,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/UserOutput'
         '500':
           description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
