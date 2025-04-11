@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../../utils/jwt';
-import { Unauthorized } from '../error/unauthorized';
+import { UnauthorizedError } from '../error';
 
 export const authenticate = (
   req: Request,
@@ -17,11 +17,9 @@ export const authenticate = (
       req.user = decodedToken; // Aggiunge i dati dell'utente alla request
       next();
     } else {
-      return next(new Unauthorized(`Token non valido.`));
+      return next(new UnauthorizedError(`Token non valido.`));
     }
   } else {
-    return next(new Unauthorized(`Token di autenticazione mancante.`));
+    return next(new UnauthorizedError(`Token di autenticazione mancante.`));
   }
 };
-
-// TODO - implementare la divisione per i ruoli

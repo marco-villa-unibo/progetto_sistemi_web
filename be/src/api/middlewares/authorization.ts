@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserRoleDTO, UserRoleEnum } from '../../api/types';
-import { Forbidden } from '../error/forbidden';
+import { ForbiddenError } from '../error';
 
 export const authorize = (roles: UserRoleDTO[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -8,7 +8,7 @@ export const authorize = (roles: UserRoleDTO[]) => {
       return next(); // L'utente ha uno dei ruoli richiesti, accesso consentito
     } else {
       return next(
-        new Forbidden(
+        new ForbiddenError(
           `Non hai i permessi necessari per accedere a questa risorsa.`
         )
       );

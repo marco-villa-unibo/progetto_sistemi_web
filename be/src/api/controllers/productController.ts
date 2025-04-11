@@ -71,7 +71,7 @@ export const insertProduct = async (
     const p: ProductOutput = await createProduct(newProd);
     res.status(201).send(p);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -84,7 +84,7 @@ export const getAllProducts = async (
     const p: ProductOutput[] = await fetchAllProducts();
     res.status(200).send(p);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -105,7 +105,7 @@ export const getProductById = async (
     }
     res.status(200).send(p);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -128,7 +128,7 @@ export const removeProduct = async (
 
     res.status(204).end();
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -174,6 +174,6 @@ export const modifyProduct = async (
 
     res.status(200).send(p);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

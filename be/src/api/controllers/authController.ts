@@ -4,8 +4,7 @@ import {
   login as loginService,
 } from '../../db/services/authService';
 import { UserInput } from '../../db/models/User';
-import { BadRequestError } from '../error';
-import { Unauthorized } from '../error/unauthorized';
+import { BadRequestError, UnauthorizedError } from '../error';
 import { UserLoginDTO } from '../types';
 
 export const register = async (
@@ -29,7 +28,7 @@ export const login = async (
   const userLogin: UserLoginDTO = req.body;
   const u = await loginService(userLogin);
   if (!u) {
-    return next(new Unauthorized(`Wrong username or password.`));
+    return next(new UnauthorizedError(`Wrong username or password.`));
   }
 
   res.status(200).send(u);
