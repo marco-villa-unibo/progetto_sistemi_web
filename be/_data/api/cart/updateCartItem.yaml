@@ -7,7 +7,7 @@ paths:
       description: Updates item's quantity in logged user's cart.
       operationId: updateCartItem
       security:
-        - BearerAuth: []
+        - bearerAuth: []
       parameters:
         - in: path
           name: cartItemId
@@ -23,7 +23,7 @@ paths:
               $ref: '#/components/schemas/UpdateCartItemQuantityRequest'
       responses:
         '200':
-          description: Ite quantity successfully updated.
+          description: Item quantity successfully updated.
           content:
             application/json:
               schema:

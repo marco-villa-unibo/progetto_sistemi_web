@@ -7,7 +7,7 @@ paths:
       description: Retrieves logged user's cart items.
       operationId: getCart
       security:
-        - BearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           description: Successful operation

@@ -7,7 +7,7 @@ paths:
       description: Deletes an item from logged user's cart.
       operationId: deleteCartItem
       security:
-        - BearerAuth: []
+        - bearerAuth: []
       parameters:
         - in: path
           name: cartItemId

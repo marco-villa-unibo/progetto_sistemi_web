@@ -7,7 +7,7 @@ paths:
       description: Adds an item and quantity to the cart.
       operationId: addCartItem
       security:
-        - BearerAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:

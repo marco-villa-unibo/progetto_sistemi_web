@@ -8,19 +8,13 @@ components:
         message:
           type: string
   responses:
-    InternalServerError:
-      description: Internal server error (500)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorModel'
     BadRequestError:
       description: Bad request error (400)
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorModel'
-    InvalidCredentialsError:
+    UnauthorizedError:
       description: Invalid credentials error (401)
       content:
         application/json:
@@ -40,6 +34,12 @@ components:
             $ref: '#/components/schemas/ErrorModel'
     UnprocessableEntityError:
       description: Unprocessable entity error (422)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    InternalServerError:
+      description: Internal server error (500)
       content:
         application/json:
           schema:

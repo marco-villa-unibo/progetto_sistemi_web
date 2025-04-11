@@ -11,16 +11,6 @@ components:
           type: integer
           description: ID dell'utente a cui appartiene il carrello.
           readOnly: true # Di solito non viene passato direttamente nella creazione
-        createdAt:
-          type: string
-          format: date-time
-          description: Data e ora di creazione del carrello.
-          readOnly: true
-        updatedAt:
-          type: string
-          format: date-time
-          description: Data e ora dell'ultimo aggiornamento del carrello.
-          readOnly: true
       required:
         - UserId # Anche se di solito viene dedotto dal token
 
