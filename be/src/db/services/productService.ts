@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import Product, { ProductInput, ProductOutput } from '../models/Product';
 
 export const createProduct = async (
@@ -10,11 +11,16 @@ export const updateProductById = async (
   id: number,
   payload: Partial<ProductInput>
 ): Promise<ProductOutput | null> => {
-  const prod = await Product.findByPk(id);
+  const [affectedRows, updatedProducts] = await Product.update(payload, {
+    where: { id },
+    returning: true,
+  });
 
-  if (!prod) return null;
+  if (affectedRows === 0) {
+    return null;
+  }
 
-  return await prod.update(payload);
+  return updatedProducts[0];
 };
 
 export const findProductById = async (
@@ -24,19 +30,19 @@ export const findProductById = async (
 };
 
 export const deleteProductById = async (id: number): Promise<boolean> => {
-  const numDeletedProducts = await Product.destroy({
+  const deletedRows = await Product.destroy({
     where: { id },
   });
-
-  return !!numDeletedProducts;
+  return deletedRows > 0;
 };
 
 export const fetchAllProducts = async (): Promise<ProductOutput[]> => {
   return Product.findAll();
 };
 
+// TODO - implementare ricerca con filtri
 // export const fetchAllProducts = async (
-//   filters: GetAllProductFilters
+//   filters?: GetAllProductFilters
 // ): Promise<ProductOutput[]> => {
 //   return Product.findAll({
 //     where: {
@@ -47,3 +53,16 @@ export const fetchAllProducts = async (): Promise<ProductOutput[]> => {
 // };
 
 // TODO - update di più prodotti in una sola volta
+// export const bulkUpdateProducts = async (
+//   productsToUpdate: { id: number; payload: Partial<ProductInput> }[]
+// ): Promise<ProductOutput[]> => {
+//   const updatedProducts: ProductOutput[] = [];
+//   for (const { id, payload } of productsToUpdate) {
+//     const product = await Product.findByPk(id);
+//     if (product) {
+//       await product.update(payload);
+//       updatedProducts.push(product.get({ plain: true }) as ProductOutput); // Ottieni una versione "plain" per la consistenza
+//     }
+//   }
+//   return updatedProducts;
+// };

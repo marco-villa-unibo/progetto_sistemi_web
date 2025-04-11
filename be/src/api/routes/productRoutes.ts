@@ -6,8 +6,8 @@ import {
   modifyProduct,
   removeProduct,
 } from '../controllers/productController';
-import { authenticate } from '../middlewares/authentication';
-import { isEmployee } from '../middlewares/authorization';
+import { authenticate } from '../middlewares';
+import { isEmployee } from '../middlewares';
 
 export const productRouter = Router();
 

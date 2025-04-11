@@ -5,8 +5,8 @@ import {
   modifyUser,
   removeUser,
 } from '../controllers/userController';
-import { authenticate } from '../middlewares/authentication';
-import { isAdmin } from '../middlewares/authorization';
+import { authenticate } from '../middlewares';
+import { isAdmin } from '../middlewares';
 
 export const userRouter = Router();
 
