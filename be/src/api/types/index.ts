@@ -4,3 +4,4 @@ export * from './userDto';
 export * from './productDto';
 export * from './categoryDto';
 export * from './userRoleDto';
+export * from './cartDto';
