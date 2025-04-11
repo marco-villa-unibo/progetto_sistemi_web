@@ -13,7 +13,7 @@
     "start:server": "tsc && node dist/app.js",
     "clean": "node _scripts/clean.js",
     "seed": "npx sequelize-cli db:seed:all",
-    "seed:undo": "npx sequelize-cli db:seed:undo"
+    "seed:undo": "npx sequelize-cli db:seed:undo:all"
   },
   "author": "MV",
   "license": "ISC",
