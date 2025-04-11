@@ -24,3 +24,6 @@ be/dist
 # Image folder
 be/public/images/*
 be/public/avatars/*
+
+# EXCLUDE
+!.gitkeep
