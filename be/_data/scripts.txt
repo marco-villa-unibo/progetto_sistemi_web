@@ -17,4 +17,4 @@
     ok - TODO: trasformare categoria in schema enum separato 
     ok - TODO: trasformare userRole in schema enum separato 
     ok - TODO: aggiungere restrizioni input per campi (es. username not empty..)
-    // TODO: aggiungere ORDER
+    ok - TODO: aggiungere ORDER

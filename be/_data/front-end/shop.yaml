@@ -218,6 +218,128 @@ paths:
                 $ref: '#/components/schemas/HealthStatus'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /order:
+    post:
+      tags:
+        - orders
+      summary: Places a new order form logged user's cart.
+      description: Places a new order form logged user's cart. Deletes the cart after creation.
+      operationId: addOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Ordine creato con successo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderWithItems'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - orders
+      summary: Retrieves all logged user's orders.
+      description: Retrieves all logged user's orders.
+      operationId: getAllOrders
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Ordini recuperati con successo.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /order/{orderId}:
+    get:
+      tags:
+        - orders
+      summary: Retrieves a specific logged user's order.
+      description: Retrieves an order by ID, giving that it belongs to the logged user.
+      operationId: getOrderById
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          description: ID dell'ordine da recuperare.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ordine recuperato con successo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderWithItems'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /order/{orderId}/status:
+    patch:
+      tags:
+        - admin
+        - orders
+      summary: Updates order status (Admin only).
+      description: Allows admins to update the status of a specific order
+      operationId: updateOrderStatus
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatusRequest'
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          description: ID dell'ordine da aggiornare.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stato dell'ordine aggiornato con successo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /product:
     get:
       tags:
@@ -557,6 +679,22 @@ components:
         - CASA
         - SURGELATI
         - LIQUORI
+    UserRole:
+      description: User Role Model
+      type: string
+      enum:
+        - CUSTOMER
+        - EMPLOYEE
+        - ADMIN
+    OrderStatus:
+      description: Nuovo stato dell'ordine.
+      type: string
+      enum:
+        - PENDING
+        - PROCESSING
+        - SHIPPED
+        - DELIVERED
+        - CANCELLED
     ErrorModel:
       type: object
       required:
@@ -579,6 +717,113 @@ components:
           type: integer
           description: Number of milliseconds since Epoch time
           example: 1688612539479
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'ordine.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente che ha effettuato l'ordine.
+          readOnly: true
+        orderDate:
+          type: string
+          format: date-time
+          description: Data e ora in cui è stato effettuato l'ordine.
+          readOnly: true
+        totalAmount:
+          type: number
+          format: float
+          description: Importo totale dell'ordine.
+          readOnly: true
+        orderStatus:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - SHIPPED
+            - DELIVERED
+            - CANCELLED
+          description: Stato attuale dell'ordine.
+          readOnly: true
+        shippingAddress:
+          type: string
+          description: Indirizzo di spedizione.
+        billingAddress:
+          type: string
+          description: Indirizzo di fatturazione.
+        paymentMethod:
+          type: string
+          description: Metodo di pagamento utilizzato.
+        transactionId:
+          type: string
+          nullable: true
+          description: ID della transazione di pagamento (se applicabile).
+          readOnly: true
+      required:
+        - shippingAddress
+        - billingAddress
+        - paymentMethod
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'elemento dell'ordine.
+          readOnly: true
+        OrderId:
+          type: integer
+          description: ID dell'ordine a cui appartiene l'elemento.
+          readOnly: true
+        ProductId:
+          type: integer
+          description: ID del prodotto nell'elemento dell'ordine.
+        quantity:
+          type: integer
+          description: Quantità del prodotto nell'elemento dell'ordine.
+          minimum: 1
+        unitPrice:
+          type: number
+          format: float
+          description: Prezzo unitario del prodotto al momento dell'ordine.
+      required:
+        - ProductId
+        - quantity
+        - unitPrice
+    OrderWithItems:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Order'
+      properties:
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+    CreateOrderRequest:
+      type: object
+      properties:
+        shippingAddress:
+          type: string
+          description: Indirizzo di spedizione.
+        billingAddress:
+          type: string
+          description: Indirizzo di fatturazione.
+        paymentMethod:
+          type: string
+          description: Metodo di pagamento utilizzato.
+      required:
+        - shippingAddress
+        - billingAddress
+        - paymentMethod
+    UpdateOrderStatusRequest:
+      type: object
+      properties:
+        orderStatus:
+          $ref: '#/components/schemas/OrderStatus'
+      required:
+        - orderStatus
     Product:
       description: Product Model
       type: object
@@ -710,13 +955,6 @@ components:
         password:
           type: string
           example: Password1!
-    UserRole:
-      description: User Role Model
-      type: string
-      enum:
-        - CUSTOMER
-        - EMPLOYEE
-        - ADMIN
   responses:
     BadRequestError:
       description: Bad request error (400)
