@@ -2,9 +2,9 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelizeConnection } from '../dbConfig';
 import { User } from '.';
-import { CartDTO } from '../../api/types/cartDto';
+import { CartWithItemsDTO } from '../../api/types/cartDto';
 
-interface CartAttributes extends CartDTO {
+interface CartAttributes extends CartWithItemsDTO {
   createdAt?: Date;
   updatedAt?: Date;
 }

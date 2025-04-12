@@ -1,5 +1,5 @@
 import { Cart, CartItem, Product } from '../models';
-import { CartDTO, CartItemDTO, CartWithItemsDTO } from '../../api/types';
+import { CartItemDTO, CartWithItemsDTO } from '../../api/types';
 
 export const getCartByUserId = async (userId: number): Promise<Cart | null> => {
   return Cart.findOne({ where: { UserId: userId } });

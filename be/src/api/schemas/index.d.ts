@@ -233,11 +233,12 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        Cart: {
+        CartWithItems: {
             /** @description ID univoco del carrello. */
             readonly id?: number;
             /** @description ID dell'utente a cui appartiene il carrello. */
             readonly UserId: number;
+            cartItems?: components["schemas"]["CartItem"][];
         };
         CartItem: {
             /** @description ID univoco dell'elemento del carrello. */
@@ -249,23 +250,6 @@ export interface components {
             /** @description Quantità del prodotto nell'elemento del carrello. */
             quantity: number;
         };
-        CartWithItems: {
-            /** @description ID univoco del carrello. */
-            readonly id?: number;
-            /** @description ID dell'utente a cui appartiene il carrello. */
-            readonly UserId: number;
-            /**
-             * Format: date-time
-             * @description Data e ora di creazione del carrello.
-             */
-            readonly createdAt?: string;
-            /**
-             * Format: date-time
-             * @description Data e ora dell'ultimo aggiornamento del carrello.
-             */
-            readonly updatedAt?: string;
-            cartItems?: components["schemas"]["CartItem"][];
-        };
         AddItemToCartRequest: {
             /** @description ID del prodotto da aggiungere. */
             ProductId: number;
@@ -275,14 +259,6 @@ export interface components {
         UpdateCartItemQuantityRequest: {
             /** @description Nuova quantità. */
             quantity: number;
-        };
-        RemoveItemFromCartResponse: {
-            /** @description Messaggio di conferma (opzionale). */
-            message?: string;
-        };
-        ClearCartResponse: {
-            /** @description Messaggio di conferma (opzionale). */
-            message?: string;
         };
         /**
          * @description Category Model

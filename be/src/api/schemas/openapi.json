@@ -765,7 +765,7 @@
   },
   "components": {
     "schemas": {
-      "Cart": {
+      "CartWithItems": {
         "type": "object",
         "properties": {
           "id": {
@@ -777,6 +777,12 @@
             "type": "integer",
             "description": "ID dell'utente a cui appartiene il carrello.",
             "readOnly": true
+          },
+          "cartItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
           }
         },
         "required": [
@@ -811,42 +817,6 @@
           "quantity"
         ]
       },
-      "CartWithItems": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "ID univoco del carrello.",
-            "readOnly": true
-          },
-          "UserId": {
-            "type": "integer",
-            "description": "ID dell'utente a cui appartiene il carrello.",
-            "readOnly": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Data e ora di creazione del carrello.",
-            "readOnly": true
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Data e ora dell'ultimo aggiornamento del carrello.",
-            "readOnly": true
-          },
-          "cartItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CartItem"
-            }
-          }
-        },
-        "required": [
-          "UserId"
-        ]
-      },
       "AddItemToCartRequest": {
         "type": "object",
         "properties": {
@@ -877,24 +847,6 @@
         "required": [
           "quantity"
         ]
-      },
-      "RemoveItemFromCartResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Messaggio di conferma (opzionale)."
-          }
-        }
-      },
-      "ClearCartResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Messaggio di conferma (opzionale)."
-          }
-        }
       },
       "Category": {
         "description": "Category Model",

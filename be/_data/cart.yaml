@@ -1,6 +1,6 @@
 components:
   schemas:
-    Cart:
+    CartWithItems: # Rappresentazione del carrello con gli elementi inclusi
       type: object
       properties:
         id:
@@ -10,9 +10,13 @@ components:
         UserId:
           type: integer
           description: ID dell'utente a cui appartiene il carrello.
-          readOnly: true # Di solito non viene passato direttamente nella creazione
+          readOnly: true
+        cartItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
       required:
-        - UserId # Anche se di solito viene dedotto dal token
+        - UserId
 
     CartItem:
       type: object
@@ -35,34 +39,6 @@ components:
       required:
         - ProductId
         - quantity
-
-    CartWithItems: # Rappresentazione del carrello con gli elementi inclusi
-      type: object
-      properties:
-        id:
-          type: integer
-          description: ID univoco del carrello.
-          readOnly: true
-        UserId:
-          type: integer
-          description: ID dell'utente a cui appartiene il carrello.
-          readOnly: true
-        createdAt:
-          type: string
-          format: date-time
-          description: Data e ora di creazione del carrello.
-          readOnly: true
-        updatedAt:
-          type: string
-          format: date-time
-          description: Data e ora dell'ultimo aggiornamento del carrello.
-          readOnly: true
-        cartItems:
-          type: array
-          items:
-            $ref: '#/components/schemas/CartItem'
-      required:
-        - UserId
 
     AddItemToCartRequest: # Richiesta per aggiungere un elemento al carrello
       type: object
@@ -87,17 +63,3 @@ components:
           minimum: 1
       required:
         - quantity
-
-    RemoveItemFromCartResponse: # Risposta per la rimozione di un elemento (potrebbe essere vuota)
-      type: object
-      properties:
-        message:
-          type: string
-          description: Messaggio di conferma (opzionale).
-
-    ClearCartResponse: # Risposta per lo svuotamento del carrello (potrebbe essere vuota)
-      type: object
-      properties:
-        message:
-          type: string
-          description: Messaggio di conferma (opzionale).
