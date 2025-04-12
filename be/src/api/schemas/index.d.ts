@@ -331,13 +331,13 @@ export interface components {
         } & components["schemas"]["Product"];
         /** @description User Model */
         User: {
-            /** @example theUser */
+            /** @example 1 */
             username: string;
             /** @example John */
             firstName: string;
             /** @example James */
             lastName: string;
-            /** @example john@email.com */
+            /** @example test@example.com */
             email: string;
             /** @example 12345 */
             phone?: string;
@@ -367,9 +367,9 @@ export interface components {
         } & components["schemas"]["User"];
         /** @description User Login Model */
         UserLogin: {
-            /** @example theUser */
+            /** @example 1 */
             username?: string;
-            /** @example john@email.com */
+            /** @example test@example.com */
             email?: string;
             /** @example Password1! */
             password: string;

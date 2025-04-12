@@ -1021,7 +1021,7 @@
         "properties": {
           "username": {
             "type": "string",
-            "example": "theUser"
+            "example": 1
           },
           "firstName": {
             "type": "string",
@@ -1033,7 +1033,7 @@
           },
           "email": {
             "type": "string",
-            "example": "john@email.com"
+            "example": "test@example.com"
           },
           "phone": {
             "type": "string",
@@ -1116,11 +1116,11 @@
         "properties": {
           "username": {
             "type": "string",
-            "example": "theUser"
+            "example": 1
           },
           "email": {
             "type": "string",
-            "example": "john@email.com"
+            "example": "test@example.com"
           },
           "password": {
             "type": "string",

@@ -1,5 +1,4 @@
 openapi: 3.0.4
-
 info:
   title: On-Line Shop | Sistemi Web
   description: |-
@@ -12,10 +11,8 @@ info:
   contact:
     email: marco.villa13@studio.unibo.it
   version: 1.0.0
-
 servers:
   - url: http://localhost:8080/api/v1
-
 tags:
   - name: health
     description: Health check
@@ -23,23 +20,7 @@ tags:
     description: gestione dei prodotti
   - name: user
     description: gestione degli user
-
 paths:
-  /health:
-    get:
-      description: Health check endpoint for Shop API
-      operationId: healthCheck
-      tags:
-        - health
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthStatus'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
   /auth/register:
     post:
       tags:
@@ -52,7 +33,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserInput'
+              $ref: '#/components/schemas/UserRegister'
         required: true
       responses:
         '201':
@@ -62,13 +43,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
-          description: Invalid input
           $ref: '#/components/responses/BadRequestError'
         '422':
-          description: Validation exception
           $ref: '#/components/responses/UnprocessableEntityError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
   /auth/login:
     post:
@@ -92,10 +70,153 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserOutput'
         '401':
-          description: Invalid credentials
-          $ref: '#/components/responses/InvalidCredentialsError'
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
-          description: Unexpected server error
+          $ref: '#/components/responses/InternalServerError'
+  /cart:
+    get:
+      tags:
+        - cart
+      summary: Retrieves logged user's cart.
+      description: Retrieves logged user's cart items.
+      operationId: getCart
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartWithItems'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - cart
+      summary: Deletes logged user's cart.
+      description: Removes all items in user's cart.
+      operationId: deleteCart
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Cart deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /cart/items:
+    post:
+      tags:
+        - cart items
+      summary: Adds an item to logged user's cart.
+      description: Adds an item and quantity to the cart.
+      operationId: addCartItem
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddItemToCartRequest'
+      responses:
+        '201':
+          description: Item added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartWithItems'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /cart/items/{cartItemId}:
+    put:
+      tags:
+        - cart items
+      summary: Updates item's quantity in logged user's cart.
+      description: Updates item's quantity in logged user's cart.
+      operationId: updateCartItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartItemId
+          required: true
+          description: ID dell'elemento del carrello da aggiornare.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCartItemQuantityRequest'
+      responses:
+        '200':
+          description: Item quantity successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartWithItems'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - cart items
+      summary: Deletes an item from logged user's cart.
+      description: Deletes an item from logged user's cart.
+      operationId: deleteCartItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartItemId
+          required: true
+          description: ID dell'elemento del carrello da rimuovere.
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Item deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /health:
+    get:
+      description: Health check endpoint for Shop API
+      operationId: healthCheck
+      tags:
+        - health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '500':
           $ref: '#/components/responses/InternalServerError'
   /product:
     get:
@@ -113,8 +234,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ProductOutput'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
     post:
       tags:
@@ -139,45 +261,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductOutput'
         '400':
-          description: Invalid input
           $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '422':
-          description: Validation exception
           $ref: '#/components/responses/UnprocessableEntityError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
   /product/{productId}:
-    get:
-      tags:
-        - product
-      summary: Finds product by ID.
-      description: Returns a single product.
-      operationId: findProductById
-      parameters:
-        - name: productId
-          in: path
-          description: ID of product to return
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProductOutput'
-        '400':
-          description: Invalid ID supplied
-          $ref: '#/components/responses/BadRequestError'
-        '404':
-          description: Product not found
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          description: Unexpected server error
-          $ref: '#/components/responses/InternalServerError'
     put:
       tags:
         - product
@@ -209,16 +300,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductOutput'
         '400':
-          description: Invalid ID supplied
           $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
-          description: Product not found
           $ref: '#/components/responses/NotFoundError'
         '422':
-          description: Validation exception
           $ref: '#/components/responses/UnprocessableEntityError'
         '500':
-          description: Unexpected server error
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - product
+      summary: Finds product by ID.
+      description: Returns a single product.
+      operationId: findProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductOutput'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
@@ -240,13 +356,12 @@ paths:
         '204':
           description: Product deleted
         '400':
-          description: Invalid ID supplied
           $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
-          description: Product not found
           $ref: '#/components/responses/NotFoundError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
   /user:
     get:
@@ -255,6 +370,8 @@ paths:
       summary: Finds all users in the store.
       description: Finds all users in the store.
       operationId: findAllUsers
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: Successful operation
@@ -263,46 +380,60 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/UserOutput'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
-    post:
+  /user/{userId}:
+    put:
       tags:
         - user
-      summary: Add a new user.
-      description: Add a new user with CUSTOMER role.
-      operationId: addUser
+      summary: Update an existing user.
+      description: Update an existing user by ID.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to update
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
-        description: Create a new user
+        description: Update an existing user in the store
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserInput'
         required: true
       responses:
-        '201':
-          description: User created successfully
+        '200':
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserOutput'
         '400':
-          description: Invalid input
           $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
         '422':
-          description: Validation exception
           $ref: '#/components/responses/UnprocessableEntityError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
-  /user/{userId}:
     get:
       tags:
         - user
       summary: Finds user by ID.
       description: Returns a single user.
       operationId: findUserById
+      security:
+        - bearerAuth: []
       parameters:
         - name: userId
           in: path
@@ -317,15 +448,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserOutput'
         '400':
-          description: Invalid ID supplied
           $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
-          description: User not found
           $ref: '#/components/responses/NotFoundError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
@@ -333,6 +463,8 @@ paths:
       summary: Deletes a user.
       description: Delete a user.
       operationId: deleteUser
+      security:
+        - bearerAuth: []
       parameters:
         - name: userId
           in: path
@@ -345,16 +477,124 @@ paths:
         '204':
           description: User deleted
         '400':
-          description: Invalid ID supplied
           $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
-          description: User not found
           $ref: '#/components/responses/NotFoundError'
         '500':
-          description: Unexpected server error
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
+    Cart:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco del carrello.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente a cui appartiene il carrello.
+          readOnly: true
+      required:
+        - UserId
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'elemento del carrello.
+          readOnly: true
+        CartId:
+          type: integer
+          description: ID del carrello a cui appartiene l'elemento.
+          readOnly: true
+        ProductId:
+          type: integer
+          description: ID del prodotto nell'elemento del carrello.
+        quantity:
+          type: integer
+          description: Quantità del prodotto nell'elemento del carrello.
+          minimum: 1
+      required:
+        - ProductId
+        - quantity
+    CartWithItems:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco del carrello.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente a cui appartiene il carrello.
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e ora di creazione del carrello.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data e ora dell'ultimo aggiornamento del carrello.
+          readOnly: true
+        cartItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+      required:
+        - UserId
+    AddItemToCartRequest:
+      type: object
+      properties:
+        ProductId:
+          type: integer
+          description: ID del prodotto da aggiungere.
+        quantity:
+          type: integer
+          description: Quantità da aggiungere.
+          minimum: 1
+      required:
+        - ProductId
+        - quantity
+    UpdateCartItemQuantityRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          description: Nuova quantità.
+          minimum: 1
+      required:
+        - quantity
+    RemoveItemFromCartResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Messaggio di conferma (opzionale).
+    ClearCartResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Messaggio di conferma (opzionale).
+    Category:
+      description: Category Model
+      type: string
+      enum:
+        - ORTOFRUTTA
+        - SURGELATI
+        - BANCO
+    ErrorModel:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
     HealthStatus:
       description: Health check status
       type: object
@@ -370,87 +610,6 @@ components:
           type: integer
           description: Number of milliseconds since Epoch time
           example: 1688612539479
-    User:
-      description: User Model
-      type: object
-      required:
-        - username
-        - firstName
-        - lastName
-        - email
-        - address
-      properties:
-        username:
-          type: string
-          example: theUser
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: James
-        email:
-          type: string
-          example: john@email.com
-        phone:
-          type: string
-          example: '12345'
-        address:
-          type: string
-          example: via Roma, 1 - Roma
-        userRole:
-          $ref: '#/components/schemas/UserRole'
-
-    UserInput:
-      description: User Model Input
-      type: object
-      required:
-        - password
-      allOf:
-        - $ref: '#/components/schemas/User'
-      properties:
-        password:
-          type: string
-          example: 'Password1!'
-
-    UserOutput:
-      description: User Model Input
-      type: object
-      required:
-        - id
-      allOf:
-        - $ref: '#/components/schemas/User'
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        token:
-          type: string
-          example: 'token'
-
-    UserLogin:
-      description: User Login Model
-      type: object
-      required:
-        - password
-      properties:
-        username:
-          type: string
-          example: theUser
-        email:
-          type: string
-          example: john@email.com
-        password:
-          type: string
-          example: 'Password1!'
-    UserRole:
-      description: User Role Model
-      type: string
-      enum:
-        - 'CUSTOMER'
-        - 'EMPLOYEE'
-        - 'ADMIN'
     Product:
       description: Product Model
       type: object
@@ -475,7 +634,6 @@ components:
         quantity:
           type: string
           example: 10
-
     ProductInput:
       description: Product Model Input
       type: object
@@ -486,7 +644,6 @@ components:
           type: string
           format: binary
           description: Image file for the product
-
     ProductOutput:
       description: Product Model Output
       type: object
@@ -502,35 +659,110 @@ components:
         imageUrl:
           type: string
           description: Image path for the product
-    Category:
-      description: Category Model
-      type: string
-      enum:
-        - 'ORTOFRUTTA'
-        - 'SURGELATI'
-        - 'BANCO'
-    ErrorModel:
+    User:
+      description: User Model
       type: object
       required:
-        - message
+        - username
+        - firstName
+        - lastName
+        - email
+        - address
       properties:
-        message:
+        username:
           type: string
+          example: 1
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: test@example.com
+        phone:
+          type: string
+          example: '12345'
+        address:
+          type: string
+          example: via Roma, 1 - Roma
+    UserInput:
+      description: User Model Input
+      type: object
+      required:
+        - password
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          example: Password1!
+        userRole:
+          $ref: '#/components/schemas/UserRole'
+    UserOutput:
+      description: User Model Output
+      type: object
+      required:
+        - id
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        token:
+          type: string
+          example: token
+    UserRegister:
+      description: User Model for registration
+      type: object
+      required:
+        - password
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          example: Password1!
+    UserLogin:
+      description: User Login Model
+      type: object
+      required:
+        - password
+      properties:
+        username:
+          type: string
+          example: 1
+        email:
+          type: string
+          example: test@example.com
+        password:
+          type: string
+          example: Password1!
+    UserRole:
+      description: User Role Model
+      type: string
+      enum:
+        - CUSTOMER
+        - EMPLOYEE
+        - ADMIN
   responses:
-    InternalServerError:
-      description: Internal server error (500)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorModel'
     BadRequestError:
       description: Bad request error (400)
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorModel'
-    InvalidCredentialsError:
+    UnauthorizedError:
       description: Invalid credentials error (401)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    ForbiddenError:
+      description: Invalid credentials error (403)
       content:
         application/json:
           schema:
@@ -543,6 +775,12 @@ components:
             $ref: '#/components/schemas/ErrorModel'
     UnprocessableEntityError:
       description: Unprocessable entity error (422)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    InternalServerError:
+      description: Internal server error (500)
       content:
         application/json:
           schema:
