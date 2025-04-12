@@ -902,7 +902,11 @@
         "enum": [
           "ORTOFRUTTA",
           "SURGELATI",
-          "BANCO"
+          "BANCO",
+          "ELETTRONICA",
+          "CASA",
+          "SURGELATI",
+          "LIQUORI"
         ]
       },
       "ErrorModel": {

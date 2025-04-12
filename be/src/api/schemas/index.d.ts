@@ -288,7 +288,7 @@ export interface components {
          * @description Category Model
          * @enum {string}
          */
-        Category: "ORTOFRUTTA" | "SURGELATI" | "BANCO";
+        Category: "ORTOFRUTTA" | "SURGELATI" | "BANCO" | "ELETTRONICA" | "CASA" | "SURGELATI" | "LIQUORI";
         ErrorModel: {
             message: string;
         };

@@ -7,4 +7,7 @@ export const CategoryEnum = createEnumObjectFromType<CategoryDTO>({
   BANCO: 'BANCO',
   ORTOFRUTTA: 'ORTOFRUTTA',
   SURGELATI: 'SURGELATI',
+  CASA: 'CASA',
+  ELETTRONICA: 'ELETTRONICA',
+  LIQUORI: 'LIQUORI',
 });
