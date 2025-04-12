@@ -2,6 +2,7 @@ paths:
   /user:
     get:
       tags:
+        - admin
         - user
       summary: Finds all users in the store.
       description: Finds all users in the store.

@@ -265,6 +265,16 @@ export interface components {
          * @enum {string}
          */
         Category: "ORTOFRUTTA" | "SURGELATI" | "BANCO" | "ELETTRONICA" | "CASA" | "SURGELATI" | "LIQUORI";
+        /**
+         * @description User Role Model
+         * @enum {string}
+         */
+        UserRole: "CUSTOMER" | "EMPLOYEE" | "ADMIN";
+        /**
+         * @description Nuovo stato dell'ordine.
+         * @enum {string}
+         */
+        OrderStatus: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
         ErrorModel: {
             message: string;
         };
@@ -277,6 +287,74 @@ export interface components {
              * @example 1688612539479
              */
             timestamp: number;
+        };
+        Order: {
+            /** @description ID univoco dell'ordine. */
+            readonly id?: number;
+            /** @description ID dell'utente che ha effettuato l'ordine. */
+            readonly UserId?: number;
+            /**
+             * Format: date-time
+             * @description Data e ora in cui è stato effettuato l'ordine.
+             */
+            readonly orderDate?: string;
+            /**
+             * Format: float
+             * @description Importo totale dell'ordine.
+             */
+            readonly totalAmount?: number;
+            /**
+             * @description Stato attuale dell'ordine.
+             * @enum {string}
+             */
+            readonly orderStatus?: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+            /** @description Indirizzo di spedizione. */
+            shippingAddress: string;
+            /** @description Indirizzo di fatturazione. */
+            billingAddress: string;
+            /** @description Metodo di pagamento utilizzato. */
+            paymentMethod: string;
+            /** @description ID della transazione di pagamento (se applicabile). */
+            readonly transactionId?: string | null;
+            /**
+             * Format: date-time
+             * @description Data e ora di creazione dell'ordine.
+             */
+            readonly createdAt?: string;
+            /**
+             * Format: date-time
+             * @description Data e ora dell'ultimo aggiornamento dell'ordine.
+             */
+            readonly updatedAt?: string;
+        };
+        OrderItem: {
+            /** @description ID univoco dell'elemento dell'ordine. */
+            readonly id?: number;
+            /** @description ID dell'ordine a cui appartiene l'elemento. */
+            readonly OrderId?: number;
+            /** @description ID del prodotto nell'elemento dell'ordine. */
+            ProductId: number;
+            /** @description Quantità del prodotto nell'elemento dell'ordine. */
+            quantity: number;
+            /**
+             * Format: float
+             * @description Prezzo unitario del prodotto al momento dell'ordine.
+             */
+            unitPrice: number;
+        };
+        OrderWithItems: {
+            orderItems?: components["schemas"]["OrderItem"][];
+        } & components["schemas"]["Order"];
+        CreateOrderRequest: {
+            /** @description Indirizzo di spedizione. */
+            shippingAddress: string;
+            /** @description Indirizzo di fatturazione. */
+            billingAddress: string;
+            /** @description Metodo di pagamento utilizzato. */
+            paymentMethod: string;
+        };
+        UpdateOrderStatusRequest: {
+            orderStatus: components["schemas"]["OrderStatus"];
         };
         /** @description Product Model */
         Product: {
@@ -350,11 +428,6 @@ export interface components {
             /** @example Password1! */
             password: string;
         };
-        /**
-         * @description User Role Model
-         * @enum {string}
-         */
-        UserRole: "CUSTOMER" | "EMPLOYEE" | "ADMIN";
     };
     responses: {
         /** @description Bad request error (400) */

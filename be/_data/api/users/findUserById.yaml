@@ -2,6 +2,7 @@ paths:
   /user/{userId}:
     get:
       tags:
+        - admin
         - user
       summary: Finds user by ID.
       description: Returns a single user.

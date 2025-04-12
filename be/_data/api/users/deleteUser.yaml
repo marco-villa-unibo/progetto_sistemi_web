@@ -2,6 +2,7 @@ paths:
   /user/{userId}:
     delete:
       tags:
+        - admin
         - user
       summary: Deletes a user.
       description: Delete a user.

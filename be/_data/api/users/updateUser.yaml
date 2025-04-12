@@ -2,6 +2,7 @@ paths:
   /user:
     put:
       tags:
+        - admin
         - user
       summary: Update an existing user.
       description: Update an existing user by ID.

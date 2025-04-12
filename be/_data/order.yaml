@@ -1,0 +1,123 @@
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'ordine.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente che ha effettuato l'ordine.
+          readOnly: true
+        orderDate:
+          type: string
+          format: date-time
+          description: Data e ora in cui è stato effettuato l'ordine.
+          readOnly: true
+        totalAmount:
+          type: number
+          format: float
+          description: Importo totale dell'ordine.
+          readOnly: true
+        orderStatus:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - SHIPPED
+            - DELIVERED
+            - CANCELLED
+          description: Stato attuale dell'ordine.
+          readOnly: true
+        shippingAddress:
+          type: string
+          description: Indirizzo di spedizione.
+        billingAddress:
+          type: string
+          description: Indirizzo di fatturazione.
+        paymentMethod:
+          type: string
+          description: Metodo di pagamento utilizzato.
+        transactionId:
+          type: string
+          nullable: true
+          description: ID della transazione di pagamento (se applicabile).
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e ora di creazione dell'ordine.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data e ora dell'ultimo aggiornamento dell'ordine.
+          readOnly: true
+      required:
+        - shippingAddress
+        - billingAddress
+        - paymentMethod
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'elemento dell'ordine.
+          readOnly: true
+        OrderId:
+          type: integer
+          description: ID dell'ordine a cui appartiene l'elemento.
+          readOnly: true
+        ProductId:
+          type: integer
+          description: ID del prodotto nell'elemento dell'ordine.
+        quantity:
+          type: integer
+          description: Quantità del prodotto nell'elemento dell'ordine.
+          minimum: 1
+        unitPrice:
+          type: number
+          format: float
+          description: Prezzo unitario del prodotto al momento dell'ordine.
+      required:
+        - ProductId
+        - quantity
+        - unitPrice
+
+    OrderWithItems: # Rappresentazione dell'ordine con gli elementi inclusi
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Order'
+      properties:
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+
+    CreateOrderRequest: # Richiesta per creare un nuovo ordine
+      type: object
+      properties:
+        shippingAddress:
+          type: string
+          description: Indirizzo di spedizione.
+        billingAddress:
+          type: string
+          description: Indirizzo di fatturazione.
+        paymentMethod:
+          type: string
+          description: Metodo di pagamento utilizzato.
+      required:
+        - shippingAddress
+        - billingAddress
+        - paymentMethod
+
+    UpdateOrderStatusRequest: # Richiesta per aggiornare lo stato di un ordine (Admin)
+      type: object
+      properties:
+        orderStatus:
+          $ref: '#/components/schemas/OrderStatus'
+      required:
+        - orderStatus
