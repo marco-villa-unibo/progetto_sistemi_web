@@ -5,9 +5,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret'; // Assicurati di avere una chiave segreta forte nell'.env
+const JWT_DURATION = Number(process.env.JWT_DURATION) || 86400; // Scade dopo 86400 secondi (24 ore)
 
 export const generateToken = (payload: IUserJwtPayload): string => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' }); // Scade dopo 1 ora (personalizza la durata)
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_DURATION,
+  });
 };
 
 export const verifyToken = (token: string): IUserJwtPayload | null => {
