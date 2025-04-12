@@ -1,5 +1,5 @@
 paths:
-  /orders/{orderId}:
+  /order/{orderId}:
     get:
       tags:
         - orders
