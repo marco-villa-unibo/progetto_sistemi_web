@@ -61,8 +61,9 @@ ok - proteggere tutte le routes mancanti
 ok - refactor Product (service/controller)
 ok - refactor User (service/controller)
 ok - carrello
+ok - ordini
 
-- ordini
+- caricamento avatar per gli user
 - script e automazione primo lancio e seeding DB
 - test unitari
 - tet integrazione
