@@ -129,6 +129,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves all logged user's orders.
+         * @description Retrieves all logged user's orders.
+         */
+        get: operations["getAllOrders"];
+        put?: never;
+        /**
+         * Places a new order form logged user's cart.
+         * @description Places a new order form logged user's cart. Deletes the cart after creation.
+         */
+        post: operations["addOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/order/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a specific logged user's order.
+         * @description Retrieves an order by ID, giving that it belongs to the logged user.
+         */
+        get: operations["getOrderById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/order/{orderId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Updates order status (Admin only).
+         * @description Allows admins to update the status of a specific order
+         */
+        patch: operations["updateOrderStatus"];
+        trace?: never;
+    };
     "/product": {
         parameters: {
             query?: never;
@@ -316,16 +380,6 @@ export interface components {
             paymentMethod: string;
             /** @description ID della transazione di pagamento (se applicabile). */
             readonly transactionId?: string | null;
-            /**
-             * Format: date-time
-             * @description Data e ora di creazione dell'ordine.
-             */
-            readonly createdAt?: string;
-            /**
-             * Format: date-time
-             * @description Data e ora dell'ultimo aggiornamento dell'ordine.
-             */
-            readonly updatedAt?: string;
         };
         OrderItem: {
             /** @description ID univoco dell'elemento dell'ordine. */
@@ -692,6 +746,115 @@ export interface operations {
                     "application/json": components["schemas"]["HealthStatus"];
                 };
             };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getAllOrders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ordini recuperati con successo. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    addOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description Ordine creato con successo. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderWithItems"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            404: components["responses"]["NotFoundError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getOrderById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID dell'ordine da recuperare. */
+                orderId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ordine recuperato con successo. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderWithItems"];
+                };
+            };
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            404: components["responses"]["NotFoundError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    updateOrderStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID dell'ordine da aggiornare. */
+                orderId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOrderStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description Stato dell'ordine aggiornato con successo. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            404: components["responses"]["NotFoundError"];
             500: components["responses"]["InternalServerError"];
         };
     };
