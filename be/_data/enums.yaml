@@ -1,0 +1,31 @@
+components:
+  schemas:
+    Category:
+      description: Category Model
+      type: string
+      enum:
+        - 'ORTOFRUTTA'
+        - 'SURGELATI'
+        - 'BANCO'
+        - 'ELETTRONICA'
+        - 'CASA'
+        - 'SURGELATI'
+        - 'LIQUORI'
+
+    UserRole:
+      description: User Role Model
+      type: string
+      enum:
+        - 'CUSTOMER'
+        - 'EMPLOYEE'
+        - 'ADMIN'
+
+    OrderStatus:
+      description: Nuovo stato dell'ordine.
+      type: string
+      enum:
+        - PENDING
+        - PROCESSING
+        - SHIPPED
+        - DELIVERED
+        - CANCELLED

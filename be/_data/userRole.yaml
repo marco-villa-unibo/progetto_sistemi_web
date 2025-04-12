@@ -1,9 +1,0 @@
-components:
-  schemas:
-    UserRole:
-      description: User Role Model
-      type: string
-      enum:
-        - 'CUSTOMER'
-        - 'EMPLOYEE'
-        - 'ADMIN'
