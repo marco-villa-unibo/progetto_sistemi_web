@@ -2,6 +2,7 @@ import { createEnumObjectFromType } from '../../utils/helpers';
 import { components } from '../schemas';
 
 // ORDER
+export type OrderDTO = components['schemas']['Order'];
 export type OrderItemDTO = components['schemas']['OrderItem'];
 export type OrderWithItemsDTO = components['schemas']['OrderWithItems'];
 export type CreateOrderRequestDTO = components['schemas']['CreateOrderRequest'];
