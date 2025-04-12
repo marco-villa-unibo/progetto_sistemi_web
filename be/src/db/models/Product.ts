@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { ProductDTO } from '../../api/types';
 import { sequelizeConnection } from '../dbConfig';
-import { CategoryDTO, CategoryEnum } from '../../api/types/categoryDto';
+import { CategoryDTO, CategoryEnum } from '../../api/types';
 import { User } from '.';
 
 /**
