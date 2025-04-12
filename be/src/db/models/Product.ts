@@ -1,7 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import { ProductDTO } from '../../api/types';
 import { sequelizeConnection } from '../dbConfig';
-import { CategoryDTO, CategoryEnum } from '../../api/types';
+import { CategoryDTO, CategoryEnum, ProductDTO } from '../../api/types';
 import { User } from '.';
 
 /**
@@ -95,8 +94,8 @@ Product.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users', // Nome della tabella di riferimento (solitamente in PascalCase)
-        key: 'id', // Nome della colonna di riferimento nella tabella Users
+        model: 'Users', // Nome della tabella di riferimento
+        key: 'id', // Nome della colonna di riferimento
       },
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',

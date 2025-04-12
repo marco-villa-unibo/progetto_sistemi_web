@@ -16,16 +16,18 @@ export const authorize = (roles: UserRoleDTO[]) => {
   };
 };
 
-// Middleware specifici per i ruoli comuni:
+// Lascia accedere solo admin
 export const isAdmin = authorize([UserRoleEnum.ADMIN]);
 
+// Lascia accedere employee o admin
 export const isEmployee = authorize([
   UserRoleEnum.EMPLOYEE,
   UserRoleEnum.ADMIN,
-]); // Gli employee possono accedere se sono employee O admin
+]);
 
+// Lascia accedere customer o employee o admin (tutti, basta avere JWT valido)
 export const isCustomer = authorize([
   UserRoleEnum.CUSTOMER,
   UserRoleEnum.EMPLOYEE,
   UserRoleEnum.ADMIN,
-]); // I customer possono accedere se sono customer, employee O admin
+]);

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, isCustomer } from '../middlewares';
+import { authenticate } from '../middlewares';
 import {
   addItem,
   clearUserCart,
@@ -37,7 +37,7 @@ export const cartRouter = Router();
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-cartRouter.get('/', authenticate, isCustomer, getUserCart);
+cartRouter.get('/', authenticate, getUserCart);
 
 /**
  * @openapi
@@ -58,7 +58,7 @@ cartRouter.get('/', authenticate, isCustomer, getUserCart);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-cartRouter.delete('/', authenticate, isCustomer, clearUserCart);
+cartRouter.delete('/', authenticate, clearUserCart);
 
 //////////////////////
 // Cart/Item routes //
@@ -99,7 +99,7 @@ cartRouter.delete('/', authenticate, isCustomer, clearUserCart);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-cartRouter.post('/items', authenticate, isCustomer, addItem);
+cartRouter.post('/items', authenticate, addItem);
 
 /**
  * @openapi
@@ -143,7 +143,7 @@ cartRouter.post('/items', authenticate, isCustomer, addItem);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-cartRouter.put('/items/:id', authenticate, isCustomer, updateQuantity);
+cartRouter.put('/items/:id', authenticate, updateQuantity);
 
 /**
  * @openapi
@@ -173,4 +173,4 @@ cartRouter.put('/items/:id', authenticate, isCustomer, updateQuantity);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-cartRouter.delete('items/:id', authenticate, isCustomer, removeItem);
+cartRouter.delete('items/:id', authenticate, removeItem);
