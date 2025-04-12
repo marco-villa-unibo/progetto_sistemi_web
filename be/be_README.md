@@ -60,8 +60,8 @@ ok - differenziare permessi auth per ruoli
 ok - proteggere tutte le routes mancanti
 ok - refactor Product (service/controller)
 ok - refactor User (service/controller)
+ok - carrello
 
-- carrello
 - ordini
 - script e automazione primo lancio e seeding DB
 - test unitari

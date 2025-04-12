@@ -12,9 +12,9 @@
     ok - NOTE: user: schema, path
     ok - TODO: implementare strutture yaml corrette 
     ok - TODO: aggiungere USER
-    // TODO: aggiungere CART
-    // TODO: aggiungere ORDER
-    // TODO: aggiungere restrizioni input per campi (es. username not empty..)
-    // TODO: script generazione automatica "shop.yaml" per front-end
+    ok - TODO: aggiungere CART
+    ok - TODO: script generazione automatica "shop.yaml" per front-end
     ok - TODO: trasformare categoria in schema enum separato 
     ok - TODO: trasformare userRole in schema enum separato 
+    ok - TODO: aggiungere restrizioni input per campi (es. username not empty..)
+    // TODO: aggiungere ORDER
