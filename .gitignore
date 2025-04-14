@@ -27,3 +27,4 @@ be/public/avatars/*
 
 # EXCLUDE
 !.gitkeep
+be/coverage

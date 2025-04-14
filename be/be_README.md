@@ -67,3 +67,4 @@ ok - ordini
 - script e automazione primo lancio e seeding DB
 - test unitari
 - tet integrazione
+- documentazione

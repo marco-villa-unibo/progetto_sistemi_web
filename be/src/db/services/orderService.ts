@@ -50,7 +50,7 @@ export const createOrderFromCart = async (
         OrderId: newOrder.id,
         ProductId: cartItem.ProductId,
         quantity: cartItem.quantity,
-        unitPrice: parseFloat(product.price),
+        unitPrice: product.price,
       });
       totalAmount += orderItem.quantity * orderItem.unitPrice;
       orderItems.push(orderItem);
