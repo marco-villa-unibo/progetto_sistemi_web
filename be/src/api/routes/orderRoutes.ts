@@ -112,7 +112,6 @@ orderRouter.get('/:orderId', authenticate, getOrder);
  * /order/{orderId}/status:
  *   patch:
  *     tags:
- *       - admin
  *       - orders
  *     summary: Updates order status (Admin only).
  *     description: Allows admins to update the status of a specific order
