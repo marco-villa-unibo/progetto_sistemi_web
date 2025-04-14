@@ -303,7 +303,6 @@ paths:
   /order/{orderId}/status:
     patch:
       tags:
-        - admin
         - orders
       summary: Updates order status (Admin only).
       description: Allows admins to update the status of a specific order
@@ -843,10 +842,15 @@ components:
         category:
           $ref: '#/components/schemas/Category'
         price:
-          type: string
+          oneOf:
+            - type: string
+            - type: number
+              format: float
           example: 9.99
         quantity:
-          type: string
+          oneOf:
+            - type: string
+            - type: integer
           example: 10
     ProductInput:
       description: Product Model Input
@@ -878,10 +882,7 @@ components:
       type: object
       required:
         - username
-        - firstName
-        - lastName
         - email
-        - address
       properties:
         username:
           type: string
