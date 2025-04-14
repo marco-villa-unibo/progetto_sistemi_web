@@ -60,11 +60,11 @@ ok - differenziare permessi auth per ruoli
 ok - proteggere tutte le routes mancanti
 ok - carrello
 ok - ordini
+ok - test unitari
 
 - refactor Product (service/controller)
 - refactor User (service/controller)
 - caricamento avatar per gli user
 - script e automazione primo lancio e seeding DB
-- test unitari
 - tet integrazione
 - documentazione

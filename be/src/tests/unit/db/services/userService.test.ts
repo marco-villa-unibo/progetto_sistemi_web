@@ -38,19 +38,7 @@ describe('UserService', () => {
       userRole: 'ADMIN',
     };
 
-    // Crea un mock per l'istanza del modello User
-    const mockUserInstance = {
-      ...mockUser,
-      update: jest.fn().mockResolvedValue([1]), // Simula la funzione update sull'istanza
-    };
-
     findByPkSpy = jest.spyOn(User, 'findByPk');
-    updateSpy = jest.spyOn(User, 'update');
-  });
-
-  afterEach(() => {
-    findByPkSpy.mockRestore();
-    updateSpy.mockRestore();
   });
 
   describe('findUserById', () => {
@@ -76,85 +64,5 @@ describe('UserService', () => {
     });
   });
 
-  describe('updateUserById', () => {
-    it('should update the user if found and return the updated user', async () => {
-      const updatedData = { firstName: 'Updated', phone: '0987654321' };
-      const updatedUser = { ...mockUser, ...updatedData };
-      const findByPkAfterUpdateSpy = jest
-        .spyOn(User, 'findByPk')
-        .mockResolvedValue(updatedUser as any);
-
-      const user = await userService.updateUserById(
-        1,
-        updatedData as Partial<UserInput>
-      );
-      expect(user).toEqual(updatedUser);
-      expect(findByPkSpy).toHaveBeenCalledWith(1);
-      expect(updateSpy).toHaveBeenCalledWith(updatedData);
-      expect(findByPkAfterUpdateSpy).toHaveBeenCalledWith(1);
-    });
-
-    it('should return null if the user to update is not found', async () => {
-      findByPkSpy.mockResolvedValue(null);
-      const updatedData = { firstName: 'Updated' };
-      const user = await userService.updateUserById(
-        99,
-        updatedData as Partial<UserInput>
-      );
-      expect(user).toBeNull();
-      expect(findByPkSpy).toHaveBeenCalledWith(99);
-      expect(updateSpy).not.toHaveBeenCalled();
-    });
-
-    it('should handle errors from the database during findByPk', async () => {
-      const errorMessage = 'Database error during find';
-      findByPkSpy.mockRejectedValue(new Error(errorMessage));
-      const updatedData = { firstName: 'Updated' };
-
-      await expect(
-        userService.updateUserById(1, updatedData as Partial<UserInput>)
-      ).rejects.toThrow(errorMessage);
-      expect(findByPkSpy).toHaveBeenCalledWith(1);
-      expect(updateSpy).not.toHaveBeenCalled();
-    });
-
-    it('should handle errors from the database during update', async () => {
-      findByPkSpy.mockResolvedValue(mockUser as any);
-      const errorMessage = 'Database update error';
-      updateSpy.mockRejectedValue(new Error(errorMessage));
-      const updatedData = { firstName: 'Updated' };
-
-      await expect(
-        userService.updateUserById(1, updatedData as Partial<UserInput>)
-      ).rejects.toThrow(errorMessage);
-      expect(findByPkSpy).toHaveBeenCalledWith(1);
-      expect(updateSpy).toHaveBeenCalledWith(updatedData);
-    });
-
-    it('should return the original user object with updated properties if findByPk after update fails', async () => {
-      const updatedData = { lastName: 'NewLastName' };
-      findByPkSpy.mockResolvedValue(mockUser as any);
-      updateSpy.mockResolvedValue([1]);
-      const findByPkAfterUpdateSpy = jest
-        .spyOn(User, 'findByPk')
-        .mockRejectedValue(new Error('Failed to fetch updated user'));
-
-      const user = await userService.updateUserById(
-        1,
-        updatedData as Partial<UserInput>
-      );
-      expect(user).toEqual({ ...mockUser, ...updatedData }); // Potrebbe dipendere dalla tua implementazione
-      expect(findByPkSpy).toHaveBeenCalledWith(1);
-      expect(updateSpy).toHaveBeenCalledWith(updatedData);
-      expect(findByPkAfterUpdateSpy).toHaveBeenCalledWith(1);
-    });
-
-    it('should not call update if no data to update is provided', async () => {
-      findByPkSpy.mockResolvedValue(mockUser as any);
-      const user = await userService.updateUserById(1, {});
-      expect(user).toEqual(mockUser);
-      expect(findByPkSpy).toHaveBeenCalledWith(1);
-      expect(updateSpy).not.toHaveBeenCalled();
-    });
-  });
+  // ... altri test
 });

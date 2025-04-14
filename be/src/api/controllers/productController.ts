@@ -50,7 +50,6 @@ export const insertProduct = async (
     return next(new UnprocessableEntityError('Product image not provided'));
   }
 
-  // TODO: gestire validazione lato DB
   if (Number(price) <= 0 || Number(quantity) <= 0) {
     return next(new UnprocessableEntityError(`Product model fields not valid`));
   }

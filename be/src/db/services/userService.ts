@@ -38,5 +38,3 @@ export const fetchAllUsers = async (): Promise<UserOutput[]> => {
 //     ...((filters?.isDeleted || filters?.includeDeleted) && { paranoid: true }),
 //   });
 // };
-
-// TODO - cambio di ruolo di un user
