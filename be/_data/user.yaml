@@ -5,10 +5,7 @@ components:
       type: object
       required:
         - username
-        - firstName
-        - lastName
         - email
-        - address
       properties:
         username:
           type: string
