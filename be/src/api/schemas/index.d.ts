@@ -418,9 +418,9 @@ export interface components {
             pDescription: string;
             category: components["schemas"]["Category"];
             /** @example 9.99 */
-            price: string;
+            price: string | number;
             /** @example 10 */
-            quantity: string;
+            quantity: string | number;
         };
         /** @description Product Model Input */
         ProductInput: {
@@ -442,15 +442,15 @@ export interface components {
             /** @example 1 */
             username: string;
             /** @example John */
-            firstName: string;
+            firstName?: string;
             /** @example James */
-            lastName: string;
+            lastName?: string;
             /** @example test@example.com */
             email: string;
             /** @example 12345 */
             phone?: string;
             /** @example via Roma, 1 - Roma */
-            address: string;
+            address?: string;
         };
         /** @description User Model Input */
         UserInput: {

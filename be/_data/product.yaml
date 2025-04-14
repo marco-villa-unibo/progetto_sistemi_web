@@ -19,10 +19,15 @@ components:
         category:
           $ref: '#/components/schemas/Category'
         price:
-          type: string
+          oneOf:
+            - type: string
+            - type: number
+              format: float
           example: 9.99
         quantity:
-          type: string
+          oneOf:
+            - type: string
+            - type: integer
           example: 10
 
     ProductInput:

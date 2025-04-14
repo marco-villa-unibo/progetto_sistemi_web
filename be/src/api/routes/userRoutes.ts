@@ -10,8 +10,6 @@ import { isAdmin } from '../middlewares';
 
 export const userRouter = Router();
 
-// FIXME - refactor (in vista di signup login e jwt)
-
 /**
  * @openapi
  *  /user:

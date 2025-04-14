@@ -171,8 +171,9 @@ export const modifyProduct = async (
     if (!p) {
       return next(new NotFoundError(`Product not found for ID ${id}`));
     }
+    const r = await findProductById(+id);
 
-    res.status(200).send(p);
+    res.status(200).send(r);
   } catch (error) {
     return next(error);
   }

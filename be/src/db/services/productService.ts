@@ -10,16 +10,14 @@ export const createProduct = async (
 export const updateProductById = async (
   id: number,
   payload: Partial<ProductInput>
-): Promise<ProductOutput | null> => {
-  const [affectedRows, updatedProducts] = await Product.update(payload, {
+): Promise<number | null> => {
+  const updatedProducts = await Product.update(payload, {
     where: { id },
-    returning: true,
   });
 
-  if (affectedRows === 0) {
+  if (updatedProducts[0] === 0) {
     return null;
   }
-
   return updatedProducts[0];
 };
 

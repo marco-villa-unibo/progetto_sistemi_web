@@ -35,8 +35,8 @@ class Product
   public title!: string;
   public pDescription!: string;
   public category!: CategoryDTO;
-  public price!: string;
-  public quantity!: string;
+  public price!: number;
+  public quantity!: number;
   public imageUrl!: string;
   public UserId!: number;
 
