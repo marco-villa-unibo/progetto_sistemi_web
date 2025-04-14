@@ -7,7 +7,7 @@ const jestConfig: Config.InitialOptions = {
   moduleDirectories: ['node_modules', 'src'],
   testMatch: [
     '<rootDir>/src/tests/**/*.test.ts', // test unitari
-    '<rootDir>/tests/**/*.test.ts', // test integrazione
+    '<rootDir>/src/integration-tests/**/*.test.ts', // test integrazione
   ],
   // automock: true,
 };

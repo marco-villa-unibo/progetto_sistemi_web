@@ -16,7 +16,7 @@ const DB_PASS = process.env.DATABASE_PASS;
 
 export const sequelizeConnection = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
   host: DB_HOST,
-  dialect: DB_DRIVER,
+  dialect: 'mysql',
   logging: true, // differenziare ambienti dev - test
   retry: {
     max: 3,
