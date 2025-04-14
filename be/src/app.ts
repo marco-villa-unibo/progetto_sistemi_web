@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 
 import {
   addTimestamp,
@@ -39,6 +39,13 @@ export const get = () => {
     '/images',
     express.static(path.join(__dirname, process.env.IMAGE_UPLOAD_FOLDER!))
   );
+
+  // HOME DIRECTIONS
+  app.get('/', async (_req: Request, res: Response): Promise<void | any> => {
+    return res.status(200).send({
+      message: `Welcome to the SHOP API! \n Endpoints available at http://localhost:${PORT}/api/v1 or Swagger at http://localhost:${PORT}/api/v1/api-docs/`,
+    });
+  });
 
   // V1 ROUTES
   app.use('/api/v1', routes);
