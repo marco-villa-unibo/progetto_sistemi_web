@@ -8,7 +8,8 @@ export const updateUserById = async (
 
   if (!user) return null;
 
-  return await user.update(payload);
+  await user.update({ ...payload });
+  return user;
 };
 
 export const findUserById = async (id: number): Promise<UserOutput | null> => {

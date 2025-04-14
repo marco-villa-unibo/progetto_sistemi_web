@@ -81,7 +81,7 @@ userRouter.get('/', authenticate, isAdmin, getAllUsers);
  *        '500':
  *          $ref: '#/components/responses/InternalServerError'
  */
-userRouter.put('/', authenticate, isAdmin, modifyUser);
+userRouter.put('/:id', authenticate, isAdmin, modifyUser);
 
 /**
  * @openapi

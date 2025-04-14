@@ -479,7 +479,6 @@
     "/order/{orderId}/status": {
       "patch": {
         "tags": [
-          "admin",
           "orders"
         ],
         "summary": "Updates order status (Admin only).",

@@ -31,7 +31,7 @@ export interface UserOutput
   > {
   userRole: UserRoleDTO;
   passwordHash?: string;
-  token?: string; // TODO: gestire il login al momento della registrazione
+  token?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
