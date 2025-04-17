@@ -6,6 +6,7 @@ import {
 import { UserInput } from '../../db/models/User';
 import { BadRequestError, UnauthorizedError } from '../error';
 import { UserLoginDTO } from '../types';
+import { mailingService } from '@/src/utils/mail';
 
 export const register = async (
   req: Request,
@@ -17,6 +18,12 @@ export const register = async (
   if (!newUser) {
     return next(new BadRequestError(`User Already existing`));
   }
+  // Send confirmation e-mail to the user
+  // mailingService(
+  //   newUser.email,
+  //   'WELCOME to the Shop!',
+  //   '<h1>WELCOME</h1><br> You successfully subscribed to the Shop!'
+  // );
   res.status(201).send(newUser);
 };
 
