@@ -23,6 +23,12 @@ export const createOrder = async (
     const orderData: CreateOrderRequestDTO = req.body;
     const newOrder = await createOrderFromCart(userId, orderData);
     if (newOrder) {
+      // Send confirmation e-mail to the user
+      // mailingService(
+      //   newUser.email,
+      //   'New order placed',
+      //   '<h1>CONGRATULATIONS</h1><br> You successfully placed your order!'
+      // );
       res.status(201).send(newOrder);
     } else {
       next(new NotFoundError("Impossibile creare l'ordine dal carrello."));
