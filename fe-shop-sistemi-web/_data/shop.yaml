@@ -1,0 +1,1000 @@
+openapi: 3.0.4
+info:
+  title: On-Line Shop | Sistemi Web
+  description: |-
+    Back-End per lo store- progetto Sistemi web
+
+    Approccio "Design first" per favorire la divisione di ruoli tra back-end e front-end
+
+    Link utili:
+    - [Repository progetto](https://github.com/marco-villa-unibo/progetto_sistemi_web)
+  contact:
+    email: marco.villa13@studio.unibo.it
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: health
+    description: Health check
+  - name: product
+    description: gestione dei prodotti
+  - name: user
+    description: gestione degli user
+paths:
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register a new user.
+      description: Register a new user with CUSTOMER role.
+      operationId: register
+      requestBody:
+        description: Create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+        required: true
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login an existing user and get a JWT token.
+      description: Login a user.
+      operationId: login
+      requestBody:
+        description: Login an existing user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOutput'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /cart:
+    get:
+      tags:
+        - cart
+      summary: Retrieves logged user's cart.
+      description: Retrieves logged user's cart items.
+      operationId: getCart
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartWithItems'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - cart
+      summary: Deletes logged user's cart.
+      description: Removes all items in user's cart.
+      operationId: deleteCart
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Cart deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /cart/items:
+    post:
+      tags:
+        - cart items
+      summary: Adds an item to logged user's cart.
+      description: Adds an item and quantity to the cart.
+      operationId: addCartItem
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddItemToCartRequest'
+      responses:
+        '201':
+          description: Item added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartWithItems'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /cart/items/{cartItemId}:
+    put:
+      tags:
+        - cart items
+      summary: Updates item's quantity in logged user's cart.
+      description: Updates item's quantity in logged user's cart.
+      operationId: updateCartItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartItemId
+          required: true
+          description: ID dell'elemento del carrello da aggiornare.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCartItemQuantityRequest'
+      responses:
+        '200':
+          description: Item quantity successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartWithItems'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - cart items
+      summary: Deletes an item from logged user's cart.
+      description: Deletes an item from logged user's cart.
+      operationId: deleteCartItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartItemId
+          required: true
+          description: ID dell'elemento del carrello da rimuovere.
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Item deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /health:
+    get:
+      description: Health check endpoint for Shop API
+      operationId: healthCheck
+      tags:
+        - health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /order:
+    post:
+      tags:
+        - orders
+      summary: Places a new order form logged user's cart.
+      description: Places a new order form logged user's cart. Deletes the cart after creation.
+      operationId: addOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Ordine creato con successo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderWithItems'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - orders
+      summary: Retrieves all logged user's orders.
+      description: Retrieves all logged user's orders.
+      operationId: getAllOrders
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Ordini recuperati con successo.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /order/{orderId}:
+    get:
+      tags:
+        - orders
+      summary: Retrieves a specific logged user's order.
+      description: Retrieves an order by ID, giving that it belongs to the logged user.
+      operationId: getOrderById
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          description: ID dell'ordine da recuperare.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ordine recuperato con successo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderWithItems'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /order/{orderId}/status:
+    patch:
+      tags:
+        - orders
+      summary: Updates order status (Admin only).
+      description: Allows admins to update the status of a specific order
+      operationId: updateOrderStatus
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatusRequest'
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          description: ID dell'ordine da aggiornare.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stato dell'ordine aggiornato con successo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /product:
+    get:
+      tags:
+        - product
+      summary: Finds all products in the store.
+      description: Finds all products in the store.
+      operationId: findAllProducts
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductOutput'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - product
+      summary: Add a new product to the store.
+      description: Add a new product to the store, including image.
+      operationId: addProduct
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Create a new product in the store
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+        required: true
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductOutput'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /product/{productId}:
+    put:
+      tags:
+        - product
+      summary: Update an existing product.
+      description: Update an existing product by ID.
+      operationId: updateProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existing product in the store
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductOutput'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - product
+      summary: Finds product by ID.
+      description: Returns a single product.
+      operationId: findProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductOutput'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - product
+      summary: Deletes a product.
+      description: Delete a product.
+      operationId: deleteProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Product deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /user:
+    get:
+      tags:
+        - user
+      summary: Finds all users in the store.
+      description: Finds all users in the store.
+      operationId: findAllUsers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserOutput'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /user/{userId}:
+    put:
+      tags:
+        - user
+      summary: Update an existing user.
+      description: Update an existing user by ID.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existing user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOutput'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - user
+      summary: Finds user by ID.
+      description: Returns a single user.
+      operationId: findUserById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOutput'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - user
+      summary: Deletes a user.
+      description: Delete a user.
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: User deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    CartWithItems:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco del carrello.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente a cui appartiene il carrello.
+          readOnly: true
+        cartItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+      required:
+        - UserId
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'elemento del carrello.
+          readOnly: true
+        CartId:
+          type: integer
+          description: ID del carrello a cui appartiene l'elemento.
+          readOnly: true
+        ProductId:
+          type: integer
+          description: ID del prodotto nell'elemento del carrello.
+        quantity:
+          type: integer
+          description: Quantità del prodotto nell'elemento del carrello.
+          minimum: 1
+      required:
+        - ProductId
+        - quantity
+    AddItemToCartRequest:
+      type: object
+      properties:
+        ProductId:
+          type: integer
+          description: ID del prodotto da aggiungere.
+        quantity:
+          type: integer
+          description: Quantità da aggiungere.
+          minimum: 1
+      required:
+        - ProductId
+        - quantity
+    UpdateCartItemQuantityRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          description: Nuova quantità.
+          minimum: 1
+      required:
+        - quantity
+    Category:
+      description: Category Model
+      type: string
+      enum:
+        - ORTOFRUTTA
+        - SURGELATI
+        - BANCO
+        - ELETTRONICA
+        - CASA
+        - SURGELATI
+        - LIQUORI
+    UserRole:
+      description: User Role Model
+      type: string
+      enum:
+        - CUSTOMER
+        - EMPLOYEE
+        - ADMIN
+    OrderStatus:
+      description: Nuovo stato dell'ordine.
+      type: string
+      enum:
+        - PENDING
+        - PROCESSING
+        - SHIPPED
+        - DELIVERED
+        - CANCELLED
+    ErrorModel:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    HealthStatus:
+      description: Health check status
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum:
+            - OK
+        timestamp:
+          type: integer
+          description: Number of milliseconds since Epoch time
+          example: 1688612539479
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'ordine.
+          readOnly: true
+        UserId:
+          type: integer
+          description: ID dell'utente che ha effettuato l'ordine.
+          readOnly: true
+        orderDate:
+          type: string
+          format: date-time
+          description: Data e ora in cui è stato effettuato l'ordine.
+          readOnly: true
+        totalAmount:
+          type: number
+          format: float
+          description: Importo totale dell'ordine.
+          readOnly: true
+        orderStatus:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - SHIPPED
+            - DELIVERED
+            - CANCELLED
+          description: Stato attuale dell'ordine.
+          readOnly: true
+        shippingAddress:
+          type: string
+          description: Indirizzo di spedizione.
+        billingAddress:
+          type: string
+          description: Indirizzo di fatturazione.
+        paymentMethod:
+          type: string
+          description: Metodo di pagamento utilizzato.
+        transactionId:
+          type: string
+          nullable: true
+          description: ID della transazione di pagamento (se applicabile).
+          readOnly: true
+      required:
+        - shippingAddress
+        - billingAddress
+        - paymentMethod
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID univoco dell'elemento dell'ordine.
+          readOnly: true
+        OrderId:
+          type: integer
+          description: ID dell'ordine a cui appartiene l'elemento.
+          readOnly: true
+        ProductId:
+          type: integer
+          description: ID del prodotto nell'elemento dell'ordine.
+        quantity:
+          type: integer
+          description: Quantità del prodotto nell'elemento dell'ordine.
+          minimum: 1
+        unitPrice:
+          type: number
+          format: float
+          description: Prezzo unitario del prodotto al momento dell'ordine.
+      required:
+        - ProductId
+        - quantity
+        - unitPrice
+    OrderWithItems:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Order'
+      properties:
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+    CreateOrderRequest:
+      type: object
+      properties:
+        shippingAddress:
+          type: string
+          description: Indirizzo di spedizione.
+        billingAddress:
+          type: string
+          description: Indirizzo di fatturazione.
+        paymentMethod:
+          type: string
+          description: Metodo di pagamento utilizzato.
+      required:
+        - shippingAddress
+        - billingAddress
+        - paymentMethod
+    UpdateOrderStatusRequest:
+      type: object
+      properties:
+        orderStatus:
+          $ref: '#/components/schemas/OrderStatus'
+      required:
+        - orderStatus
+    Product:
+      description: Product Model
+      type: object
+      required:
+        - title
+        - pDescription
+        - category
+        - price
+        - quantity
+      properties:
+        title:
+          type: string
+          example: Penna
+        pDescription:
+          type: string
+          example: Penna multicolore BIC
+        category:
+          $ref: '#/components/schemas/Category'
+        price:
+          oneOf:
+            - type: string
+            - type: number
+              format: float
+          example: 9.99
+        quantity:
+          oneOf:
+            - type: string
+            - type: integer
+          example: 10
+    ProductInput:
+      description: Product Model Input
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Product'
+      properties:
+        image:
+          type: string
+          format: binary
+          description: Image file for the product
+    ProductOutput:
+      description: Product Model Output
+      type: object
+      required:
+        - id
+        - imageUrl
+      allOf:
+        - $ref: '#/components/schemas/Product'
+      properties:
+        id:
+          type: number
+          example: 0
+        imageUrl:
+          type: string
+          description: Image path for the product
+    User:
+      description: User Model
+      type: object
+      required:
+        - username
+        - email
+      properties:
+        username:
+          type: string
+          example: 1
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: test@example.com
+        phone:
+          type: string
+          example: '12345'
+        address:
+          type: string
+          example: via Roma, 1 - Roma
+    UserInput:
+      description: User Model Input
+      type: object
+      required:
+        - password
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          example: Password1!
+        userRole:
+          $ref: '#/components/schemas/UserRole'
+    UserOutput:
+      description: User Model Output
+      type: object
+      required:
+        - id
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        token:
+          type: string
+          example: token
+    UserRegister:
+      description: User Model for registration
+      type: object
+      required:
+        - password
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          example: Password1!
+    UserLogin:
+      description: User Login Model
+      type: object
+      required:
+        - password
+      properties:
+        username:
+          type: string
+          example: 1
+        email:
+          type: string
+          example: test@example.com
+        password:
+          type: string
+          example: Password1!
+  responses:
+    BadRequestError:
+      description: Bad request error (400)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    UnauthorizedError:
+      description: Invalid credentials error (401)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    ForbiddenError:
+      description: Invalid credentials error (403)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    NotFoundError:
+      description: Not found error (404)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    UnprocessableEntityError:
+      description: Unprocessable entity error (422)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    InternalServerError:
+      description: Internal server error (500)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
