@@ -10,7 +10,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "format": "prettier --write src/",
-    "gen-api": "openapi-generator-cli generate -g  typescript-fetch -i _data/shop.yaml -o ./src/generated-sources/shop"
+    "gen-api": "./node_modules/.bin/openapi-generator-cli generate -g  typescript-fetch -i _data/shop.yaml -o ./src/generated-sources/shop"
   },
   "dependencies": {
     "@openapitools/openapi-generator-cli": "^2.20.0",
