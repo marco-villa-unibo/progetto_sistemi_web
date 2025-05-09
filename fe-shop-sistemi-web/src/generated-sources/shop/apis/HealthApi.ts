@@ -33,13 +33,21 @@ export class HealthApi extends runtime.BaseAPI {
     /**
      * Health check endpoint for Shop API
      */
-    async healthCheckRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HealthStatus>> {
+    async healthAdminRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HealthStatus>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
         const response = await this.request({
-            path: `/health`,
+            path: `/health/admin`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -51,8 +59,68 @@ export class HealthApi extends runtime.BaseAPI {
     /**
      * Health check endpoint for Shop API
      */
-    async healthCheck(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HealthStatus> {
-        const response = await this.healthCheckRaw(initOverrides);
+    async healthAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HealthStatus> {
+        const response = await this.healthAdminRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Health check endpoint for Shop API
+     */
+    async healthCustomerRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HealthStatus>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/health/customer`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => HealthStatusFromJSON(jsonValue));
+    }
+
+    /**
+     * Health check endpoint for Shop API
+     */
+    async healthCustomer(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HealthStatus> {
+        const response = await this.healthCustomerRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Health check endpoint for Shop API
+     */
+    async healthEmployeeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HealthStatus>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/health/employee`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => HealthStatusFromJSON(jsonValue));
+    }
+
+    /**
+     * Health check endpoint for Shop API
+     */
+    async healthEmployee(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HealthStatus> {
+        const response = await this.healthEmployeeRaw(initOverrides);
         return await response.value();
     }
 
