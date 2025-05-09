@@ -203,10 +203,10 @@ paths:
           $ref: '#/components/responses/NotFoundError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /health:
+  /health/customer:
     get:
       description: Health check endpoint for Shop API
-      operationId: healthCheck
+      operationId: healthCustomer
       tags:
         - health
       responses:
@@ -216,6 +216,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthStatus'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /health/employee:
+    get:
+      description: Health check endpoint for Shop API
+      operationId: healthEmployee
+      tags:
+        - health
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /health/admin:
+    get:
+      description: Health check endpoint for Shop API
+      operationId: healthAdmin
+      tags:
+        - health
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalServerError'
   /order:

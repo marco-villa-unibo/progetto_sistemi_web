@@ -112,7 +112,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/health": {
+    "/health/customer": {
         parameters: {
             query?: never;
             header?: never;
@@ -120,7 +120,41 @@ export interface paths {
             cookie?: never;
         };
         /** @description Health check endpoint for Shop API */
-        get: operations["healthCheck"];
+        get: operations["healthCustomer"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/health/employee": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Health check endpoint for Shop API */
+        get: operations["healthEmployee"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/health/admin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Health check endpoint for Shop API */
+        get: operations["healthAdmin"];
         put?: never;
         post?: never;
         delete?: never;
@@ -728,7 +762,7 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
-    healthCheck: {
+    healthCustomer: {
         parameters: {
             query?: never;
             header?: never;
@@ -746,6 +780,50 @@ export interface operations {
                     "application/json": components["schemas"]["HealthStatus"];
                 };
             };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    healthEmployee: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthStatus"];
+                };
+            };
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    healthAdmin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthStatus"];
+                };
+            };
+            401: components["responses"]["UnauthorizedError"];
             500: components["responses"]["InternalServerError"];
         };
     };
