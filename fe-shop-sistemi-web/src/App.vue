@@ -6,8 +6,8 @@ import ProductsComponent from './components/ProductsComponent.vue';
 
 <template>
   <!--<ProductsComponent />-->
- <RouterLink to="/products">Products</RouterLink>
-  
+ <!--<RouterLink to="/products">Products</RouterLink>-->
+ <RouterLink to="/registration">Registrati</RouterLink>
 
   <RouterView />
 </template>

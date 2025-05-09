@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const searchQuery = ref('');
+const sortOrder = ref<'asc' | 'desc'>('asc');
 // Lista dei prodotti
 const Products = ref( [
   {
@@ -145,6 +147,21 @@ const Products = ref( [
   }
 ]);
 
+import { computed } from 'vue';
+
+const filteredProducts = computed(() => {
+  return [...Products.value]
+    .filter(product =>
+      product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+    .sort((a, b) => {
+      return sortOrder.value === 'asc'
+        ? a.price - b.price
+        : b.price - a.price;
+    });
+});
+
 // Variabili reattive
 const showId = ref<number | null>(null);
 const show = ref(false);
@@ -180,7 +197,20 @@ function add() {
     justify-content: center;
     overflow: auto;" class="font">
     
-    <div v-for="product in Products" :key="product.id" style="width:25%">
+    <div style="width: 100%; text-align: center; margin: 20px 0;">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Cerca un prodotto..."
+          style="padding: 10px; width: 50%; border: 1px solid #ccc; border-radius: 4px;"
+        />
+        <select v-model="sortOrder" style="margin-left: 10px; padding: 10px;">
+          <option value="asc">Prezzo crescente</option>
+          <option value="desc">Prezzo decrescente</option>
+        </select>
+      </div>
+
+    <div v-for="product in filteredProducts" :key="product.id" style="width:25%">
       <button class="card" style="margin:10px; padding: 10px;" @click="selectItems(product.id)">
         <div class="nameSpace">{{ product.name }}</div>
         <div class="imageSpace">
