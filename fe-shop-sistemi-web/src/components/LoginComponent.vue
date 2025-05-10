@@ -1,5 +1,5 @@
 <template id="login-form">
-    <div class="login-wrapper">
+    <div class="open login-wrapper">
       <div class="login-left">
         <img height="180" src="../assets/DALL·E-2025-03-22-16.32 (3).png" srcr="https://preview.ibb.co/hUAr57/bar_bg.jpg">
       </div>
@@ -7,11 +7,11 @@
         <div style="height: 100%; display: flex;flex-direction: column;justify-content: center;align-content: space-around;align-items: stretch;">
           <div class="h2">Login</div>
           <div class="form-group">
-            <input type="text" id="username" placeholder="Username" v-model="username">
+            <input type="text" id="username" placeholder="Username" v-model="setUsername">
             <label for="username">Username</label>    
           </div>
           <div class="form-group">
-            <input type="password" id="Password" placeholder="Password" v-model="password">
+            <input type="password" id="Password" placeholder="Password" v-model="setPassword">
             <label for="Password">Password</label>    
           </div>
           <div class="checkbox-container">
@@ -24,7 +24,7 @@
               </div>
               <div>
                   <p>Non hai un'account?</p>
-                  <RouterLink to="/registration" id="Register" class="btn center-icon" @click="register()">Registrati</RouterLink>
+                  <RouterLink to="/registration" id="Register" class="btn center-icon">Registrati</RouterLink>
               </div> 
           </div>
         </div>
@@ -32,47 +32,49 @@
     </div>
   </template>
   
-  <script>
+  <script setup lang="ts">
   import axios from "axios";
-  export default {
-    name: "LoginForm",
-    template: "#login-form",
-    data() {
-      return {
-        rememberMe: false,
-        username: "",
-        password: ""
+  import type {UserLogin} from "../generated-sources/shop/models/UserLogin";
+  import type { LoginRequest } from "../generated-sources/shop/apis/AuthApi";
+  import { AuthApi} from "../generated-sources/shop/apis/AuthApi";
 
-      };
-    },
-    beforeMount() {
+  var setUsername:string
+  var setPassword:string
+  var email
+  var rememberMe:boolean
+  const authApi = new AuthApi
+  function beforeMount() {
       let init = 1000;
-      var check = checkCookie()
-      if (check==false){
-        console.log("Utente non loggato")
-      }
+      //var check = checkCookie()
+      //if (check==false){
+      //  console.log("Utente non loggato")
+      //}
       
       setTimeout(function() {
-        document.querySelector(".login-wrapper").classList.toggle("open");
+        document.querySelector(".login-wrapper")!.classList.toggle("open");
         init = 300;
       }, init);
-    },
-    methods: {
-      isRememberMe() {
-        return this.rememberMe === true;
-      },
-      login() {
+    }
+  function login() {
+
         //we should handle errors in a more scalabe way, but this works for now
-  
+        var user:UserLogin = {username : setUsername,
+          password : setPassword}
+        var userLogin:LoginRequest = {userLogin: user}
+        authApi.loginRaw(userLogin)
+        
         //alert(this.username + " " + this.password + " " + this.rememberMe);
-        if (this.username == "user" && this.password=="pass" ){
-          console.log()
-          this.$emit('logged', true)
-          setCookie(this.username, this.password, 1)
-        }
-        else {
-          this.$emit('logged', false)
-        }
+    //    axios.post("/api/v1/auth/login", { //Per problemi di cors impostato indirizzo backend nel file vite.config.ts
+    //  username: this.username,
+    //  password: this.password
+    //})
+    //.then(response => {
+    //  const token = response.data.token;
+    //  const userInfo = response.data.user;
+    //  this.$router.push('/Products') 
+    //}).catch(err => {
+    //        alert(err);
+    //      });
         //axios
         //  .post("", {
         //    body: {
@@ -89,60 +91,8 @@
         //  });
         //  
         //  this.$emit('logged', true)
-      },
-      register() {
-        console.log("andando alla registrazione")
-        this.$emit('clicked', false)
       }
-    }
-  };
-
-  function setCookie(cname, cvalue, exdays) {
-  console.log(cname)
-  console.log(cvalue)
-  const d = new Date();
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  let expires = "expires="+ d.toUTCString();
-  document.cookieUsername = cname
-  document.cookiePassword = cvalue
-  console.log("Cookies")
-  console.log(document.cookie)
-  }
-
-  function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  console.log(decodedCookie)
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    console.log(c)
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
-  function checkCookie() {
-  let cookieUsername = getCookie("username");
-  let cookiePassword = getCookie("password");
-  console.log(cookieUsername)
-  console.log(cookiePassword)
-  if (cookieUsername != "" && cookiePassword != "") {
-    console.log("Prima di assegnare username e password")
-    this.username = cookieUsername
-    this.password = cookiePassword
-    console.log("Prima di chiamare login")
-    login()
-  }
-  else {
-    return false
-  }
-}
+    
   </script>
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->

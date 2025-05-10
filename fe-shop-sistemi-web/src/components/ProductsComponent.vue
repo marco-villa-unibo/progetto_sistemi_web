@@ -190,13 +190,6 @@ function add() {
 </script>
 
 <template>
-  <div style="width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
-    overflow: auto;" class="font">
-    
     <div style="width: 100%; text-align: center; margin: 20px 0;">
         <input
           type="text"
@@ -208,7 +201,14 @@ function add() {
           <option value="asc">Prezzo crescente</option>
           <option value="desc">Prezzo decrescente</option>
         </select>
-      </div>
+      </div>  
+  <div style="width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    overflow: auto;" class="font">
+    
 
     <div v-for="product in filteredProducts" :key="product.id" style="width:25%">
       <button class="card" style="margin:10px; padding: 10px;" @click="selectItems(product.id)">

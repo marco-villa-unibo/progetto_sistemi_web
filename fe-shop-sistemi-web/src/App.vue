@@ -5,15 +5,28 @@ import ProductsComponent from './components/ProductsComponent.vue';
 </script>
 
 <template>
+  <div style="display: flex; flex-direction: column;
+    align-items: center; height:100% !Important">
+      <div style="height: 50px; width: 100%">
+          <RouterLink to="/registration" tag="button">Registrati</RouterLink>
+          <RouterLink to="/login" tag="button">login</RouterLink>  
+          <RouterLink to="/CreateProduct" tag="button">Crea Prodotto</RouterLink>  
+      </div>
+      <div>
+          <RouterLink to="/products" tag="button">Products</RouterLink>
+      </div>
+      <RouterView ></RouterView>
+  </div>
   <!--<ProductsComponent />-->
  <!--<RouterLink to="/products">Products</RouterLink>-->
- <RouterLink to="/registration">Registrati</RouterLink>
+ <!--<RouterLink to="/registration">Registrati</RouterLink>-->
+ <!--<RouterLink to="/CreateProduct">Registrati</RouterLink>-->
 
-  <RouterView />
+  
 </template>
 
 <style scoped>
-header {
+.header {
   line-height: 1.5;
   max-height: 100vh;
 }
@@ -49,7 +62,7 @@ nav a:first-of-type {
 }
 
 @media (min-width: 1024px) {
-  header {
+  .header {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
@@ -59,7 +72,7 @@ nav a:first-of-type {
     margin: 0 2rem 0 0;
   }
 
-  header .wrapper {
+  .header .wrapper {
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;

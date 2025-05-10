@@ -11,11 +11,11 @@
             <label for="username">Username</label>    
           </div>
           <div class="form-group">
-              <input type="text" id="email" placeholder="Email" v-model="email" v-required>
+              <input type="text" id="email" placeholder="Email" v-model="email" required>
               <label for="email">Email</label>   
           </div>
           <div class="form-group">
-            <input type="password" id="Password" placeholder="Password" v-model="password" required>
+            <input type="password" id="password" placeholder="Password" v-model="password" required>
             <label for="Password">Password</label>    
           </div>
           <div class="form-group">
@@ -46,10 +46,13 @@
     template: "#register-form",
     data() {
       return {
+        firstname:"",
+        lastname:"",
         email:"",
         username: "",
         password: "",
-        checkPassword: ""
+        checkPassword: "",
+        address:"",
       };
     },
     beforeMount() {
@@ -66,21 +69,30 @@
       register() {
         //we should handle errors in a more scalabe way, but this works for now
   
-        alert(this.username + " " + this.password + " " + this.rememberMe);
+        
   
         axios
-          .post("", {
-            body: {
-              username: this.username,
-              password: this.password
-            }
-          })
+          .post("/api/v1/auth/register",
+          {
+              username:  this.username,
+              email: this.email,
+              password: this.password,
+              firstName: "prova1",
+              lastName: "prova0",
+              address:"prova" 
+            
+      },{
+            headers: {
+              "Content-Type":"application/json"
+            },
+          }, )
           .then(response => {
-            alert(response);
+            console.log(response.data)
+            console.log(response);
             //handle response and save JWT
           })
           .catch(err => {
-            alert(err);
+            console.log(err);
           });
       },
       login() {
