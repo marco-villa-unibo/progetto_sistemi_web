@@ -2,7 +2,6 @@ import express, { Application, Request, Response } from 'express';
 
 import {
   addTimestamp,
-  cors,
   errorHandler,
   logger,
   openApiValidator,
@@ -14,6 +13,7 @@ import dbInit from './db/init';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import path from 'path';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -24,7 +24,16 @@ const PORT = process.env.PORT;
 export const get = () => {
   const app: Application = express();
 
+  // CORS OPTIONS
+  const corsOptions = {
+    origin: 'http://localhost:5173',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
+
   // MIDDLEWARES
+  app.use(cors(corsOptions));
   app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
   app.use(express.json({ limit: '50mb' }));
   app.use(express.text());
@@ -32,7 +41,7 @@ export const get = () => {
   app.use(addTimestamp);
   app.use(logger);
   app.use(openApiValidator);
-  app.use(cors);
+  // app.use(cors);
 
   // STATIC SERVING
   app.use(
