@@ -62,12 +62,19 @@ export const insertProduct = async (
   }
 
   const newProd: ProductInput = {
-    ...req.body,
+    // ...req.body,
+    category: req.body.category,
+    pDescription: req.body.pDescription,
+    title: req.body.title,
+    quantity: Number(quantity),
+    price: Number(price),
     imageUrl: imagePath,
     UserId: user.id,
   };
+  console.log('newProd :>> ', newProd);
   try {
     const p: ProductOutput = await createProduct(newProd);
+    console.log('p :>> ', p);
     res.status(201).send(p);
   } catch (error) {
     return next(error);
