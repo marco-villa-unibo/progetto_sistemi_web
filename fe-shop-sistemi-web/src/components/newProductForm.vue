@@ -1,5 +1,5 @@
 <template>
-    <form> <!--@submit.prevent="handleSubmit" class="product-form"-->
+    <form @submit.prevent="uploadProduct" class="product-form">
       <div class="form-group">
         <label for="title">Titolo</label>
         <input id="title" v-model="form.title" required />
@@ -12,7 +12,15 @@
   
       <div class="form-group">
         <label for="category">Categoria</label>
-        <input id="category" v-model="form.category" required />
+
+        <select name="Category" id="category" v-model="form.category" required>
+          <option value=0>Banco</option>
+          <option value="ORTOFRUTTA">Ortofrutta</option>
+          <option value="SURGELATI">SURGELATI</option>
+          <option value="CASA">CASA</option>
+          <option value="ELETTRONICA">ELETTRONICA</option>
+          <option value="LIQUORI">LIQUORI</option>
+        </select>
       </div>
   
       <div class="form-group">
@@ -27,17 +35,18 @@
   
       <div class="form-group">
         <label for="imageUrl">URL Immagine</label>
-        <input id="imageUrl" type="url" v-model="form.imageUrl" />
+        <input id="imageUrl" type="file" accept="image/jpeg, image/png" @change="uploadImage"/>
       </div>
   
-      <button @click="uploadProduct">Salva</button>
+      <button type="submit" @click="uploadProduct">Salva</button>
     </form>
   </template>
   
   <script setup lang="ts">
   import { reactive, watch, toRefs } from 'vue'
   import axios from "axios";
-  //import { emit } from 'vue'
+  import { setToken, getToken, removeToken } from "../generated-sources/shop/apis/AuthApi";
+
   
   interface Product {
     title: string
@@ -48,13 +57,13 @@
     imageUrl: string
   }
   
-  // Props
+
   const props = defineProps<{
     modelValue?: Product
   }>()
   
-  // Stato interno
-  const form = reactive<Product>({
+
+  const form = reactive<Product> ({
     title: '',
     pDescription: '',
     category: '',
@@ -63,27 +72,40 @@
     imageUrl: ''
   })
   
-  // Sincronizza dati in ingresso (edit)
-  watch(
-    () => props.modelValue,
-    (value) => {
-      if (value) Object.assign(form, value)
-    },
-    { immediate: true }
-  )
-  function uploadProduct(){
-        console.log(this.Product.title)
-        //alert(this.username + " " + this.password + " " + this.rememberMe);
-    //    axios.post("/api/v1/auth/product", { //Per problemi di cors impostato indirizzo backend nel file vite.config.ts
-    //  username: this.Product.title,
-    //  password: this.Product.title
-    //})
-    //.then(response => {
-    //  const token = response.data.token;
-    //  const userInfo = response.data.user;
-    //  this.$router.push('/Products') 
-    //})
+
+  function uploadImage(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return;
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    form.imageUrl = e.target?.result as string
+    console.log('Image base64:', form.imageUrl)
   }
+  reader.readAsDataURL(file)
+}
+
+  function uploadProduct(){
+    console.log(form.title)
+    var access_token = getToken()
+    axios.defaults.headers.common['Authorization'] = `Bearer  ${access_token}`
+    axios.post("/api/v1/product", { //Per problemi di cors impostato indirizzo backend nel file vite.config.ts
+      
+        title: form.title,
+        pDescription: form.pDescription,
+        category: form.category,
+        price: form.price,
+        quantity: form.quantity,
+        imageUrl: form.imageUrl
+    })
+    .then(response => {
+      console.log('product added successfully:', response.data); 
+    }).catch(err => {
+            alert(err);
+    });
+  }
+
   </script>
   
   <style scoped>

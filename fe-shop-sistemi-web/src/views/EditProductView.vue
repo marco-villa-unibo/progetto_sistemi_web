@@ -22,7 +22,7 @@ var isEdit:Boolean =  false
   const route = useRoute()
   const router = useRouter()
   
-  // Simulazione: caricamento prodotto da ID (in caso di modifica)
+
   const isEdit = route.params.id !== undefined
   const product = ref(
     isEdit
@@ -45,17 +45,14 @@ var isEdit:Boolean =  false
         }
   )
   
-  // Salvataggio (creazione o aggiornamento)
+
   function handleSubmit(newProduct: any) {
     if (isEdit) {
       console.log('Aggiorna prodotto:', newProduct)
-      // Chiamata API update qui...
     } else {
       console.log('Crea nuovo prodotto:', newProduct)
-      // Chiamata API create qui...
     }
   
-    // Dopo il salvataggio, torna alla lista prodotti
     router.push('/prodotti')
   }
   </script>

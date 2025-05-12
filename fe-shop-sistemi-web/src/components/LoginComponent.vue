@@ -36,66 +36,50 @@
   import axios from "axios";
   import type {UserLogin} from "../generated-sources/shop/models/UserLogin";
   import type { LoginRequest } from "../generated-sources/shop/apis/AuthApi";
-  import { AuthApi} from "../generated-sources/shop/apis/AuthApi";
+  import { AuthApi, setToken, getToken, removeToken } from "../generated-sources/shop/apis/AuthApi";
+  import { useRouter } from 'vue-router';
+  import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { before } from "node:test";
 
+  const router = useRouter();
   var setUsername:string
   var setPassword:string
   var email
   var rememberMe:boolean
   const authApi = new AuthApi
+  onMounted(() => {
+    beforeMount()
+  })
   function beforeMount() {
       let init = 1000;
-      //var check = checkCookie()
-      //if (check==false){
-      //  console.log("Utente non loggato")
-      //}
+
       
       setTimeout(function() {
-        document.querySelector(".login-wrapper")!.classList.toggle("open");
+        document.querySelector(".login-wrapper")!.classList.toggle("closed");
         init = 300;
       }, init);
     }
+
   function login() {
 
-        //we should handle errors in a more scalabe way, but this works for now
-        var user:UserLogin = {username : setUsername,
-          password : setPassword}
-        var userLogin:LoginRequest = {userLogin: user}
-        authApi.loginRaw(userLogin)
-        
-        //alert(this.username + " " + this.password + " " + this.rememberMe);
-    //    axios.post("/api/v1/auth/login", { //Per problemi di cors impostato indirizzo backend nel file vite.config.ts
-    //  username: this.username,
-    //  password: this.password
-    //})
-    //.then(response => {
-    //  const token = response.data.token;
-    //  const userInfo = response.data.user;
-    //  this.$router.push('/Products') 
-    //}).catch(err => {
-    //        alert(err);
-    //      });
-        //axios
-        //  .post("", {
-        //    body: {
-        //      username: this.username,
-        //      password: this.password
-        //    }
-        //  })
-        //  .then(response => {
-        //    alert(response);
-        //    //handle response and save JWT
-        //  })
-        //  .catch(err => {
-        //    alert(err);
-        //  });
-        //  
-        //  this.$emit('logged', true)
+
+        axios.post("/api/v1/auth/login", { //Per problemi di cors impostato indirizzo backend nel file vite.config.ts
+      username: setUsername,
+      password: setPassword
+    })
+    .then(response => {
+      setToken(response.data.token)
+      window.dispatchEvent(new Event('token-changed'))
+      const userInfo = response.data.user;
+      router.push('/Products')
+    }).catch(err => {
+            alert(err);
+          });
       }
     
   </script>
   
-  <!-- Add "scoped" attribute to limit CSS to this component only -->
+  
   <style>
   * {
     box-sizing: border-box;
@@ -131,19 +115,19 @@
     font-family: inherit;
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none;
     border: 0;
     font-size: 16px;
     color: #000;
     border-radius: 0;
     border: 0;
+    appearance: None
   }
-  
+
   .center-icon{
     display: flex;
     align-items: center;
   } 
-
+  
   input[type="text"],
   input[type="password"] {
     width: 100%;

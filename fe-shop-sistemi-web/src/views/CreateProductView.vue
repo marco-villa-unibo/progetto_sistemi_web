@@ -8,15 +8,6 @@
   <script setup lang="ts">
   import newProductForm from '../components/newProductForm.vue'
   
-  function createProduct(product: any) {
-    console.log('Prodotto da creare:', product)
-  
-    // Esempio: chiamata API simulata
-    // await api.post('/products', product)
-  
-    // Redirect o messaggio
-    alert('Prodotto creato con successo!')
-  }
   </script>
   
   <style scoped>

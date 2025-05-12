@@ -1,28 +1,61 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import ProductsComponent from './components/ProductsComponent.vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { getToken, removeToken } from "./generated-sources/shop/apis/AuthApi"
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+
+const token = ref<string | null>(null)
+
+const checkToken = () => {
+  token.value = getToken()
+}
+
+const role = computed(() => {
+  if (token.value) {
+    try {
+      const payload = JSON.parse(atob(token.value.split('.')[1]))
+      return payload.role
+    } catch (e) {
+      return null
+    }
+  }
+  return null
+})
+
+onMounted(() => {
+  checkToken()
+  window.addEventListener('token-changed', checkToken)
+})
+
+
+onUnmounted(() => {
+  window.removeEventListener('token-changed', checkToken)
+})
+
+
+const logout = () => {
+  removeToken()
+  token.value = null
+  window.dispatchEvent(new Event('token-changed'))
+  router.push('/Products')
+}
 </script>
 
 <template>
   <div style="display: flex; flex-direction: column;
     align-items: center; height:100% !Important">
-      <div style="height: 50px; width: 100%">
-          <RouterLink to="/registration" tag="button">Registrati</RouterLink>
-          <RouterLink to="/login" tag="button">login</RouterLink>  
-          <RouterLink to="/CreateProduct" tag="button">Crea Prodotto</RouterLink>  
-      </div>
-      <div>
-          <RouterLink to="/products" tag="button">Products</RouterLink>
-      </div>
-      <RouterView ></RouterView>
+    <div style="height: 50px; width: 100%">
+      <RouterLink to="/login" tag="button">Login</RouterLink>  
+      <RouterLink v-if="token && role !== 'CUSTOMER'" to="/CreateProduct" tag="button">Crea Prodotto</RouterLink>  
+      <RouterLink v-if="token" to="/Profile" tag="button">Profilo</RouterLink>  
+      <RouterLink to="/products" tag="button">Products</RouterLink>
+      <RouterLink v-if="token && role !== 'CUSTOMER' && role !== 'EMPLOYEE'" to="/Users" tag="button">Utenti</RouterLink>  
+      <button @click="logout" >Logout</button>
+    </div>
+    <RouterView />
   </div>
-  <!--<ProductsComponent />-->
- <!--<RouterLink to="/products">Products</RouterLink>-->
- <!--<RouterLink to="/registration">Registrati</RouterLink>-->
- <!--<RouterLink to="/CreateProduct">Registrati</RouterLink>-->
-
-  
 </template>
 
 <style scoped>

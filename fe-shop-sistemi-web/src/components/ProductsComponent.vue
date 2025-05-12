@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import EditProductForm from './editProductForm.vue';
+
 const searchQuery = ref('');
 const sortOrder = ref<'asc' | 'desc'>('asc');
 // Lista dei prodotti
@@ -148,6 +150,9 @@ const Products = ref( [
 ]);
 
 import { computed } from 'vue';
+import axios from "axios";
+import { getToken } from "../generated-sources/shop/apis/AuthApi";
+import { onMounted} from 'vue'
 
 const filteredProducts = computed(() => {
   return [...Products.value]
@@ -162,23 +167,55 @@ const filteredProducts = computed(() => {
     });
 });
 
-// Variabili reattive
+const token = ref<string | null>(null)
+
+const checkToken = () => {
+  token.value = getToken()
+}
+
+onMounted(() => {
+  checkToken()
+  window.addEventListener('token-changed', checkToken)
+})
+
+
+const role = computed(() => {
+  if (token.value) {
+    try {
+      const payload = JSON.parse(atob(token.value.split('.')[1]))
+      return payload.role
+    } catch (e) {
+      return null
+    }
+  }
+  return null
+})
+
+
 const showId = ref<number | null>(null);
 const show = ref(false);
 const quantity = ref<number>(0);
+const edit = ref<boolean>(false);
 
-// Funzione per aprire il dettaglio del prodotto
+
 function selectItems(id: number) {
   console.log("ID selezionato:", id);
   showId.value = id;
   show.value = true;
 }
 
-// Funzione per chiudere il div
+
 function closeDetails() {
   show.value = false;
   showId.value = null;
 }
+
+function editProduct() {
+    edit.value = true;
+}
+
+var access_token = getToken()
+axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}` 
 
 function remove() {
     this.quantity -= 1;
@@ -223,42 +260,98 @@ function add() {
       </button>
     </div>
 
-    <!-- Div per il dettaglio del prodotto -->
+    
     <div v-if="show" class="details-popup font"> 
-      <button class="close-btn" @click="closeDetails"><i class="fa fa-window-close" aria-hidden="true"></i></button>
-      <div v-if="showId !== null">
-        <h2 style="padding-bottom:10px">{{ Products.find(p => p.id === showId)?.name }}</h2>
-        <div style="padding-bottom:20px; ">
-            <img :src="Products.find(p => p.id === showId)?.image" style="box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+        <button class="close-btn" @click="closeDetails"><i class="fa fa-window-close" aria-hidden="true"></i></button>
+        <div v-if="showId !== null && edit == false">
+            <h2 style="padding-bottom:10px">{{ Products.find(p => p.id === showId)?.name }}</h2>
+            <div style="padding-bottom:20px; ">
+                <img :src="Products.find(p => p.id === showId)?.image" style="box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
   border-radius: 4px;" height="42%" width="42%" />
-        </div>
-        <div style="width: 100%;display: flex; flex-direction: column; align-items: center;">
-            <div style="width: 70%; display: flex;">
-                <b>Descrizione:</b>
             </div>
-            <div style="width: 70%; display: flex;">
-                <p>{{ Products.find(p => p.id === showId)?.description }}</p>
-            </div>
-        </div>
-        <div>
-            <p><b>Prezzo:</b> {{ Products.find(p => p.id === showId)?.price }}€</p>
-        </div>
-        <div style="display: flex; flex-direction:row;  justify-content: center;">
-            <div style="padding-right:10px">
-                <button @click="remove()">
-                    <i class="fa fa-minus">‌</i>
-                </button>
+            <div style="width: 100%;display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 70%; display: flex;">
+                    <b>Descrizione:</b>
+                </div>
+                <div style="width: 70%; display: flex;">
+                    <p>{{ Products.find(p => p.id === showId)?.description }}</p>
+                </div>
             </div>
             <div>
-                {{quantity}}
+                <p><b>Prezzo:</b> {{ Products.find(p => p.id === showId)?.price }}€</p>
             </div>
-            <div style="padding-left:10px">
-                <button @click="add()">
-                    <i class="fa fa-plus">‌</i>
-                </button>
+            <div style="display: flex; flex-direction:row;  justify-content: center;">
+                <div style="padding-right:10px">
+                    <button @click="remove()">
+                        <i class="fa fa-minus">‌</i>
+                    </button>
+                </div>
+                <div>
+                    {{quantity}}
+                </div>
+                <div style="padding-left:10px">
+                    <button @click="add()">
+                        <i class="fa fa-plus">‌</i>
+                    </button>
+                </div>
+            </div>
+            <div v-if="token && role !== 'CUSTOMER'">
+                <button @click="editProduct()">Edit Product</button>
             </div>
         </div>
-      </div>
+        <div v-if="showId !== null && edit == true && token && role !== 'CUSTOMER'">
+            <div style="width: 100%;display: flex; flex-direction: column; align-items: center;">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>Titolo:</td>
+                        <td>
+                            <textarea id="title" > {{ Products.find(p => p.id === showId)?.name }}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Descrizione:</td>
+                        <td>
+                            <textarea id="description" >{{ Products.find(p => p.id === showId)?.description }}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nuovo Prezzo:</td>
+                        <td>
+                            <input type="number"></input>€
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Vecchio Prezzo:</td>
+                        <td>
+                            <p @value="Products.find(p => p.id === showId)?.price" type="number">{{ Products.find(p => p.id === showId)?.price }}€</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nuova Quantità:</td>
+                        <td>
+                            <input type="number"></input>€
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Vecchia Quantità:</td>
+                        <td>
+                            <p @value="Products.find(p => p.id === showId)?.price" type="number">{{ Products.find(p => p.id === showId)?.price }}€</p>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            <div style="padding-bottom:20px; ">
+                <img :src="Products.find(p => p.id === showId)?.image" style="box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;" height="42%" width="42%" />
+            </div>
+            <div>
+                <button> salva </button>
+                <button> annulla </button>
+                <button> elimina prodotto </button>
+            </div>
+        </div>
     </div>
 
   </div>

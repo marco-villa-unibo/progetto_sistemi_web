@@ -45,8 +45,7 @@ export const get = () => {
 
   // STATIC SERVING
   app.use(
-    '/images',
-    express.static(path.join(__dirname, process.env.IMAGE_UPLOAD_FOLDER!))
+    express.static("public")
   );
 
   // HOME DIRECTIONS

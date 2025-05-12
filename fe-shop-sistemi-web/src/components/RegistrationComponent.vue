@@ -67,10 +67,6 @@
         return this.rememberMe === true;
       },
       register() {
-        //we should handle errors in a more scalabe way, but this works for now
-  
-        
-  
         axios
           .post("/api/v1/auth/register",
           {
@@ -89,7 +85,6 @@
           .then(response => {
             console.log(response.data)
             console.log(response);
-            //handle response and save JWT
           })
           .catch(err => {
             console.log(err);
@@ -103,7 +98,6 @@
   };
   </script>
   
-  <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style>
   * {
     box-sizing: border-box;
