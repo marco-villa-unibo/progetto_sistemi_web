@@ -24,6 +24,18 @@ const role = computed(() => {
   return null
 })
 
+const username = computed(() => {
+  if (token.value) {
+    try {
+      const payload = JSON.parse(atob(token.value.split('.')[1]))
+      return payload.username
+    } catch (e) {
+      return null
+    }
+  }
+  return null
+})
+
 onMounted(() => {
   checkToken()
   window.addEventListener('token-changed', checkToken)
@@ -45,14 +57,26 @@ const logout = () => {
 
 <template>
   <div style="display: flex; flex-direction: column;
-    align-items: center; height:100% !Important">
+    align-items: center; height:100% !Important; overflow: hidden;">
     <div style="height: 50px; width: 100%">
-      <RouterLink to="/login" tag="button">Login</RouterLink>  
-      <RouterLink v-if="token && role !== 'CUSTOMER'" to="/CreateProduct" tag="button">Crea Prodotto</RouterLink>  
-      <RouterLink v-if="token" to="/Profile" tag="button">Profilo</RouterLink>  
-      <RouterLink to="/products" tag="button">Products</RouterLink>
-      <RouterLink v-if="token && role !== 'CUSTOMER' && role !== 'EMPLOYEE'" to="/Users" tag="button">Utenti</RouterLink>  
-      <button @click="logout" >Logout</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 60px; background-color:green">
+        <div v-if="token" style="padding: 0 20px; color: white; font-size: 20px;">
+          <RouterLink v-if="token" to="/Profile" tag="button">{{ username}}</RouterLink>  
+        </div>
+        <div style="padding: 0 20px; color: white; font-size: 20px;">
+          <RouterLink to="/login" tag="button" v-if="!token">Login</RouterLink>  
+        </div>
+        <RouterLink v-if="token && role !== 'CUSTOMER'" to="/CreateProduct" tag="button">Crea Prodotto</RouterLink>  
+        <RouterLink v-if="token" to="/Profile" tag="button">Profilo</RouterLink>  
+        <RouterLink v-if="!token || role == 'CUSTOMER'" to="/products" tag="button">Products</RouterLink>
+        <div style="padding: 0 20px; color: white; font-size: 20px;">
+          <RouterLink v-if="token && role !== 'CUSTOMER' && role !== 'EMPLOYEE'" to="/Users" tag="button">Utenti</RouterLink>  
+        </div>
+        <div v-if="token" style="padding: 0 20px; color: white; font-size: 20px;">
+          <button @click="logout" >Logout</button>
+        </div>
+      </div>
+
     </div>
     <RouterView />
   </div>

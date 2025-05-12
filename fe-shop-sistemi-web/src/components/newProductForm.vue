@@ -1,112 +1,107 @@
-<template>
-    <form @submit.prevent="uploadProduct" class="product-form">
-      <div class="form-group">
-        <label for="title">Titolo</label>
-        <input id="title" v-model="form.title" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="pDescription">Descrizione</label>
-        <textarea id="pDescription" v-model="form.pDescription" required></textarea>
-      </div>
-  
-      <div class="form-group">
-        <label for="category">Categoria</label>
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+import axios from "axios"
+import { getToken, removeToken } from "../generated-sources/shop/apis/AuthApi"
 
-        <select name="Category" id="category" v-model="form.category" required>
-          <option value=0>Banco</option>
-          <option value="ORTOFRUTTA">Ortofrutta</option>
-          <option value="SURGELATI">SURGELATI</option>
-          <option value="CASA">CASA</option>
-          <option value="ELETTRONICA">ELETTRONICA</option>
-          <option value="LIQUORI">LIQUORI</option>
-        </select>
-      </div>
-  
-      <div class="form-group">
-        <label for="price">Prezzo</label>
-        <input id="price" type="number" step="0.01" v-model.number="form.price" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="quantity">Quantità</label>
-        <input id="quantity" type="number" v-model.number="form.quantity" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="imageUrl">URL Immagine</label>
-        <input id="imageUrl" type="file" accept="image/jpeg, image/png" @change="uploadImage"/>
-      </div>
-  
-      <button type="submit" @click="uploadProduct">Salva</button>
-    </form>
-  </template>
-  
-  <script setup lang="ts">
-  import { reactive, watch, toRefs } from 'vue'
-  import axios from "axios";
-  import { setToken, getToken, removeToken } from "../generated-sources/shop/apis/AuthApi";
-
-  
-  interface Product {
-    title: string
-    pDescription: string
-    category: string
-    price: number
-    quantity: number
-    imageUrl: string
-  }
-  
-
-  const props = defineProps<{
-    modelValue?: Product
-  }>()
-  
-
-  const form = reactive<Product> ({
-    title: '',
-    pDescription: '',
-    category: '',
-    price: 0,
-    quantity: 0,
-    imageUrl: ''
-  })
-  
-
-  function uploadImage(event: Event) {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (!file) return;
-
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    form.imageUrl = e.target?.result as string
-    console.log('Image base64:', form.imageUrl)
-  }
-  reader.readAsDataURL(file)
+interface ProductForm {
+  title: string
+  pDescription: string
+  category: string
+  price: number
+  quantity: number
 }
 
-  function uploadProduct(){
-    console.log(form.title)
-    var access_token = getToken()
-    axios.defaults.headers.common['Authorization'] = `Bearer  ${access_token}`
-    axios.post("/api/v1/product", { //Per problemi di cors impostato indirizzo backend nel file vite.config.ts
-      
-        title: form.title,
-        pDescription: form.pDescription,
-        category: form.category,
-        price: form.price,
-        quantity: form.quantity,
-        imageUrl: form.imageUrl
-    })
-    .then(response => {
-      console.log('product added successfully:', response.data); 
-    }).catch(err => {
-            alert(err);
-    });
+const form = reactive<ProductForm>({
+  title: '',
+  pDescription: '',
+  category: '',
+  price: 0,
+  quantity: 0
+})
+
+const imageFile = ref<File | null>(null)
+
+function uploadImage(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    imageFile.value = file
+    console.log('Selected file:', file.name)
+  }
+}
+
+function uploadProduct() {
+  if (!imageFile.value) {
+    alert("Devi selezionare un'immagine.")
+    return
   }
 
-  </script>
+  const formData = new FormData()
+  formData.append('image', imageFile.value)
+  formData.append('title', form.title)
+  formData.append('pDescription', form.pDescription)
+  formData.append('category', form.category)
+  formData.append('price', form.price.toString())
+  formData.append('quantity', form.quantity.toString())
+
+  const access_token = getToken()
+  axios.post('http://localhost:8080/api/v1/product', formData, {
+    headers: {
+      'Authorization': `Bearer ${access_token}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  .then(response => {
+    console.log('Product added successfully:', response.data)
+  })
+  .catch(err => {
+    alert('Errore nel salvataggio del prodotto: ' + err)
+  })
+}
+</script>
+
+<template>
+  <form @submit.prevent="uploadProduct" class="product-form">
+    <div class="form-group">
+      <label for="title">Titolo</label>
+      <input id="title" v-model="form.title" required />
+    </div>
+
+    <div class="form-group">
+      <label for="pDescription">Descrizione</label>
+      <textarea id="pDescription" v-model="form.pDescription" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="category">Categoria</label>
+      <select id="category" v-model="form.category" required>
+        <option value="">Seleziona categoria</option>
+        <option value="ORTOFRUTTA">Ortofrutta</option>
+        <option value="SURGELATI">Surgelati</option>
+        <option value="CASA">Casa</option>
+        <option value="ELETTRONICA">Elettronica</option>
+        <option value="LIQUORI">Liquori</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="price">Prezzo</label>
+      <input id="price" type="number" step="0.01" v-model.number="form.price" required />
+    </div>
+
+    <div class="form-group">
+      <label for="quantity">Quantità</label>
+      <input id="quantity" type="number" v-model.number="form.quantity" required />
+    </div>
+
+    <div class="form-group">
+      <label for="image">Immagine</label>
+      <input id="image" type="file" accept="image/*" @change="uploadImage" required />
+    </div>
+
+    <button type="submit">Salva</button>
+  </form>
+</template>
   
   <style scoped>
   .product-form {

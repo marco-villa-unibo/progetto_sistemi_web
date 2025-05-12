@@ -1,184 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue'
+import axios from "axios"
+import EditProductForm from './editProductForm.vue'
+import { getToken } from "../generated-sources/shop/apis/AuthApi"
+import { reactive, watch, toRefs } from 'vue'
 
-import EditProductForm from './editProductForm.vue';
+// Reattivi
+const searchQuery = ref('')
+const sortOrder = ref<'asc' | 'desc'>('asc')
+const Products = ref<any[]>([])  // Ora vuoto, verrà popolato via API
 
-const searchQuery = ref('');
-const sortOrder = ref<'asc' | 'desc'>('asc');
-// Lista dei prodotti
-const Products = ref( [
-  {
-    id: 1,
-    name: "Laptop Gaming",
-    price: 1499.99,
-    image: "https://picsum.photos/200?random=1",
-    description: "Potente laptop da gaming con scheda grafica dedicata e display 144Hz."
-  },
-  {
-    id: 2,
-    name: "Smartphone Pro",
-    price: 899.99,
-    image: "https://picsum.photos/200?random=2",
-    description: "Smartphone di ultima generazione con fotocamera da 108MP e display AMOLED."
-  },
-  {
-    id: 3,
-    name: "Smartwatch Fitness",
-    price: 199.99,
-    image: "https://picsum.photos/200?random=3",
-    description: "Smartwatch con monitoraggio del battito cardiaco e GPS integrato."
-  },
-  {
-    id: 4,
-    name: "Cuffie Wireless",
-    price: 129.99,
-    image: "https://picsum.photos/200?random=4",
-    description: "Cuffie con cancellazione del rumore attiva e autonomia di 30 ore."
-  },
-  {
-    id: 5,
-    name: "Monitor 4K Ultra HD",
-    price: 499.99,
-    image: "https://picsum.photos/200?random=5",
-    description: "Monitor IPS 4K con HDR e frequenza di aggiornamento di 144Hz."
-  },
-  {
-    id: 6,
-    name: "Mouse da Gaming RGB",
-    price: 59.99,
-    image: "https://picsum.photos/200?random=6",
-    description: "Mouse ergonomico con 12 tasti programmabili e illuminazione RGB."
-  },
-  {
-    id: 7,
-    name: "Tastiera Meccanica",
-    price: 89.99,
-    image: "https://picsum.photos/200?random=7",
-    description: "Tastiera meccanica con switch rossi e retroilluminazione RGB personalizzabile."
-  },
-  {
-    id: 8,
-    name: "Sedia da Gaming",
-    price: 249.99,
-    image: "https://picsum.photos/200?random=8",
-    description: "Sedia ergonomica con cuscino lombare e inclinazione fino a 180°."
-  },
-  {
-    id: 9,
-    name: "Stampante Laser",
-    price: 299.99,
-    image: "https://picsum.photos/200?random=9",
-    description: "Stampante laser monocromatica con connettività Wi-Fi e alta velocità di stampa."
-  },
-  {
-    id: 10,
-    name: "Webcam Full HD",
-    price: 69.99,
-    image: "https://picsum.photos/200?random=10",
-    description: "Webcam 1080p con microfono integrato per videoconferenze di alta qualità."
-  },
-  {
-    id: 11,
-    name: "Hard Disk Esterno 1TB",
-    price: 89.99,
-    image: "https://picsum.photos/200?random=11",
-    description: "Disco rigido esterno da 1TB, perfetto per archiviazione sicura."
-  },
-  {
-    id: 12,
-    name: "Router Wi-Fi 6",
-    price: 179.99,
-    image: "https://picsum.photos/200?random=12",
-    description: "Router dual-band con tecnologia Wi-Fi 6 per connessioni ultra veloci."
-  },
-  {
-    id: 13,
-    name: "Scheda Grafica RTX 4080",
-    price: 1299.99,
-    image: "https://picsum.photos/200?random=13",
-    description: "Scheda grafica di ultima generazione con 16GB di memoria GDDR6X."
-  },
-  {
-    id: 14,
-    name: "Microfono USB Professionale",
-    price: 99.99,
-    image: "https://picsum.photos/200?random=14",
-    description: "Microfono USB a condensatore per streaming e registrazione audio di alta qualità."
-  },
-  {
-    id: 15,
-    name: "Power Bank 20000mAh",
-    price: 39.99,
-    image: "https://picsum.photos/200?random=15",
-    description: "Power bank ad alta capacità con ricarica rapida per dispositivi mobili."
-  },
-  {
-    id: 16,
-    name: "Console Next-Gen",
-    price: 599.99,
-    image: "https://picsum.photos/200?random=16",
-    description: "Console di nuova generazione con SSD ultra veloce e grafica 4K."
-  },
-  {
-    id: 17,
-    name: "Tablet 10 Pollici",
-    price: 349.99,
-    image: "https://picsum.photos/200?random=17",
-    description: "Tablet con schermo 10' Full HD e penna digitale inclusa."
-  },
-  {
-    id: 18,
-    name: "Auricolari Bluetooth",
-    price: 79.99,
-    image: "https://picsum.photos/200?random=18",
-    description: "Auricolari true wireless con riduzione del rumore attiva e lunga autonomia."
-  },
-  {
-    id: 19,
-    name: "Altoparlante Bluetooth",
-    price: 59.99,
-    image: "https://picsum.photos/200?random=19",
-    description: "Speaker portatile con audio stereo potente e resistenza all'acqua IPX7."
-  },
-  {
-    id: 20,
-    name: "Zaino Tech Impermeabile",
-    price: 49.99,
-    image: "https://picsum.photos/200?random=20",
-    description: "Zaino con scomparti imbottiti per laptop e accessori tecnologici."
-  }
-]);
+const token = ref<string | null>(null)
 
-import { computed } from 'vue';
-import axios from "axios";
-import { getToken } from "../generated-sources/shop/apis/AuthApi";
-import { onMounted} from 'vue'
+const showId = ref<number | null>(null)
+const show = ref(false)
+const quantity = ref<number>(0)
+const edit = ref<boolean>(false)
 
+// Filtraggio e ordinamento
 const filteredProducts = computed(() => {
   return [...Products.value]
     .filter(product =>
       product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
-    .sort((a, b) => {
-      return sortOrder.value === 'asc'
-        ? a.price - b.price
-        : b.price - a.price;
-    });
-});
+    .sort((a, b) => sortOrder.value === 'asc' ? a.price - b.price : b.price - a.price)
+})
 
-const token = ref<string | null>(null)
-
+// Recupero token
 const checkToken = () => {
   token.value = getToken()
 }
 
-onMounted(() => {
-  checkToken()
-  window.addEventListener('token-changed', checkToken)
-})
-
-
+// Decodifica del ruolo da JWT
 const role = computed(() => {
   if (token.value) {
     try {
@@ -191,39 +45,130 @@ const role = computed(() => {
   return null
 })
 
-
-const showId = ref<number | null>(null);
-const show = ref(false);
-const quantity = ref<number>(0);
-const edit = ref<boolean>(false);
-
-
+// Gestione popup e selezione prodotto
 function selectItems(id: number) {
-  console.log("ID selezionato:", id);
-  showId.value = id;
-  show.value = true;
+  showId.value = id
+  show.value = true
 }
 
-
 function closeDetails() {
-  show.value = false;
-  showId.value = null;
+    if (edit.value == true){
+        editProduct()
+    }
+  show.value = false
+  showId.value = null
 }
 
 function editProduct() {
-    edit.value = true;
+    edit.value = !edit.value
+
 }
 
-var access_token = getToken()
-axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}` 
-
 function remove() {
-    this.quantity -= 1;
+  quantity.value -= 1
 }
 
 function add() {
-    this.quantity += 1;
+  quantity.value += 1
 }
+
+const access_token = getToken()
+axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+
+async function fetchProducts() {
+  try {
+    const response = await axios.get('/api/v1/product')
+    Products.value = response.data.map((p: any) => ({
+      id: p.id,
+      name: p.title,
+      description: p.pDescription,
+      price: p.price,
+      quantity: p.quantity,
+      category: p.category,
+      image: p.imageUrl.replace("public\\", "http://localhost:8080/"), // Assumendo che serva da lì
+    }));
+  } catch (error) {
+    console.error("Errore nel caricamento prodotti:", error);
+  }
+}
+
+async function saveProduct(id: number) {
+    console.log("Salva prodotto");
+    if (Products.value.find(p => p.id === id)?.name != form.title) {
+        Products.value.find(p => p.id === id).name = form.title
+    }
+    if (Products.value.find(p => p.id === id)?.description != form.pDescription) {
+        Products.value.find(p => p.id === id).description = form.pDescription
+    }
+    if (Products.value.find(p => p.id === id)?.price != form.price) {
+        console.log(form.price)
+        Products.value.find(p => p.id === id).price = form.price
+    }
+    if (Products.value.find(p => p.id === id)?.quantity != form.quantity) {
+        console.log(form.quantity)
+        Products.value.find(p => p.id === id).quantity = form.quantity
+    }
+    const response = await axios.put(`/api/v1/product/${id}`, {
+        title: Products.value.find(p => p.id === id)?.name,
+        pDescription: Products.value.find(p => p.id === id)?.description,
+        price: Products.value.find(p => p.id === id)?.price,
+        category: Products.value.find(p => p.id === id)?.category,
+        quantity: Products.value.find(p => p.id === id)?.quantity
+    }, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+    console.log("Prodotto salvato:", response.data);
+    // Aggiorna la lista dei prodotti
+    const index = Products.value.findIndex(p => p.id === id);
+    if (index !== -1) {
+        Products.value[index] = {
+        ...Products.value[index],
+        ...response.data,
+        };
+    }
+    fetchProducts(); // Ricarica i prodotti
+    closeDetails(); // Chiudi il popup
+    edit.value = false; // Torna alla visualizzazione normale
+    show.value = false; // Chiudi il popup
+    showId.value = null; // Resetta l'ID del prodotto selezionato
+    quantity.value = 0; // Resetta la quantità
+    console.log("Prodotto salvato");
+    console.log(Products.value.find(p => p.id === id));
+
+}
+
+interface ProductForm {
+  title: string
+  pDescription: string
+  category: string
+  price: number
+  quantity: number
+}
+
+const form = reactive<ProductForm>({
+  title: '',
+  pDescription: '',
+  category: '',
+  price: 0,
+  quantity: 0
+})
+
+function deleteProduct(id: number) {
+    const response = axios.delete(`/api/v1/product/${id}`);
+    fetchProducts(); // Ricarica i prodotti
+    closeDetails();
+    fetchProducts()
+};
+
+
+// Inizializzazione al montaggio
+onMounted(() => {
+  checkToken()
+  fetchProducts()
+  window.addEventListener('token-changed', checkToken)
+})
 </script>
 
 <template>
@@ -247,7 +192,7 @@ function add() {
     overflow: auto;" class="font">
     
 
-    <div v-for="product in filteredProducts" :key="product.id" style="width:25%">
+    <div v-for="product in filteredProducts" :key="product.id" style="width:25%; overflow: auto">
       <button class="card" style="margin:10px; padding: 10px;" @click="selectItems(product.id)">
         <div class="nameSpace">{{ product.name }}</div>
         <div class="imageSpace">
@@ -262,7 +207,7 @@ function add() {
 
     
     <div v-if="show" class="details-popup font"> 
-        <button class="close-btn" @click="closeDetails"><i class="fa fa-window-close" aria-hidden="true"></i></button>
+        <button class="close-btn" @click="closeDetails()"><i class="fa fa-window-close" aria-hidden="true"></i></button>
         <div v-if="showId !== null && edit == false">
             <h2 style="padding-bottom:10px">{{ Products.find(p => p.id === showId)?.name }}</h2>
             <div style="padding-bottom:20px; ">
@@ -306,19 +251,19 @@ function add() {
                     <tr>
                         <td>Titolo:</td>
                         <td>
-                            <textarea id="title" > {{ Products.find(p => p.id === showId)?.name }}</textarea>
+                            <textarea id="title" v-model="form.title"> {{ Products.find(p => p.id === showId)?.name }}</textarea>
                         </td>
                     </tr>
                     <tr>
                         <td>Descrizione:</td>
                         <td>
-                            <textarea id="description" >{{ Products.find(p => p.id === showId)?.description }}</textarea>
+                            <textarea id="description" v-model="form.pDescription">{{ Products.find(p => p.id === showId)?.description }}</textarea>
                         </td>
                     </tr>
                     <tr>
                         <td>Nuovo Prezzo:</td>
                         <td>
-                            <input type="number"></input>€
+                            <input type="number" v-model.number="form.price"></input>€
                         </td>
                     </tr>
                     <tr>
@@ -330,13 +275,13 @@ function add() {
                     <tr>
                         <td>Nuova Quantità:</td>
                         <td>
-                            <input type="number"></input>€
+                            <input type="number" v-model.number="form.quantity"></input>€
                         </td>
                     </tr>
                     <tr>
                         <td>Vecchia Quantità:</td>
                         <td>
-                            <p @value="Products.find(p => p.id === showId)?.price" type="number">{{ Products.find(p => p.id === showId)?.price }}€</p>
+                            <p @value="Products.find(p => p.id === showId)?.quantity" type="number">{{ Products.find(p => p.id === showId)?.quantity }}</p>
                         </td>
                     </tr>
                 </tbody>
@@ -347,9 +292,9 @@ function add() {
   border-radius: 4px;" height="42%" width="42%" />
             </div>
             <div>
-                <button> salva </button>
-                <button> annulla </button>
-                <button> elimina prodotto </button>
+                <button @click="saveProduct(showId)"> salva </button>
+                <button @click="editProduct()"> annulla </button>
+                <button @click="deleteProduct(showId)"> elimina prodotto </button>
             </div>
         </div>
     </div>
