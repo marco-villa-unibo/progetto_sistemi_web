@@ -6,14 +6,16 @@ import RegistrationView from '../views/RegistrationView.vue'
 import CreateProductView from '../views/CreateProductView.vue'
 import UsersView from '../views/UsersView.vue'
 import userProfileEditorComponent from '../components/userProfileEditorComponent.vue'
+import CartView from '../views/CartView.vue'
+import OrdersView from '../views/OrdersView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'products',
+      component: ProductsView,
     },
     {
       path: '/about',
@@ -29,11 +31,6 @@ const router = createRouter({
       path: '/registration',
       name: 'registration',
       component: RegistrationView,
-    },
-    {
-      path: '/products',
-      name: 'products',
-      component: ProductsView,
     },
     {
       path: '/CreateProduct',
@@ -54,6 +51,16 @@ const router = createRouter({
       path: '/Profile',
       name: 'Profile',
       component: userProfileEditorComponent,
+    },
+    {
+      path: '/Cart',
+      name: 'Cart',
+      component: CartView,
+    },
+    {
+      path: '/Orders',
+      name: 'orders',
+      component: OrdersView,
     },
   ],
 })

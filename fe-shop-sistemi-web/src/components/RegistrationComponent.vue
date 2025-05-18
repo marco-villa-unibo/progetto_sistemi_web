@@ -15,6 +15,10 @@
               <label for="email">Email</label>   
           </div>
           <div class="form-group">
+            <input type="tel" id="phone" placeholder="Phone" v-model="phone" required>
+            <label for="phone">telefono</label>    
+          </div>
+          <div class="form-group">
             <input type="password" id="password" placeholder="Password" v-model="password" required>
             <label for="Password">Password</label>    
           </div>
@@ -50,6 +54,7 @@
         lastname:"",
         email:"",
         username: "",
+        phone: "",
         password: "",
         checkPassword: "",
         address:"",
@@ -73,6 +78,7 @@
               username:  this.username,
               email: this.email,
               password: this.password,
+              phone: this.phone,
               firstName: "prova1",
               lastName: "prova0",
               address:"prova" 

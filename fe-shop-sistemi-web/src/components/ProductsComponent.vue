@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from "axios"
-import EditProductForm from './editProductForm.vue'
 import { getToken } from "../generated-sources/shop/apis/AuthApi"
 import { reactive, watch, toRefs } from 'vue'
 
@@ -45,10 +44,30 @@ const role = computed(() => {
   return null
 })
 
-// Gestione popup e selezione prodotto
-function selectItems(id: number) {
+
+async function fetchCart() {
+  try {
+    const token = getToken()
+    if (!token) throw new Error('Token mancante.')
+
+    const response = await axios.get('/api/v1/cart', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data.cartItems || []
+  } catch (error) {
+    console.error('Errore caricamento carrello:', error)
+    return []
+  }
+}
+
+async function selectItems(id: number) {
   showId.value = id
   show.value = true
+
+  const cartItems = await fetchCart()
+  const cartItem = cartItems.find((item: any) => item.ProductId === id)
+  quantity.value = cartItem ? cartItem.quantity : 0
 }
 
 function closeDetails() {
@@ -91,6 +110,33 @@ async function fetchProducts() {
     console.error("Errore nel caricamento prodotti:", error);
   }
 }
+async function addToCart() {
+  try {
+    const response = await axios.put('/api/v1/cart/items/'+showId.value, {
+      quantity: quantity.value
+    })
+    console.log("Prodotto aggiunto al carrello:", response.data)
+  } catch (error) {
+    try {
+      const response = await axios.post('/api/v1/cart/items', {
+        ProductId: showId.value,
+        quantity: quantity.value
+      })
+      console.log("Prodotto aggiunto al carrello:", response.data)
+    } catch (error) {
+      console.error("Errore nell'aggiunta al carrello:", error)
+    }
+  }
+}
+
+async function removeFromCart() {
+  try {
+    const response = await axios.delete(`/api/v1/cart/items/${showId.value}`)
+    console.log("Prodotto rimosso dal carrello:", response.data)
+  } catch (error) {
+    console.error("Errore nella rimozione dal carrello:", error)
+  }
+}
 
 async function saveProduct(id: number) {
     console.log("Salva prodotto");
@@ -128,12 +174,12 @@ async function saveProduct(id: number) {
         ...response.data,
         };
     }
-    fetchProducts(); // Ricarica i prodotti
-    closeDetails(); // Chiudi il popup
-    edit.value = false; // Torna alla visualizzazione normale
-    show.value = false; // Chiudi il popup
-    showId.value = null; // Resetta l'ID del prodotto selezionato
-    quantity.value = 0; // Resetta la quantità
+    fetchProducts(); 
+    closeDetails(); 
+    edit.value = false; 
+    show.value = false; 
+    showId.value = null;
+    quantity.value = 0;
     console.log("Prodotto salvato");
     console.log(Products.value.find(p => p.id === id));
 
@@ -157,13 +203,12 @@ const form = reactive<ProductForm>({
 
 function deleteProduct(id: number) {
     const response = axios.delete(`/api/v1/product/${id}`);
-    fetchProducts(); // Ricarica i prodotti
+    fetchProducts();
     closeDetails();
     fetchProducts()
 };
 
 
-// Inizializzazione al montaggio
 onMounted(() => {
   checkToken()
   fetchProducts()
@@ -206,43 +251,62 @@ onMounted(() => {
     </div>
 
     
-    <div v-if="show" class="details-popup font"> 
-        <button class="close-btn" @click="closeDetails()"><i class="fa fa-window-close" aria-hidden="true"></i></button>
-        <div v-if="showId !== null && edit == false">
-            <h2 style="padding-bottom:10px">{{ Products.find(p => p.id === showId)?.name }}</h2>
-            <div style="padding-bottom:20px; ">
+    <div v-if="show" class="details-popup font" style="border: 4px solid green"> 
+        <button class="close-btn" @click="closeDetails()"><i class="fa fa-window-close" aria-hidden="true">X</i></button>
+        <div v-if="showId !== null && edit == false" style="height: 100%;">
+          <div style="padding:10px">
+            <div style="font-size: xx-large;"><strong>{{ Products.find(p => p.id === showId)?.name }}</strong></div>
+          </div>
+          <div style="display: flex;    height: 90%;    flex-direction: row;    /* align-content: center; */    align-items: center;    justify-content: center;">
+            <div style="padding-bottom: 20px;width: 40%;">
                 <img :src="Products.find(p => p.id === showId)?.image" style="box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;" height="42%" width="42%" />
+  border-radius: 4px;" height="100%" width="100%" />
             </div>
-            <div style="width: 100%;display: flex; flex-direction: column; align-items: center;">
-                <div style="width: 70%; display: flex;">
-                    <b>Descrizione:</b>
-                </div>
-                <div style="width: 70%; display: flex;">
-                    <p>{{ Products.find(p => p.id === showId)?.description }}</p>
-                </div>
+            <div style="width: 40%; height: 70%; display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 100%;display: flex; flex-direction: row; align-items: center; padding:20px">
+                  <div style="width: 70%; height: 100%; display: flex;align-items: flex-start; justify-content: center;">
+                      <b style="font-size: x-large;">Descrizione:</b>
+                  </div>
+                  <div style="width: 70%; display: flex;">
+                      <p>{{ Products.find(p => p.id === showId)?.description }}</p>
+                  </div>
+              </div>
+              <div style="width: 100%;display: flex; flex-direction: row; align-items: center; padding:20px">
+                  <div style="width: 70%; height: 100%; display: flex;align-items: flex-start; justify-content: center;">
+                      <p><b style="font-size: x-large;">Prezzo:</b></p>
+                  </div>
+                  <div style="width: 70%; display: flex;">
+                      <p> {{ Products.find(p => p.id === showId)?.price }}€</p>
+                  </div>
+              </div>
+              <div style="display: flex; flex-direction:row;  justify-content: center;">
+                  <div style="padding-right:10px">
+                      <button @click="remove()">
+                          <i class="fa fa-minus">‌-</i>
+                      </button>
+                  </div>
+                  <div>
+                      {{quantity}}
+                  </div>
+                  <div style="padding-left:10px">
+                      <button @click="add()">
+                          <i class="fa fa-plus">‌+</i>
+                      </button>
+                  </div>
+              </div>
+              <div style="padding-left:10px">
+                  <button @click="addToCart()">
+                      <i class="fa fa-plus">‌Aggiungi al carrelo</i>
+                  </button>
+                  <button @click="removeFromCart()">
+                      <i class="fa fa-plus">‌Rimuovi dal carrello</i>
+                  </button>
+              </div>
+              <div v-if="token && role !== 'CUSTOMER'">
+                  <button @click="editProduct()">Edit Product</button>
+              </div>
             </div>
-            <div>
-                <p><b>Prezzo:</b> {{ Products.find(p => p.id === showId)?.price }}€</p>
-            </div>
-            <div style="display: flex; flex-direction:row;  justify-content: center;">
-                <div style="padding-right:10px">
-                    <button @click="remove()">
-                        <i class="fa fa-minus">‌</i>
-                    </button>
-                </div>
-                <div>
-                    {{quantity}}
-                </div>
-                <div style="padding-left:10px">
-                    <button @click="add()">
-                        <i class="fa fa-plus">‌</i>
-                    </button>
-                </div>
-            </div>
-            <div v-if="token && role !== 'CUSTOMER'">
-                <button @click="editProduct()">Edit Product</button>
-            </div>
+          </div>
         </div>
         <div v-if="showId !== null && edit == true && token && role !== 'CUSTOMER'">
             <div style="width: 100%;display: flex; flex-direction: column; align-items: center;">

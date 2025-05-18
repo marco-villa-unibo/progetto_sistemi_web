@@ -71,7 +71,7 @@ import { before } from "node:test";
       setToken(response.data.token)
       window.dispatchEvent(new Event('token-changed'))
       const userInfo = response.data.user;
-      router.push('/Products')
+      router.push('/')
     }).catch(err => {
             alert(err);
           });

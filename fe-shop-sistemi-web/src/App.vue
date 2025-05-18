@@ -2,11 +2,12 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { getToken, removeToken } from "./generated-sources/shop/apis/AuthApi"
-import { useRouter } from 'vue-router';
-const router = useRouter();
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 
 const token = ref<string | null>(null)
+const isSidebarOpen = ref(false)
 
 const checkToken = () => {
   token.value = getToken()
@@ -41,107 +42,114 @@ onMounted(() => {
   window.addEventListener('token-changed', checkToken)
 })
 
-
 onUnmounted(() => {
   window.removeEventListener('token-changed', checkToken)
 })
-
 
 const logout = () => {
   removeToken()
   token.value = null
   window.dispatchEvent(new Event('token-changed'))
-  router.push('/Products')
+  router.push('/')
+  isSidebarOpen.value = false
+}
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const closeSidebar = () => {
+  isSidebarOpen.value = false
 }
 </script>
 
 <template>
-  <div style="display: flex; flex-direction: column;
-    align-items: center; height:100% !Important; overflow: hidden;">
-    <div style="height: 50px; width: 100%">
-      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 60px; background-color:green">
-        <div v-if="token" style="padding: 0 20px; color: white; font-size: 20px;">
-          <RouterLink v-if="token" to="/Profile" tag="button">{{ username}}</RouterLink>  
-        </div>
-        <div style="padding: 0 20px; color: white; font-size: 20px;">
-          <RouterLink to="/login" tag="button" v-if="!token">Login</RouterLink>  
-        </div>
-        <RouterLink v-if="token && role !== 'CUSTOMER'" to="/CreateProduct" tag="button">Crea Prodotto</RouterLink>  
-        <RouterLink v-if="token" to="/Profile" tag="button">Profilo</RouterLink>  
-        <RouterLink v-if="!token || role == 'CUSTOMER'" to="/products" tag="button">Products</RouterLink>
-        <div style="padding: 0 20px; color: white; font-size: 20px;">
-          <RouterLink v-if="token && role !== 'CUSTOMER' && role !== 'EMPLOYEE'" to="/Users" tag="button">Utenti</RouterLink>  
-        </div>
-        <div v-if="token" style="padding: 0 20px; color: white; font-size: 20px;">
-          <button @click="logout" >Logout</button>
-        </div>
-      </div>
-
+  <div style="display: flex; flex-direction: column; align-items: center; height:100%; overflow: hidden;">
+    <!-- HEADER -->
+    <div style="height: 60px; width: 100%">
+  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 60px; background-color:green; padding: 0 20px; box-sizing: border-box;">
+    
+    <!-- Sinistra: Nome utente -->
+    <div v-if="token" style="color: white; font-size: 20px; cursor: pointer;" @click="toggleSidebar">
+      Ciao, {{ username }}
     </div>
+    <div v-else style="color: white; font-size: 20px;">
+      <RouterLink to="/login" tag="button">Login</RouterLink>
+    </div>
+
+    <!-- Destra: Carrello e Logout -->
+    <div v-if="token" style="display: flex; gap: 15px; align-items: center;">
+      <RouterLink  to="/cart" tag="button" style="color:white; font-size: 20px;">
+        🛒 Carrello
+      </RouterLink>
+    </div>
+  </div>
+</div>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div v-if="isSidebarOpen" class="overlay" @click="closeSidebar"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" :class="{ open: isSidebarOpen }">
+      <button class="close-btn" @click="closeSidebar">&times;</button>
+      <ul>
+        <li><RouterLink to="/Profile" @click="closeSidebar">Profilo</RouterLink></li>
+        <li v-if="role !== 'CUSTOMER'"><RouterLink to="/CreateProduct" @click="closeSidebar">Crea Prodotto</RouterLink></li>
+        <li v-if="role !== 'CUSTOMER' && role !== 'EMPLOYEE'"><RouterLink to="/Users" @click="closeSidebar">Gestione Utenti</RouterLink></li>
+        <li v-if="role !== 'CUSTOMER' && role !== 'EMPLOYEE'"><RouterLink to="/Orders" @click="closeSidebar">Gestione Ordini</RouterLink></li>
+        <li><RouterLink to="/" @click="closeSidebar">Prodotti</RouterLink></li>
+        <li><button @click="logout" style="background:none; border:none; color:white; cursor:pointer;">Logout</button></li>
+      </ul>
+    </aside>
+
+    <!-- CONTENUTO -->
     <RouterView />
   </div>
 </template>
 
 <style scoped>
-.header {
-  line-height: 1.5;
-  max-height: 100vh;
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #444;
+  color: white;
+  padding: 1rem;
+  transition: right 0.3s ease;
+  z-index: 1001;
+}
+.sidebar.open {
+  right: 0;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+.sidebar li {
+  margin: 1rem 0;
+}
+.sidebar a {
+  color: white;
+  text-decoration: none;
+}
+.sidebar .close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  float: right;
+  cursor: pointer;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  .header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  .header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
 }
 </style>
