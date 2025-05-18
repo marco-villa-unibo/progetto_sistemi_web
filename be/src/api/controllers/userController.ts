@@ -5,8 +5,8 @@ import {
   findUserById,
   updateUserById,
 } from '../../db/services/userService';
-import { BadRequestError, NotFoundError } from '../error';
-import { UserDTO } from '../types';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../error';
+import { UserDTO, UserRoleDTO } from '../types';
 import { UserOutput } from '../../db/models/User';
 import { IUserNoSensibleData } from '../interfaces';
 
@@ -89,8 +89,13 @@ export const removeUser = async (
   }
 };
 
+interface ModifyUserRequest extends Request {
+  body: { userDTO: UserDTO; userRole: UserRoleDTO };
+  params: { id: string };
+}
+
 export const modifyUser = async (
-  req: UserRequest,
+  req: ModifyUserRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -98,6 +103,32 @@ export const modifyUser = async (
     const { id } = req.params;
     if (!id || isNaN(+id) || +id <= 0) {
       return next(new BadRequestError(`User ID must be positive integer`));
+    }
+
+    if (!req.user) {
+      return next(
+        new ForbiddenError('User ID from token is missing or invalid')
+      );
+    }
+
+    const userIdFromToken = req.user.userId;
+    const userRoleFromToken = req.user.role;
+
+    if (userRoleFromToken !== 'ADMIN' && +id !== userIdFromToken) {
+      return next(
+        new ForbiddenError(
+          'You are not authorized to modify this user. Only admins can modify other users.'
+        )
+      );
+    }
+
+    if (
+      userRoleFromToken !== 'ADMIN' &&
+      userRoleFromToken !== req.body.userRole
+    ) {
+      return next(
+        new BadRequestError('You are not allowed to change the user role.')
+      );
     }
 
     const u = await updateUserById(+id, req.body);

@@ -57,7 +57,7 @@ export const removeItem = async (
 ) => {
   try {
     const userId = req.user!.userId;
-    const cartItemId = parseInt(req.params.cartItemId, 10);
+    const cartItemId = parseInt(req.params.id, 10);
 
     if (isNaN(cartItemId)) {
       return next(
@@ -90,7 +90,7 @@ export const updateQuantity = async (
 ) => {
   try {
     const userId = req.user!.userId;
-    const cartItemId = parseInt(req.params.cartItemId, 10);
+    const cartItemId = parseInt(req.params.id, 10);
     const updateQuantityDto: UpdateCartItemQuantityRequestDTO = req.body;
 
     if (isNaN(cartItemId)) {

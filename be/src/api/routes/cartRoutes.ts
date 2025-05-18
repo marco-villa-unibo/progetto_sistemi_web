@@ -173,4 +173,4 @@ cartRouter.put('/items/:id', authenticate, updateQuantity);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-cartRouter.delete('items/:id', authenticate, removeItem);
+cartRouter.delete('/items/:id', authenticate, removeItem);
