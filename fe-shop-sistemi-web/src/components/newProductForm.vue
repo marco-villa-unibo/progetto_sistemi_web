@@ -61,7 +61,7 @@ function uploadProduct() {
 </script>
 
 <template>
-  <form @submit.prevent="uploadProduct" class="product-form">
+  <form @submit.prevent="uploadProduct" class="product-form" style="font:black;">
     <div class="form-group">
       <label for="title">Titolo</label>
       <input id="title" v-model="form.title" required />
@@ -103,38 +103,87 @@ function uploadProduct() {
   </form>
 </template>
   
-  <style scoped>
+<style scoped>
+:root {
+  --green: #5cb85c;
+  --green-dark: #3d8b3d;
+  --orange: #ffa726;
+  --bg-light: #fefcf6;
+  --text-dark: #2f2f2f;
+  --border-radius: 1rem;
+  --transition: all 0.3s ease;
+}
+
+.product-form {
+  background-color: var(--bg-light);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--green-dark);
+}
+
+input,
+textarea,
+select {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.6rem;
+  transition: var(--transition);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(92, 184, 92, 0.2);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button {
+  align-self: center;
+  background-color: var(--green);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background-color: var(--green-dark);
+  transform: scale(1.03);
+}
+
+@media (max-width: 500px) {
   .product-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    padding: 1rem;
   }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  input,
-  textarea {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    align-self: flex-start;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  </style>
+}
+</style>

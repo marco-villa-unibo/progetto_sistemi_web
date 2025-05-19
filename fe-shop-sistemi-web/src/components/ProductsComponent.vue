@@ -481,4 +481,153 @@ onMounted(() => {
     font-size: 20px;
     cursor: pointer;
   }
+
+  
+
+
+
+  body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
+  padding: 16px;
+  margin: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 128, 0, 0.25);
+}
+
+.card img {
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+}
+
+.imageSpace {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.nameSpace {
+  font-weight: bold;
+  font-size: 18px;
+  padding-bottom: 10px;
+  color: #2f4f4f;
+}
+
+/* Input e Select migliorati */
+input[type="text"], select {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 12px 16px;
+  font-size: 16px;
+  transition: border 0.3s;
+}
+
+input[type="text"]:focus, select:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* Bottone primario */
+.editButton {
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 20px;
+  margin: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.editButton:hover {
+  background-color: #388e3c;
+}
+
+.editButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Popup */
+.details-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  max-width: 1000px;
+  height: 80%;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: crimson;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 36px;
+}
+
+/* Notifica */
+.notification {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  border-radius: 8px;
+  z-index: 1000;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.notification.error {
+  background-color: #f44336;
+}
+
+/* Pulsanti + e - */
+.quantity-button {
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 8px 12px;
+  margin: 0 8px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.quantity-button:hover {
+  background-color: #357a38;
+}
 </style>
