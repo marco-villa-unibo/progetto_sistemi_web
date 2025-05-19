@@ -119,3 +119,9 @@ export const updateOrderStatus = async (
   await order.update({ orderStatus: status });
   return order;
 };
+
+export const getAllOrders = async (): Promise<Order[]> => {
+  return Order.findAll({
+    order: [['orderDate', 'DESC']],
+  });
+};

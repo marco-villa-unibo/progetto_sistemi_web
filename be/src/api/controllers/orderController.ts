@@ -3,6 +3,7 @@ import {
   createOrderFromCart,
   getOrderById,
   getOrdersByUserId,
+  getAllOrders,
   updateOrderStatus,
 } from '../../db/services/orderService';
 import {
@@ -75,6 +76,19 @@ export const getUserOrders = async (
   try {
     const userId = req.user!.userId;
     const orders = await getOrdersByUserId(userId);
+    res.status(200).send(orders);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllUsersOrders = async (
+  req: Request,
+  res: Response<OrderDTO[]>,
+  next: NextFunction
+) => {
+  try {
+    const orders = await getAllOrders();
     res.status(200).send(orders);
   } catch (error) {
     next(error);
