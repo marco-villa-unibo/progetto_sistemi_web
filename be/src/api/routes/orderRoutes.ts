@@ -4,6 +4,7 @@ import {
   getOrder,
   getUserOrders,
   updateOrderStatusAdmin,
+  getAllUsersOrders,
 } from '../controllers/orderController';
 import { authenticate, isAdmin } from '../middlewares';
 
@@ -43,6 +44,33 @@ export const orderRouter = Router();
  *         $ref: '#/components/responses/InternalServerError'
  */
 orderRouter.post('/', authenticate, createOrder);
+
+/**
+ * @openapi
+ * /order/all:
+ *   get:
+ *     tags:
+ *       - orders
+ *     summary: Retrieves all users orders (Admin only).
+ *     description: Allows admins to see the status of all orders
+ *     operationId: getAllUsersOrders
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Ordini recuperati con successo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Order'
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       '500':
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+orderRouter.get('/all', authenticate, isAdmin, getAllUsersOrders);
 
 /**
  * @openapi

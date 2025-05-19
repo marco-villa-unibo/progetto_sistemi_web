@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * On-Line Shop | Sistemi Web
- * Back-End per lo store- progetto Sistemi web  Approccio \"Design first\" per favorire la divisione di ruoli tra back-end e front-end  Link utili: - [Repository progetto](https://github.com/marco-villa-unibo/progetto_sistemi_web)
+ * Back-End per lo store- progetto Sistemi web  Approccio \"API first\" per favorire la divisione di ruoli tra back-end e front-end  Link utili: - [Repository progetto](https://github.com/marco-villa-unibo/progetto_sistemi_web)
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: marco.villa13@studio.unibo.it
