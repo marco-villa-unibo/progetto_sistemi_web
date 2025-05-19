@@ -37,7 +37,7 @@
   
   <script setup lang="ts">
   import { ref, onMounted } from 'vue'
-  import { getToken } from "../generated-sources/shop/apis/AuthApi";
+  import { getToken } from "../utils/auth";
   import axios from 'axios'
   
   interface User {

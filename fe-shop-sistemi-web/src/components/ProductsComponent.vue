@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from "axios"
-import { getToken } from "../generated-sources/shop/apis/AuthApi"
+import { getToken } from "../utils/auth"
 import { reactive, watch, toRefs } from 'vue'
+import { CartItemFromJSON } from '@/generated-sources/shop'
 
 // Reattivi
 const searchQuery = ref('')
@@ -14,7 +15,10 @@ const token = ref<string | null>(null)
 const showId = ref<number | null>(null)
 const show = ref(false)
 const quantity = ref<number>(0)
+const productCartId = ref<number>(0)
 const edit = ref<boolean>(false)
+
+const initialCartQuantity = ref<number>(0)
 
 // Filtraggio e ordinamento
 const filteredProducts = computed(() => {
@@ -61,6 +65,7 @@ async function fetchCart() {
   }
 }
 
+
 async function selectItems(id: number) {
   showId.value = id
   show.value = true
@@ -68,6 +73,9 @@ async function selectItems(id: number) {
   const cartItems = await fetchCart()
   const cartItem = cartItems.find((item: any) => item.ProductId === id)
   quantity.value = cartItem ? cartItem.quantity : 0
+  productCartId.value = cartItem ? cartItem.id : 0
+  initialCartQuantity.value = cartItem ? cartItem.quantity : 0
+  console.log("ID prodotto:", id)
 }
 
 function closeDetails() {
@@ -112,10 +120,11 @@ async function fetchProducts() {
 }
 async function addToCart() {
   try {
-    const response = await axios.put('/api/v1/cart/items/'+showId.value, {
+    const response = await axios.put('/api/v1/cart/items/' + showId.value, {
       quantity: quantity.value
     })
     console.log("Prodotto aggiunto al carrello:", response.data)
+    showNotification("Prodotto aggiornato nel carrello!", 'success')
   } catch (error) {
     try {
       const response = await axios.post('/api/v1/cart/items', {
@@ -123,20 +132,37 @@ async function addToCart() {
         quantity: quantity.value
       })
       console.log("Prodotto aggiunto al carrello:", response.data)
+      showNotification("Prodotto aggiunto al carrello!", 'success')
+      closeDetails()
     } catch (error) {
       console.error("Errore nell'aggiunta al carrello:", error)
+      showNotification("Errore nell'aggiunta al carrello!", 'error')
     }
   }
 }
 
 async function removeFromCart() {
   try {
-    const response = await axios.delete(`/api/v1/cart/items/${showId.value}`)
+    console.log(productCartId.value)
+    const response = await axios.delete(`/api/v1/cart/items/${productCartId.value}`)
     console.log("Prodotto rimosso dal carrello:", response.data)
+    showNotification("Prodotto rimosso dal carrello!", 'success')
+    closeDetails()
   } catch (error) {
     console.error("Errore nella rimozione dal carrello:", error)
+    showNotification("Errore nella rimozione dal carrello!", 'error')
   }
 }
+
+const notification = ref<{ message: string, type: 'success' | 'error' } | null>(null)
+
+function showNotification(message: string, type: 'success' | 'error') {
+  notification.value = { message, type }
+  setTimeout(() => {
+    notification.value = null
+  }, 3000)
+}
+
 
 async function saveProduct(id: number) {
     console.log("Salva prodotto");
@@ -281,7 +307,7 @@ onMounted(() => {
               </div>
               <div style="display: flex; flex-direction:row;  justify-content: center;">
                   <div style="padding-right:10px">
-                      <button @click="remove()">
+                      <button @click="remove()"  :disabled="quantity <= 0">
                           <i class="fa fa-minus">‌-</i>
                       </button>
                   </div>
@@ -295,15 +321,15 @@ onMounted(() => {
                   </div>
               </div>
               <div style="padding-left:10px">
-                  <button @click="addToCart()">
-                      <i class="fa fa-plus">‌Aggiungi al carrelo</i>
+                  <button @click="addToCart()" class="editButton" :disabled="quantity == 0">
+                      ‌Aggiungi al carrelo
                   </button>
-                  <button @click="removeFromCart()">
-                      <i class="fa fa-plus">‌Rimuovi dal carrello</i>
+                  <button @click="removeFromCart()" class="editButton" :disabled="initialCartQuantity === 0">
+                      Rimuovi dal carrello
                   </button>
               </div>
               <div v-if="token && role !== 'CUSTOMER'">
-                  <button @click="editProduct()">Edit Product</button>
+                  <button @click="editProduct()" class="editButton">Edit Product</button>
               </div>
             </div>
           </div>
@@ -362,11 +388,49 @@ onMounted(() => {
             </div>
         </div>
     </div>
-
+              <div v-if="notification" :style="{
+  backgroundColor: notification.type === 'success' ? '#4CAF50' : '#f44336',
+  color: 'white',
+  padding: '10px',
+  position: 'fixed',
+  top: '20px',
+  right: '20px',
+  borderRadius: '5px',
+  zIndex: 1000
+}">
+  {{ notification.message }}
+</div>
   </div>
 </template>
 
 <style>
+
+.editButton {
+  background-color: #4CAF50; /* Verde */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.editButton:disabled {
+  background-color: #ccc; /* Verde */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  cursor: not-allowed;
+}
 .card {
   background-color: #fff;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);

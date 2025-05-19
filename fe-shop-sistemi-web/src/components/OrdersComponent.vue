@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 
 
-import { getToken } from '@/generated-sources/shop/apis/AuthApi'
+import { getToken } from "../utils/auth"
 
 
 const orders = ref<any[]>([])

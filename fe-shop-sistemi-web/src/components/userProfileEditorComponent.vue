@@ -20,7 +20,7 @@
   <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
-  import { getToken } from "../generated-sources/shop/apis/AuthApi";
+  import { getToken } from "../utils/auth";
   import {jwtDecode} from 'jwt-decode'
 
 interface DecodedToken {

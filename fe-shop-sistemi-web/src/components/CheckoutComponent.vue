@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { getToken } from '@/generated-sources/shop/apis/AuthApi'
+import { getToken } from "../utils/auth"
 import axios from 'axios'
 
 interface CartItem {

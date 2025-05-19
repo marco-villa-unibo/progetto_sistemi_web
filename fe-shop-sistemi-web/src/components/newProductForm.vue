@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import axios from "axios"
-import { getToken, removeToken } from "../generated-sources/shop/apis/AuthApi"
+import { getToken, removeToken } from "../utils/auth"
 
 interface ProductForm {
   title: string

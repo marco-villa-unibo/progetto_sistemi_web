@@ -36,7 +36,7 @@
   import axios from "axios";
   import type {UserLogin} from "../generated-sources/shop/models/UserLogin";
   import type { LoginRequest } from "../generated-sources/shop/apis/AuthApi";
-  import { AuthApi, setToken, getToken, removeToken } from "../generated-sources/shop/apis/AuthApi";
+  import { setToken, getToken, removeToken } from "../utils/auth";
   import { useRouter } from 'vue-router';
   import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { before } from "node:test";
@@ -46,7 +46,6 @@ import { before } from "node:test";
   var setPassword:string
   var email
   var rememberMe:boolean
-  const authApi = new AuthApi
   onMounted(() => {
     beforeMount()
   })
