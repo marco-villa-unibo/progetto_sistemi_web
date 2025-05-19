@@ -112,7 +112,7 @@ async function fetchProducts() {
       price: p.price,
       quantity: p.quantity,
       category: p.category,
-      image: p.imageUrl.replace("public\\", "http://localhost:8080/"), // Assumendo che serva da lì
+      image: p.imageUrl.replace(/public/g, "http://localhost:8080/"), // Assumendo che serva da lì
     }));
   } catch (error) {
     console.error("Errore nel caricamento prodotti:", error);
