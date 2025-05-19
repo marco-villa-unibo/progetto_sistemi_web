@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * On-Line Shop | Sistemi Web
- * Back-End per lo store- progetto Sistemi web  Approccio \"Design first\" per favorire la divisione di ruoli tra back-end e front-end  Link utili: - [Repository progetto](https://github.com/marco-villa-unibo/progetto_sistemi_web)
+ * Back-End per lo store- progetto Sistemi web  Approccio \"API first\" per favorire la divisione di ruoli tra back-end e front-end  Link utili: - [Repository progetto](https://github.com/marco-villa-unibo/progetto_sistemi_web)
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: marco.villa13@studio.unibo.it
@@ -131,6 +131,42 @@ export class OrdersApi extends runtime.BaseAPI {
      */
     async getAllOrders(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Order>> {
         const response = await this.getAllOrdersRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Allows admins to see the status of all orders
+     * Retrieves all users orders (Admin only).
+     */
+    async getAllUsersOrdersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Order>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/order/all`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(OrderFromJSON));
+    }
+
+    /**
+     * Allows admins to see the status of all orders
+     * Retrieves all users orders (Admin only).
+     */
+    async getAllUsersOrders(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Order>> {
+        const response = await this.getAllUsersOrdersRaw(initOverrides);
         return await response.value();
     }
 
