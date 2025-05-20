@@ -74,7 +74,7 @@ const closeSidebar = () => {
           <div style="display: flex; gap: 15px; align-items: center;">
             <RouterLink to="/"><img src="./assets/DALL·E-2025-03-22-16.32 (3).png" srcr="https://preview.ibb.co/hUAr57/bar_bg.jpg" alt="Logo" style="width: 60px; height: 60px; border-radius: 50%;"></RouterLink>
           </div>
-          <div v-if="token" style="color: black; font-size: 20px; cursor: pointer;" @click="toggleSidebar" class="editButton">
+          <div v-if="token" style="color: black; font-size: 20px; cursor: pointer;" @click="toggleSidebar" class="editButton" >
             Ciao, {{ username }}
           </div>
           <div v-else style="color: black; border: black 1px solid; font-size: 20px;" class="editButton">
@@ -84,7 +84,7 @@ const closeSidebar = () => {
 
         <!-- Destra: Carrello e Logout -->
         <div v-if="token" style="display: flex; gap: 15px; align-items: center;" class="editButton">
-          <RouterLink  to="/cart" tag="button" style="color:white; font-size: 20px;">
+          <RouterLink  to="/cart" tag="button" style="color:black; font-size: 20px;">
             🛒 Carrello
           </RouterLink>
         </div>
@@ -101,7 +101,8 @@ const closeSidebar = () => {
         <li><RouterLink to="/Profile" @click="closeSidebar">Profilo</RouterLink></li>
         <li v-if="role !== 'CUSTOMER'"><RouterLink to="/CreateProduct" @click="closeSidebar">Crea Prodotto</RouterLink></li>
         <li v-if="role !== 'CUSTOMER' && role !== 'EMPLOYEE'"><RouterLink to="/Users" @click="closeSidebar">Gestione Utenti</RouterLink></li>
-        <li v-if="token"><RouterLink to="/Orders" @click="closeSidebar">I miei Ordini</RouterLink></li>
+        <li v-if="token"><RouterLink to="/MyOrders" @click="closeSidebar">I miei Ordini</RouterLink></li>
+        <li v-if="token && role !== 'CUSTOMER'"><RouterLink to="/Orders" @click="closeSidebar">Gestione Ordini</RouterLink></li>
         <li><RouterLink to="/" @click="closeSidebar">Prodotti</RouterLink></li>
         <li><button @click="logout" style="background:none; border:none; color:white; cursor:pointer;">Logout</button></li>
       </ul>
@@ -117,7 +118,6 @@ const closeSidebar = () => {
 .editButton {
   background-color: #4CAF50; /* Verde */
   border: none;
-  color: white;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
@@ -126,6 +126,11 @@ const closeSidebar = () => {
   margin: 4px 2px;
   cursor: pointer;
   border: black;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .sidebar {

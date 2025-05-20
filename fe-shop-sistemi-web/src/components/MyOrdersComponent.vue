@@ -11,7 +11,7 @@ axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
 
 async function fetchOrders() {
   try {
-    const response = await axios.get('/api/v1/order/all')
+    const response = await axios.get('/api/v1/order')
     orders.value = response.data
   } catch (error) {
     console.error('Errore durante il recupero degli ordini:', error)
