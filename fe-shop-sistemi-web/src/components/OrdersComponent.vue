@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
-
-
 import { getToken } from "../utils/auth"
-
 
 const orders = ref<any[]>([])
 const searchUserId = ref('')
 
 const access_token = getToken()
 axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
-
 
 async function fetchOrders() {
   try {
@@ -21,7 +17,6 @@ async function fetchOrders() {
     console.error('Errore durante il recupero degli ordini:', error)
   }
 }
-
 
 const filteredOrders = computed(() => {
   return orders.value
@@ -35,127 +30,97 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="orders-wrapper">
-    <h2 class="orders-title">📦 Lista Ordini</h2>
-
-    <div class="search-bar">
+  <div class="order-manager-wrapper">
+    <div class="card">
+      <h2 style="margin-bottom: 1rem; color:black">📦 Gestione Ordini</h2>
       <input
         v-model="searchUserId"
         placeholder="🔍 Cerca per User ID"
         class="search-input"
       />
-    </div>
 
-    <div class="table-wrapper">
-      <table class="orders-table">
-        <thead>
-          <tr>
-            <th>ID Ordine</th>
-            <th>User ID</th>
-            <th>Data Ordine</th>
-            <th>Importo Totale</th>
-            <th>Stato</th>
-            <th>Pagamento</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="order in filteredOrders" :key="order.id">
-            <td>{{ order.id }}</td>
-            <td>{{ order.UserId }}</td>
-            <td>{{ new Date(order.orderDate).toLocaleString() }}</td>
-            <td>{{ order.totalAmount }}€</td>
-            <td>
-              <span :class="['badge', order.orderStatus.toLowerCase()]">
-                {{ order.orderStatus }}
-              </span>
-            </td>
-            <td>{{ order.paymentMethod }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="order-list">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>ID Ordine</th>
+              <th>User ID</th>
+              <th>Data Ordine</th>
+              <th>Importo Totale</th>
+              <th>Stato</th>
+              <th>Pagamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="order in filteredOrders" :key="order.id">
+              <td>{{ order.id }}</td>
+              <td>{{ order.UserId }}</td>
+              <td>{{ new Date(order.orderDate).toLocaleString() }}</td>
+              <td>{{ order.totalAmount }}€</td>
+              <td>
+                <span :class="['badge', order.orderStatus.toLowerCase()]">
+                  {{ order.orderStatus }}
+                </span>
+              </td>
+              <td>{{ order.paymentMethod }}</td>
+            </tr>
+          </tbody>
+        </table>
 
-    <div v-if="filteredOrders.length === 0" class="no-orders">
-      Nessun ordine trovato.
+        <div v-if="filteredOrders.length === 0" class="no-orders">
+          Nessun ordine trovato.
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-:root {
-  --bg: #ffffff;
-  --text: #1e1e1e;
-  --border: #dddddd;
-  --accent: #4caf50;
-  --danger: #e53935;
-  --warning: #ffb300;
-  --info: #2196f3;
-  --input-bg: #f5f5f5;
-}
-
-[data-theme="dark"] {
-  --bg: #1e1e1e;
-  --text: #f5f5f5;
-  --border: #333333;
-  --input-bg: #2a2a2a;
-}
-
-.orders-wrapper {
+.order-manager-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   padding: 2rem;
-  background-color: var(--bg);
-  color: var(--text);
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  transition: background-color 0.3s ease;
+  height: 100%;
 }
 
-.orders-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-}
-
-.search-bar {
-  margin-bottom: 1rem;
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
+  padding: 2rem;
+  width: 70%;
+  font-family: 'Segoe UI', sans-serif;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-input {
-  padding: 0.6rem 1rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background-color: var(--input-bg);
-  color: var(--text);
-  width: 250px;
-  font-size: 0.95rem;
-  outline: none;
-  transition: all 0.2s ease-in-out;
-}
-
-.search-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
-
-.table-wrapper {
-  overflow-x: auto;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  width: 100%;
 }
 
 .orders-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  font-size: 0.95rem;
 }
 
 .orders-table th,
 .orders-table td {
   padding: 1rem;
-  border: 1px solid var(--border);
+  border: 1px solid #ddd;
   text-align: left;
-  font-size: 0.95rem;
 }
 
 .orders-table thead {
-  background-color: var(--input-bg);
+  background-color: #f5f5f5;
 }
 
 .orders-table tbody tr:hover {
@@ -168,26 +133,25 @@ onMounted(() => {
   font-size: 0.8rem;
   font-weight: 600;
   display: inline-block;
+  color: white;
 }
 
 .badge.pending {
-  background-color: var(--warning);
-  color: white;
+  background-color: #ffb300;
 }
 
 .badge.completed {
-  background-color: var(--accent);
-  color: white;
+  background-color: #4caf50;
 }
 
 .badge.cancelled {
-  background-color: var(--danger);
-  color: white;
+  background-color: #e53935;
 }
 
 .no-orders {
   margin-top: 2rem;
   font-style: italic;
-  opacity: 0.7;
+  color: #888;
+  text-align: center;
 }
 </style>

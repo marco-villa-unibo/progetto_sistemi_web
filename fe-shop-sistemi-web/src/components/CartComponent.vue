@@ -1,51 +1,54 @@
 <template>
-  <div class="cart-items">
-    <h3>🛒 Carrello</h3>
-
-    <div v-if="loading">Caricamento carrello...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else-if="items.length === 0">Il carrello è vuoto.</div>
-
-    <ul v-else>
-      <li v-for="item in items" :key="item.id" class="cart-item">
-        <img
-          v-if="item.product?.imageUrl"
-          :src="item.product.imageUrl"
-          alt="immagine prodotto"
-          class="product-image"
-        />
-        <div class="product-info">
-          <h4>{{ item.product?.title || 'Prodotto sconosciuto' }}</h4>
-          <p>📝 {{ item.product?.pDescription }}</p>
-          <p>💶 Prezzo: €{{ item.product?.price }}</p>
-          <p>📦 Quantità nel carrello: {{ item.quantity }}</p>
+  <div class="cart-wrapper">
+    <div class="cart-card" style="overflow: auto;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <h2 style="color: black;">🛒 Carrello</h2>
         </div>
-      </li>
-    </ul>
 
-    <form @submit.prevent="submitOrder" class="checkout-form">
-      <h3>Dati di spedizione</h3>
-      <input v-model="shipping.name" placeholder="Nome completo" required />
-      <input v-model="shipping.address" placeholder="Indirizzo" required />
-      <input v-model="shipping.city" placeholder="Città" required />
-      <input v-model="shipping.postalCode" placeholder="CAP" required />
-      <input  placeholder="Indirizzo di spedizione" required />
-      <input  placeholder="Indirizzo di fatturazione" required />
+      <div v-if="loading">Caricamento carrello...</div>
+      <div v-else-if="error" class="error">{{ error }}</div>
+      <div v-else-if="items.length === 0">Il carrello è vuoto.</div>
 
-      <h3>Metodo di pagamento (fittizio)</h3>
-      <select v-model="paymentMethod" required>
-        <option value="" disabled>Seleziona metodo</option>
-        <option value="card">Carta di credito</option>
-        <option value="paypal">PayPal</option>
-      </select>
+      <ul v-else class="cart-list">
+        <li v-for="item in items" :key="item.id" class="cart-item">
+          <img v-if="item.product?.imageUrl" :src="item.product.imageUrl" alt="Immagine prodotto" class="product-image" />
+          <div class="product-info">
+            <h4>{{ item.product?.title || 'Prodotto sconosciuto' }}</h4>
+            <p>📝 {{ item.product?.pDescription }}</p>
+            <p>💶 Prezzo: €{{ item.product?.price }}</p>
+            <p>📦 Quantità: {{ item.quantity }}</p>
+          </div>
+        </li>
+      </ul>
 
-      <button type="submit" :disabled="submitting">
-        {{ submitting ? 'Elaborazione...' : 'Conferma ordine' }}
-      </button>
-    </form>
+      <button class="primary" @click="showForm = true" v-if="items.length > 0">🧾 Procedi al Checkout</button>
+    </div>
 
-    <div v-if="successMessage" class="success">
-      {{ successMessage }}
+    <div v-if="showForm" class="form-card">
+      <h3>Checkout</h3>
+      <form @submit.prevent="submitOrder">
+        <input v-model="shipping.name" placeholder="Nome completo" required />
+        <input v-model="shipping.address" placeholder="Indirizzo" required />
+        <input v-model="shipping.city" placeholder="Città" required />
+        <input v-model="shipping.postalCode" placeholder="CAP" required />
+        <input placeholder="Indirizzo di spedizione" required />
+        <input placeholder="Indirizzo di fatturazione" required />
+
+        <select v-model="paymentMethod" required>
+          <option value="" disabled>Metodo di pagamento</option>
+          <option value="card">Carta di credito</option>
+          <option value="paypal">PayPal</option>
+        </select>
+
+        <div class="form-buttons">
+          <button type="submit" class="primary" :disabled="submitting">
+            {{ submitting ? 'Elaborazione...' : 'Conferma ordine' }}
+          </button>
+          <button type="button" class="secondary" @click="showForm = false">Annulla</button>
+        </div>
+      </form>
+
+      <div v-if="successMessage" class="success">{{ successMessage }}</div>
     </div>
   </div>
 </template>
@@ -54,6 +57,10 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { getToken } from "../utils/auth"
+
+
+const showForm = ref(false)
+
 
 interface Product {
   id: number
@@ -352,5 +359,136 @@ h3 {
   .product-info {
     flex: 1;
   }
+}
+
+.cart-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  font-family: 'Segoe UI', sans-serif;
+  width: 100%;
+    height: 100%;
+}
+
+.cart-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
+  padding: 2rem;
+  width: 50%;
+}
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.cart-item {
+  display: flex;
+  background-color: #f9f9f9;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  align-items: center;
+}
+
+.product-image {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  background-color: #f0f0f0;
+}
+
+.product-info {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.6rem;
+}
+
+button {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button.primary {
+  background-color: #4caf50;
+  color: white;
+}
+
+button.primary:hover {
+  background-color: #388e3c;
+}
+
+button.secondary {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+button.secondary:hover {
+  background-color: #bdbdbd;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.form-card {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  z-index: 10;
+}
+
+.success {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.error {
+  background-color: #ffe6e6;
+  color: #c00;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  margin-top: 1rem;
+}
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 </style>
