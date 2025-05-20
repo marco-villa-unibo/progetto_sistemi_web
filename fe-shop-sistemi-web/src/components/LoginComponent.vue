@@ -272,6 +272,8 @@ import { before } from "node:test";
     position: relative;
     width: 22px;
     -webkit-appearance: none;
+    appearance: none;
+    
     transition: all 180ms linear;
   }
   
@@ -322,6 +324,9 @@ import { before } from "node:test";
   .btn {
     font-family: inherit;
     -webkit-appearance: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
     -moz-appearance: none;
     background-color: transparent;
     border: none;

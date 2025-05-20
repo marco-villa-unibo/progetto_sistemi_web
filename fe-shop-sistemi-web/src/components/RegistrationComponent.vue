@@ -297,6 +297,9 @@
     position: relative;
     width: 22px;
     -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
     transition: all 180ms linear;
   }
   
@@ -347,6 +350,7 @@
   .btn {
     font-family: inherit;
     -webkit-appearance: none;
+    appearance: none;
     -moz-appearance: none;
     background-color: transparent;
     border: none;
