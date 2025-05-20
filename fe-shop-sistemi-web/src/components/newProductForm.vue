@@ -3,6 +3,9 @@ import { reactive, ref } from 'vue'
 import axios from "axios"
 import { getToken, removeToken } from "../utils/auth"
 
+const statusMessage = ref('')
+const statusType = ref<'success' | 'error' | ''>('')
+
 interface ProductForm {
   title: string
   pDescription: string
@@ -32,7 +35,8 @@ function uploadImage(event: Event) {
 
 function uploadProduct() {
   if (!imageFile.value) {
-    alert("Devi selezionare un'immagine.")
+    statusMessage.value = "Devi selezionare un'immagine."
+    statusType.value = 'error'
     return
   }
 
@@ -52,55 +56,79 @@ function uploadProduct() {
     }
   })
   .then(response => {
-    console.log('Product added successfully:', response.data)
+    statusMessage.value = 'Prodotto salvato con successo!'
+    statusType.value = 'success'
+
+    form.title = ''
+    form.pDescription = ''
+    form.category = ''
+    form.price = 0
+    form.quantity = 0
+    imageFile.value = null
   })
   .catch(err => {
-    alert('Errore nel salvataggio del prodotto: ' + err)
+    statusMessage.value = 'Errore nel salvataggio del prodotto.'
+    statusType.value = 'error'
   })
 }
 </script>
 
 <template>
-  <form @submit.prevent="uploadProduct" class="product-form" style="font:black;">
-    <div class="form-group">
-      <label for="title">Titolo</label>
-      <input id="title" v-model="form.title" required />
-    </div>
+  <div class="profile-editor" style="display: flex; justify-content: center; align-items: center; flex-direction: row; padding-bottom: 50px;">
+    <div class="card">
+      <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 100%; height: 100%;">
+        <h2 style="color: black;">Crea Prodotto</h2>
+      </div>
+      <div style="    display: flex;    flex-direction: row;    justify-content: center;    align-items: center;    width: 90%;">
+        <div style="color: black;    display: flex;    width: 50%;    align-items: center;    justify-content: center;">
+          <img height="300" width="300" src="../assets/DALL·E-2025-03-22-16.32 (3).png" style="margin: 30px; padding: 20px;"/>
+        </div>
+        <div  style="color:black; width:50%">
+          <form @submit.prevent="uploadProduct" style="font:black; padding: none; margin: none;">
+            <div class="form-group">
+              <label for="title">Titolo</label>
+              <input id="title" v-model="form.title" required />
+            </div>
+            <div class="form-group">
+              <label for="pDescription">Descrizione</label>
+              <textarea id="pDescription" v-model="form.pDescription" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="category">Categoria</label>
+              <select id="category" v-model="form.category" required>
+                <option value="">Seleziona categoria</option>
+                <option value="ORTOFRUTTA">Ortofrutta</option>
+                <option value="SURGELATI">Surgelati</option>
+                <option value="CASA">Casa</option>
+                <option value="ELETTRONICA">Elettronica</option>
+                <option value="LIQUORI">Liquori</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="price">Prezzo</label>
+              <input id="price" type="number" step="0.01" v-model.number="form.price" required />
+            </div>
 
-    <div class="form-group">
-      <label for="pDescription">Descrizione</label>
-      <textarea id="pDescription" v-model="form.pDescription" required></textarea>
+            <div class="form-group">
+              <label for="quantity">Quantità</label>
+              <input id="quantity" type="number" v-model.number="form.quantity" required />
+            </div>
+          
+            <div class="form-group">
+              <label for="image">Immagine</label>
+              <input id="image" type="file" accept="image/*" @change="uploadImage" required />
+            </div>
+            <div v-if="statusMessage" :class="['status-message', statusType]">
+                {{ statusMessage }}
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 20px;">
+              <button type="submit" style="color:black">💾 Salva</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-
-    <div class="form-group">
-      <label for="category">Categoria</label>
-      <select id="category" v-model="form.category" required>
-        <option value="">Seleziona categoria</option>
-        <option value="ORTOFRUTTA">Ortofrutta</option>
-        <option value="SURGELATI">Surgelati</option>
-        <option value="CASA">Casa</option>
-        <option value="ELETTRONICA">Elettronica</option>
-        <option value="LIQUORI">Liquori</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="price">Prezzo</label>
-      <input id="price" type="number" step="0.01" v-model.number="form.price" required />
-    </div>
-
-    <div class="form-group">
-      <label for="quantity">Quantità</label>
-      <input id="quantity" type="number" v-model.number="form.quantity" required />
-    </div>
-
-    <div class="form-group">
-      <label for="image">Immagine</label>
-      <input id="image" type="file" accept="image/*" @change="uploadImage" required />
-    </div>
-
-    <button type="submit">Salva</button>
-  </form>
+  </div>
 </template>
   
 <style scoped>
@@ -113,7 +141,30 @@ function uploadProduct() {
   --border-radius: 1rem;
   --transition: all 0.3s ease;
 }
+.card{
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
+    padding: 16px;
+    margin: 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+        width: 50%;
+    justify-content: center;
+    transform: none;
+  }
 
+.profile-editor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
+  }
 .product-form {
   background-color: var(--bg-light);
   border-radius: var(--border-radius);
@@ -186,4 +237,26 @@ button:hover {
     padding: 1rem;
   }
 }
+
+.status-message {
+  margin: 1rem 0;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
 </style>

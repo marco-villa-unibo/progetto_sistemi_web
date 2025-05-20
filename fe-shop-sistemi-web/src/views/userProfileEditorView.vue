@@ -3,6 +3,6 @@ import userProfileEditorComponent from '../components/userProfileEditorComponent
 </script>
 
 
-<template>
-    <userProfileEditorComponent />  
+<template setup>
+        <userProfileEditorComponent />  
 </template>

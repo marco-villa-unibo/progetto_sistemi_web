@@ -1,6 +1,6 @@
 <template id="login-form">
     <div class="open login-wrapper">
-      <div class="login-left">
+      <div >
         <img height="180" src="../assets/DALL·E-2025-03-22-16.32 (3).png" srcr="https://preview.ibb.co/hUAr57/bar_bg.jpg">
       </div>
       <form class="login-right" @submit.prevent>

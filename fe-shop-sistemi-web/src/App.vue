@@ -66,25 +66,30 @@ const closeSidebar = () => {
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; height:100%; overflow: hidden;">
     <!-- HEADER -->
-    <div style="height: 60px; width: 100%">
-  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 60px; background-color:green; padding: 0 20px; box-sizing: border-box;">
+    <div style="height: 70px; width: 100%; box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 70px;background-color: rgb(68 68 68); padding: 0 20px; box-sizing: border-box;">
     
-    <!-- Sinistra: Nome utente -->
-    <div v-if="token" style="color: white; font-size: 20px; cursor: pointer;" @click="toggleSidebar">
-      Ciao, {{ username }}
-    </div>
-    <div v-else style="color: white; font-size: 20px;">
-      <RouterLink to="/login" tag="button">Login</RouterLink>
-    </div>
+        <!-- Sinistra: Nome utente -->
+        <div style="display: flex; flex-direction: row;">
+          <div style="display: flex; gap: 15px; align-items: center;">
+            <img src="./assets/DALL·E-2025-03-22-16.32 (3).png" srcr="https://preview.ibb.co/hUAr57/bar_bg.jpg" alt="Logo" style="width: 60px; height: 60px; border-radius: 50%;">
+          </div>
+          <div v-if="token" style="color: black; font-size: 20px; cursor: pointer;" @click="toggleSidebar" class="editButton">
+            Ciao, {{ username }}
+          </div>
+          <div v-else style="color: black; border: black 1px solid; font-size: 20px;" class="editButton">
+            <RouterLink to="/login" tag="button" style="color: black">Login</RouterLink>
+          </div>
+        </div>
 
-    <!-- Destra: Carrello e Logout -->
-    <div v-if="token" style="display: flex; gap: 15px; align-items: center;">
-      <RouterLink  to="/cart" tag="button" style="color:white; font-size: 20px;">
-        🛒 Carrello
-      </RouterLink>
+        <!-- Destra: Carrello e Logout -->
+        <div v-if="token" style="display: flex; gap: 15px; align-items: center;" class="editButton">
+          <RouterLink  to="/cart" tag="button" style="color:white; font-size: 20px;">
+            🛒 Carrello
+          </RouterLink>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
     <!-- SIDEBAR OVERLAY -->
     <div v-if="isSidebarOpen" class="overlay" @click="closeSidebar"></div>
@@ -108,6 +113,21 @@ const closeSidebar = () => {
 </template>
 
 <style scoped>
+
+.editButton {
+  background-color: #4CAF50; /* Verde */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border: black;
+}
+
 .sidebar {
   position: fixed;
   top: 0;

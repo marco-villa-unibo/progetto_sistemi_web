@@ -1,6 +1,5 @@
 <template>
-    <div class="create-product-view">
-      <h1>Crea nuovo prodotto</h1>
+    <div style="overflow: auto;" class="createProduct">
       <newProductForm />
     </div>
   </template>
@@ -9,11 +8,15 @@
   import newProductForm from '../components/newProductForm.vue'
   
   </script>
-  
   <style scoped>
-  .create-product-view {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
+  .createProduct{
+    width: 100%;
+    height: 100%;
+    display: flex
+;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
   }
   </style>
+  
