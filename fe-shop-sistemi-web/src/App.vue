@@ -72,7 +72,7 @@ const closeSidebar = () => {
         <!-- Sinistra: Nome utente -->
         <div style="display: flex; flex-direction: row;">
           <div style="display: flex; gap: 15px; align-items: center;">
-            <img src="./assets/DALL·E-2025-03-22-16.32 (3).png" srcr="https://preview.ibb.co/hUAr57/bar_bg.jpg" alt="Logo" style="width: 60px; height: 60px; border-radius: 50%;">
+            <RouterLink to="/"><img src="./assets/DALL·E-2025-03-22-16.32 (3).png" srcr="https://preview.ibb.co/hUAr57/bar_bg.jpg" alt="Logo" style="width: 60px; height: 60px; border-radius: 50%;"></RouterLink>
           </div>
           <div v-if="token" style="color: black; font-size: 20px; cursor: pointer;" @click="toggleSidebar" class="editButton">
             Ciao, {{ username }}

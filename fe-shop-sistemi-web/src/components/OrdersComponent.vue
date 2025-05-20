@@ -40,7 +40,7 @@ onMounted(() => {
       />
 
       <div class="order-list">
-        <table class="orders-table">
+        <table class="orders-table" style="color:black">
           <thead>
             <tr>
               <th>ID Ordine</th>
