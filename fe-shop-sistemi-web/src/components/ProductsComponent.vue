@@ -243,7 +243,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div style="width: 100%; text-align: center; margin: 20px 0;">
+    <div class="headerSearch">
         <input
           type="text"
           v-model="searchQuery"
@@ -255,155 +255,194 @@ onMounted(() => {
           <option value="desc">Prezzo decrescente</option>
         </select>
       </div>  
-  <div style="width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
-    overflow: auto;" class="font">
-    
-
-    <div v-for="product in filteredProducts" :key="product.id" style="width:25%; overflow: auto">
-      <button class="card" style="margin:10px; padding: 10px;" @click="selectItems(product.id)">
-        <div class="nameSpace">{{ product.name }}</div>
-        <div class="imageSpace">
-          <img :src="product.image" height="150px" width="150px" />
-        </div>
-        <div>Price: {{ product.price }}€</div>
-        <div>
-          <i class="fa fa-cart-plus" style="font-size:25px;"></i>
-        </div>
-      </button>
-    </div>
-
-    
-    <div v-if="show" class="details-popup font" style="border: 4px solid green"> 
-        <button class="close-btn" @click="closeDetails()"><i class="fa fa-window-close" aria-hidden="true">X</i></button>
-        <div v-if="showId !== null && edit == false" style="height: 100%;">
-          <div style="padding:10px">
-            <div style="font-size: xx-large;"><strong>{{ Products.find(p => p.id === showId)?.name }}</strong></div>
-          </div>
-          <div style="display: flex;    height: 90%;    flex-direction: row;    /* align-content: center; */    align-items: center;    justify-content: center;">
-            <div style="padding-bottom: 20px;width: 40%;">
-                <img :src="Products.find(p => p.id === showId)?.image" style="box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;" height="100%" width="100%" />
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; justify-content: center; overflow: auto;" class="font">
+        <div v-for="product in filteredProducts" :key="product.id" class="product-card" style="overflow: auto">
+          <button class="card" style="margin:10px; padding: 10px;" @click="selectItems(product.id)">
+          <div class="nameSpace">{{ product.name }}</div>
+            <div class="imageSpace">
+              <img :src="product.image" height="150px" width="150px" />
             </div>
-            <div style="width: 40%; height: 70%; display: flex; flex-direction: column; align-items: center;">
-              <div style="width: 100%;display: flex; flex-direction: row; align-items: center; padding:20px">
-                  <div style="width: 70%; height: 100%; display: flex;align-items: flex-start; justify-content: center;">
-                      <b style="font-size: x-large;">Descrizione:</b>
-                  </div>
-                  <div style="width: 70%; display: flex;">
-                      <p>{{ Products.find(p => p.id === showId)?.description }}</p>
-                  </div>
-              </div>
-              <div style="width: 100%;display: flex; flex-direction: row; align-items: center; padding:20px">
-                  <div style="width: 70%; height: 100%; display: flex;align-items: flex-start; justify-content: center;">
-                      <p><b style="font-size: x-large;">Prezzo:</b></p>
-                  </div>
-                  <div style="width: 70%; display: flex;">
-                      <p> {{ Products.find(p => p.id === showId)?.price }}€</p>
-                  </div>
-              </div>
-              <div style="display: flex; flex-direction:row;  justify-content: center;">
-                  <div style="padding-right:10px">
-                      <button @click="remove()"  :disabled="quantity <= 0">
-                          <i class="fa fa-minus">‌-</i>
-                      </button>
-                  </div>
-                  <div>
-                      {{quantity}}
-                  </div>
-                  <div style="padding-left:10px">
-                      <button @click="add()">
-                          <i class="fa fa-plus">‌+</i>
-                      </button>
-                  </div>
-              </div>
-              <div style="padding-left:10px">
-                  <button @click="addToCart()" class="editButton" :disabled="quantity == 0">
-                      ‌Aggiungi al carrelo
-                  </button>
-                  <button @click="removeFromCart()" class="editButton" :disabled="initialCartQuantity === 0">
-                      Rimuovi dal carrello
-                  </button>
-              </div>
-              <div v-if="token && role !== 'CUSTOMER'">
-                  <button @click="editProduct()" class="editButton">Edit Product</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-if="showId !== null && edit == true && token && role !== 'CUSTOMER'">
-            <div style="width: 100%;display: flex; flex-direction: column; align-items: center;">
-                <table>
-                    <tbody>
-                    <tr>
-                        <td>Titolo:</td>
-                        <td>
-                            <textarea id="title" v-model="form.title"> {{ Products.find(p => p.id === showId)?.name }}</textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Descrizione:</td>
-                        <td>
-                            <textarea id="description" v-model="form.pDescription">{{ Products.find(p => p.id === showId)?.description }}</textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Nuovo Prezzo:</td>
-                        <td>
-                            <input type="number" v-model.number="form.price"></input>€
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Vecchio Prezzo:</td>
-                        <td>
-                            <p @value="Products.find(p => p.id === showId)?.price" type="number">{{ Products.find(p => p.id === showId)?.price }}€</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Nuova Quantità:</td>
-                        <td>
-                            <input type="number" v-model.number="form.quantity"></input>€
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Vecchia Quantità:</td>
-                        <td>
-                            <p @value="Products.find(p => p.id === showId)?.quantity" type="number">{{ Products.find(p => p.id === showId)?.quantity }}</p>
-                        </td>
-                    </tr>
-                </tbody>
-                </table>
-            </div>
-            <div style="padding-bottom:20px; ">
-                <img :src="Products.find(p => p.id === showId)?.image" style="box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;" height="42%" width="42%" />
-            </div>
+            <div>Price: {{ product.price }}€</div>
             <div>
-                <button @click="saveProduct(showId)"> salva </button>
-                <button @click="editProduct()"> annulla </button>
-                <button @click="deleteProduct(showId)"> elimina prodotto </button>
+              <i class="fa fa-cart-plus" style="font-size:25px;"></i>
             </div>
+          </button>
         </div>
-    </div>
-              <div v-if="notification" :style="{
-  backgroundColor: notification.type === 'success' ? '#4CAF50' : '#f44336',
-  color: 'white',
-  padding: '10px',
-  position: 'fixed',
-  top: '20px',
-  right: '20px',
-  borderRadius: '5px',
-  zIndex: 1000
-}">
-  {{ notification.message }}
-</div>
-  </div>
+        <div v-if="show" class="details-popup font" style="border: 4px solid green"> 
+          <button class="closeBtn" @click="closeDetails()"><i class="fa fa-window-close" aria-hidden="true">X</i></button>
+          <div v-if="showId !== null && edit == false" style="height: 100%;">
+            <div style="padding:10px">
+              <div style="font-size: xx-large;"><strong>{{ Products.find(p => p.id === showId)?.name }}</strong></div>
+            </div>
+            <div class="showDetail">
+              <div style="padding-bottom: 20px;width: 40%;">
+                <img :src="Products.find(p => p.id === showId)?.image" style="box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2); border-radius: 4px;" height="100%" width="100%" />
+              </div>
+              <div class="bodyProductDetail">
+                <div class="descriptionItem">
+                    <div style="width: 70%; height: 100%; display: flex;align-items: flex-start; justify-content: center;">
+                        <b class="fontTitleDescription">Descrizione:</b>
+                    </div>
+                    <div style="width: 70%; display: flex;">
+                        <p>{{ Products.find(p => p.id === showId)?.description }}</p>
+                    </div>
+                </div>
+                <div class="descriptionItem">
+                    <div style="width: 70%; height: 100%; display: flex;align-items: flex-start; justify-content: center;">
+                        <p><b class="fontTitleDescription">Prezzo:</b></p>
+                    </div>
+                    <div style="width: 70%; display: flex;">
+                        <p> {{ Products.find(p => p.id === showId)?.price }}€</p>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction:row;  justify-content: center;">
+                    <div style="padding-right:10px">
+                        <button @click="remove()"  :disabled="quantity <= 0">
+                            <i class="fa fa-minus">‌-</i>
+                        </button>
+                    </div>
+                    <div>
+                        {{quantity}}
+                    </div>
+                    <div style="padding-left:10px">
+                        <button @click="add()">
+                            <i class="fa fa-plus">‌+</i>
+                        </button>
+                    </div>
+                </div>
+                <div class="buttonsSection">
+                    <button @click="addToCart()" class="editButton" :disabled="quantity == 0">
+                        ‌Aggiungi al carrelo
+                    </button>
+                    <button @click="removeFromCart()" class="editButton" :disabled="initialCartQuantity === 0">
+                        Rimuovi dal carrello
+                    </button>
+                </div>
+                <div v-if="token && role !== 'CUSTOMER'">
+                    <button @click="editProduct()" class="editButton">Edit Product</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="showId !== null && edit == true && token && role !== 'CUSTOMER'">
+            <div style="width: 100%; max-width: 600px; margin: auto;">
+              <h2 style="text-align: center; margin-bottom: 1rem;">Modifica Prodotto</h2>
+                <form style="display: flex; flex-direction: column;">
+                  <div style="display: flex; flex-direction: column;" class="form-group">
+                    <label for="title"><strong>Titolo</strong></label>
+                    <textarea id="title" v-model="form.title" :placeholder="Products.find(p => p.id === showId)?.name" style="padding: 0.5rem; font-size: 1rem; width: auto; max-height:75px; max-width: 100%;">
+                    </textarea>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column;" >
+                    <div class="form-group">
+                      <label for="description"><strong>Descrizione</strong></label>
+                      <textarea
+                          id="description"
+                          v-model="form.pDescription"
+                          :placeholder="Products.find(p => p.id === showId)?.description" style=" width: auto; max-height:111px; max-width: 100%;">
+                      </textarea>
+                    </div>
+                    <div style="padding: 1rem; max-width: 500px; margin: 0 auto;">
+                      <form style="display: flex; flex-direction: column;">
+                        <!-- Prezzo -->
+                        <div class="form-group">
+                          <label for="price" style="font-weight: bold;">Nuovo Prezzo</label>
+                          <small style="display: block; color: gray;">Attuale: {{ Products.find(p => p.id === showId)?.price }} €</small>
+                          <input
+                              type="number"
+                              id="price"
+                              v-model.number="form.price"
+                              :placeholder="Products.find(p => p.id === showId)?.price"
+                              style="padding: 0.6rem; font-size: 1rem; width: 100%; border-radius: 6px; border: 1px solid #ccc;"
+                          />
+                        </div>
+
+                        <!-- Quantità -->
+                        <div class="form-group">
+                          <label for="quantity" style="font-weight: bold;">Nuova Quantità</label>
+                          <small style="display: block; color: gray;">Attuale: {{ Products.find(p => p.id === showId)?.quantity }}</small>
+                          <input
+                              type="number"
+                              id="quantity"
+                              v-model.number="form.quantity"
+                              :placeholder="Products.find(p => p.id === showId)?.quantity"
+                              style="padding: 0.6rem; font-size: 1rem; width: 100%; border-radius: 6px; border: 1px solid #ccc;"
+                          />
+                        </div>
+                      </form>
+
+                      <!-- Immagine -->
+                      <div style="display: flex; justify-content: center; margin: 1rem 0;">
+                        <img
+                          :src="Products.find(p => p.id === showId)?.image"
+                          alt="Immagine prodotto"
+                          style="
+                              max-width: 80%;
+                              width: 250px;
+                              border-radius: 10px;
+                              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                              object-fit: contain;
+                          "
+                        />
+                      </div>
+
+
+                      <!-- Pulsanti -->
+                      <div style="display: flex; justify-content: space-between;">
+                        <button @click="saveProduct(showId)" style="flex: 1; padding: 0.75rem; background: #4CAF50; color: white; border: none; border-radius: 6px;">Salva</button>
+                        <button @click="editProduct()" style="flex: 1; padding: 0.75rem; background: #ccc; color: black; border: none; border-radius: 6px;">Annulla</button>
+                        <button @click="deleteProduct(showId)" style="flex: 1; padding: 0.75rem; background: #f44336; color: white; border: none; border-radius: 6px;">Elimina</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            <div v-if="notification" :style="{ backgroundColor: notification.type === 'success' ? '#4CAF50' : '#f44336', color: 'white', padding: '10px', position: 'fixed', top: '20px', right: '20px', borderRadius: '5px', zIndex: 1000 }">
+              {{ notification.message }}
+            </div>
+          </div>
+        </div>
+      </div>
 </template>
 
 <style>
+
+.fontTitleDescription {
+  font-size: x-large;
+}
+
+.bodyProductDetail {
+  width: 40%; 
+  height: 70%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+}
+
+.headerSearch {
+  width: 100%; text-align: center; margin: 20px 0;
+}
+
+.showDetail {
+  display: flex;
+  height: 90%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.descriptionItem {
+  width: 100%;
+  display: flex; 
+  flex-direction: row; 
+  align-items: center; 
+  padding:20px
+}
+
+.buttonsSection{
+  padding-left:10px
+}
 
 .editButton {
   background-color: #4CAF50; /* Verde */
@@ -447,9 +486,6 @@ onMounted(() => {
   padding-bottom: 7px;
 }
 
-.nameSpace {
-  padding-bottom: 7px;
-}
 
 /* Stile per il popup */
 .details-popup {
@@ -470,7 +506,7 @@ onMounted(() => {
     color: black;
 }
 
-.close-btn {
+.closeBtn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -581,7 +617,7 @@ input[type="text"]:focus, select:focus {
   padding: 24px;
 }
 
-.close-btn {
+.closeBtn {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -630,4 +666,104 @@ input[type="text"]:focus, select:focus {
 .quantity-button:hover {
   background-color: #357a38;
 }
+
+.product-card {
+  width: 23%;
+  margin: 10px;
+}
+
+@media (max-width: 1024px) {
+  .product-card {
+    width: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+
+  .form-group {
+    padding-top: 25px !important;
+    margin: 0px
+  }
+  .fontTitleDescription {
+    font-size: 18px;
+  }
+  .closeBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .buttonsSection{
+  padding:10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.editButton{
+  width: 100%;
+  margin: 5px;
+  padding: 10px;
+  font-size: 14px !important;
+
+}
+
+  .descriptionItem {
+  width: 100%;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  padding:10px
+}
+
+  .hide {
+    display: none;
+  }
+  .showDetail {
+  display: flex;
+  height: 90%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+  .product-card {
+    width: 100%;
+  }
+
+  .details-popup {
+    width: 90%;
+    height: auto;
+    padding: 16px;
+  }
+
+  .details-popup > div {
+    flex-direction: column !important;
+  }
+
+  .details-popup img {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+    .nameSpace {
+    font-weight: bold;
+    font-size: 12px;
+    padding-bottom: 10px;
+    color: #2f4f4f;
+  }
+
+  .bodyProductDetail {
+  width: 90%; 
+  height: 70%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+}
+}
+
 </style>

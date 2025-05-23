@@ -384,4 +384,98 @@
   .btn-secondary:hover {
     color: #1b984f;
   }
+
+  @media (max-width: 768px) {
+
+  .open .register-right .h1 .register-left img {
+    -webkit-transform: none !important;
+    transform: none!important;
+  }
+
+  .register-wrapper {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    border-radius: 0;
+    -webkit-transform: translateX(0px) translateZ(0) !important;
+    transform: translateX(0px) translateZ(0) !important;
+  }
+
+  .register-left {
+    height: auto;
+    transform: none !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .register-left img {
+    max-width: 80%;
+    height: auto;
+    object-fit: contain;
+    transform: none !important;
+    margin: 0 auto;
+  }
+
+  .register-right {
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    transform: none !important;
+  }
+
+  .open .register-left,
+  .open .register-left img,
+  .open .register-right {
+    transform: none !important;
+  }
+
+  .h2 {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="tel"] {
+    height: 36px;
+    font-size: 15px;
+  }
+
+  label {
+    font-size: 12px;
+  }
+
+  .text-checkbox {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 0 25px;
+    height: 38px;
+  }
+
+  .button-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .button-area + div {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .form-group {
+    margin-top: 5px;
+  }
+
+  .open{
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+  }
+}
   </style>

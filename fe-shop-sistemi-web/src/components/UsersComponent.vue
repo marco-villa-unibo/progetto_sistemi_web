@@ -1,7 +1,7 @@
 <template>
-  <div class="user-manager-wrapper" style="width: 100%;height: 100%;">   <!-- Card del form sopra -->
+  <div class="user-manager-wrapper">   <!-- Card del form sopra -->
     <div v-if="showForm" class="form-card">
-      <h3>{{ selectedUser?.id ? 'Modifica Utente' : 'Nuovo Utente' }}</h3>
+      <h3 style="color: black;">{{ selectedUser?.id ? 'Modifica Utente' : 'Nuovo Utente' }}</h3>
       <form @submit.prevent="saveUser">
         <input v-model="form.username" placeholder="Username" required />
         <input v-model="form.firstName" placeholder="Nome" required />
@@ -26,7 +26,7 @@
     <div class="card" style="height: 90%;">
       <h2 style="margin-bottom: 1rem; color:black">Gestione Utenti</h2>
       <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
-        <button @click="openForm()" class="primary">➕ Aggiungi Utente</button>
+        <button @click="openForm()" class="primary addUser">➕ <p class="show">Aggiungi Utente</p></button>
         <input v-model="searchTerm"  placeholder="🔍 Cerca utenti..."  class="search-input" />
       </div>
       <ul class="user-list">
@@ -174,6 +174,8 @@ const filteredUsers = computed(() => {
   justify-content: center;
   align-items: flex-start;
   padding: 2rem;
+  width: 100%;
+  height: 100%;
 }
 
 .card {
@@ -304,5 +306,36 @@ button.secondary:hover {
 .user-list::-webkit-scrollbar-thumb {
   background-color: #cccccc;
   border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .form-card{
+    width: 90%;
+    top: 5%;
+    left: 5%;
+    transform: translateX(0);
+  }
+  .user-actions{
+        display: flex
+;
+    flex-direction: column;
+    /* align-content: flex-end; */
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .search-input {
+    margin: 0px;
+    margin-left: 6px;
+  }
+    .card{
+      width: 100%;
+      height: 100% !important;
+      margin: 0px;
+      padding: 10px;
+    }
+
+    .show{
+      display: none;
+    }
 }
   </style>

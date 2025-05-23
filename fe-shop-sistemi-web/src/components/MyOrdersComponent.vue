@@ -32,15 +32,15 @@ onMounted(() => {
 <template>
   <div class="order-manager-wrapper">
     <div class="card">
-      <h2 style="margin-bottom: 1rem; color:black">📦 Gestione Ordini</h2>
+      <h2 style="margin-bottom: 1rem; color:black">📦 I Miei Ordini</h2>
       <input
         v-model="searchUserId"
         placeholder="🔍 Cerca per User ID"
         class="search-input"
       />
 
-      <div class="order-list">
-        <table class="orders-table" style="color:black">
+      <div class="order-list desktop-only">
+        <table class="orders-table">
           <thead>
             <tr>
               <th>ID Ordine</th>
@@ -64,10 +64,25 @@ onMounted(() => {
             </tr>
           </tbody>
         </table>
+      </div>
 
-        <div v-if="filteredOrders.length === 0" class="no-orders">
-          Nessun ordine trovato.
+      <div class="mobile-only">
+        <div v-for="order in filteredOrders" :key="order.id" class="order-card">
+          <p><strong>ID Ordine:</strong> {{ order.id }}</p>
+          <p><strong>Data:</strong> {{ new Date(order.orderDate).toLocaleString() }}</p>
+          <p><strong>Importo:</strong> {{ order.totalAmount }}€</p>
+          <p>
+            <strong>Stato:</strong>
+            <span :class="['badge', order.orderStatus.toLowerCase()]">
+              {{ order.orderStatus }}
+            </span>
+          </p>
+          <p><strong>Pagamento:</strong> {{ order.paymentMethod }}</p>
         </div>
+      </div>
+
+      <div v-if="filteredOrders.length === 0" class="no-orders">
+        Nessun ordine trovato.
       </div>
     </div>
   </div>
@@ -108,6 +123,7 @@ onMounted(() => {
   border-collapse: collapse;
   margin-top: 1rem;
   font-size: 0.95rem;
+  color: black;
 }
 
 .orders-table th,
@@ -134,11 +150,12 @@ onMounted(() => {
   color: white;
 }
 
-.badge.pending {
+.badge.pending, .badge.processing , .badge.shipped {
   background-color: #ffb300;
 }
 
-.badge.completed {
+
+.badge.delivered {
   background-color: #4caf50;
 }
 
@@ -151,5 +168,41 @@ onMounted(() => {
   font-style: italic;
   color: #888;
   text-align: center;
+}
+
+.order-card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: black;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .order-manager-wrapper {
+    padding: 0.5rem;
+  }
+
+  .card {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
 }
 </style>

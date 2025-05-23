@@ -200,6 +200,8 @@ import { before } from "node:test";
   }
   
   .login-wrapper {
+      display: flex; /* AGGIUNTO */
+  flex-direction: row; /* layout orizzontale di default */
     width: 800px;
     height: 540px;
     background-color: #fff;
@@ -360,4 +362,90 @@ import { before } from "node:test";
   .btn-secondary:hover {
     color: #1b984f;
   }
+
+  @media (max-width: 768px) {
+  .login-wrapper {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .login-left, .login-right {
+    width: 100%;
+    height: auto;
+    transform: translateX(0) !important;
+  }
+
+  .login-left {
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .login-left img {
+    max-width: 80%;
+    height: auto;
+    object-fit: contain;
+    transform: none !important;
+    margin: 0 auto;
+  }
+  .login-right {
+    padding: 20px;
+    position: relative;
+  }
+
+  .button-area {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .button-area .btn,
+  .btn.center-icon {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .checkbox-container {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .form-group {
+    margin-top: 5px;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    height: 36px;
+    font-size: 15px;
+  }
+
+  label {
+    font-size: 12px;
+  }
+
+  .text-checkbox {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 0 25px;
+  }
+
+  .login-right {
+    padding: 20px 15px;
+  }
+}
   </style>

@@ -67,25 +67,25 @@ const closeSidebar = () => {
   <div style="display: flex; flex-direction: column; align-items: center; height:100%; overflow: hidden;">
     <!-- HEADER -->
     <div style="height: 70px; width: 100%; box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);">
-      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 70px;background-color: rgb(68 68 68); padding: 0 20px; box-sizing: border-box;">
-    
+      <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 70px; background-color: rgb(68 68 68); padding: 0 20px; box-sizing: border-box;">
         <!-- Sinistra: Nome utente -->
-        <div style="display: flex; flex-direction: row;">
+        <div style="display: flex; flex-direction: row; align-items: center;">
           <div style="display: flex; gap: 15px; align-items: center;">
-            <RouterLink to="/"><img src="./assets/DALL·E-2025-03-22-16.32 (3).png" srcr="https://preview.ibb.co/hUAr57/bar_bg.jpg" alt="Logo" style="width: 60px; height: 60px; border-radius: 50%;"></RouterLink>
+            <RouterLink to="/"><img src="./assets/DALL·E-2025-03-22-16.32 (3).png" alt="Logo" class="logo-img" style="width: 60px; height: 60px; border-radius: 50%;"></RouterLink>
           </div>
-          <div v-if="token" style="color: black; font-size: 20px; cursor: pointer;" @click="toggleSidebar" class="editButton" >
-            Ciao, {{ username }}
+          <div v-if="token" @click="toggleSidebar" class="username-section editButton  centerIcon">
+            <p class="hide">Ciao, {{ username }}</p>
+            <p class="hideDesktop">☰</p>
           </div>
-          <div v-else style="color: black; border: black 1px solid; font-size: 20px;" class="editButton">
-            <RouterLink to="/login" tag="button" style="color: black">Login</RouterLink>
+          <div v-else class="editButton">
+            <RouterLink to="/login" tag="button" class="rootButton fontButton fontLogin">Login</RouterLink>
           </div>
         </div>
-
-        <!-- Destra: Carrello e Logout -->
-        <div v-if="token" style="display: flex; gap: 15px; align-items: center;" class="editButton">
-          <RouterLink  to="/cart" tag="button" style="color:black; font-size: 20px;">
-            🛒 Carrello
+      
+        <!-- Destra: Carrello -->
+        <div v-if="token" class="editButton centerIcon">
+          <RouterLink to="/cart" tag="button" class="rootButton fontButton">
+            <P>🛒</P>
           </RouterLink>
         </div>
       </div>
@@ -115,6 +115,9 @@ const closeSidebar = () => {
 
 <style scoped>
 
+.hideDesktop{
+  display: none;
+}
 .editButton {
   background-color: #4CAF50; /* Verde */
   border: none;
@@ -131,6 +134,11 @@ const closeSidebar = () => {
   cursor: pointer;
   display: flex;
   align-items: center;
+}
+
+.rootButton {
+  color:black; 
+  font-size: 20px;
 }
 
 .sidebar {
@@ -177,4 +185,122 @@ const closeSidebar = () => {
   background-color: rgba(0,0,0,0.5);
   z-index: 1000;
 }
+
+@media (max-width: 768px) {
+  .fontLogin{
+    display: flex;
+    font-size: medium;
+    justify-content: center;
+    align-items: center;
+  }
+  .editButton {
+    font-size: 16px;
+    padding: 8px 12px;
+    width: 15% !important;
+    height: 70%;
+    
+    display: flex;
+    justify-content: center;
+
+  }
+
+  .sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+  width: 250px;
+  height: 100%;
+  background-color: #444;
+  color: white;
+  padding: 1rem;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1001;
+  overflow-y: auto;
+}
+
+.sidebar.open {
+  transform: translateX(0%);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  margin: 1rem 0;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar .close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  float: right;
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: none;
+}
+
+.overlay.open {
+  display: block;
+}
+
+  .header-content {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    height: auto;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .header-content > div {
+    width: 100%;
+
+  }
+
+  .logo-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .username-section {
+    font-size: 18px;
+  }
+
+  .hide {
+    display: none;
+  }
+
+  .hideDesktop{
+    display: block;
+  
+  }
+
+  .centerIcon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding: 0px;
+  }
+}
+
 </style>

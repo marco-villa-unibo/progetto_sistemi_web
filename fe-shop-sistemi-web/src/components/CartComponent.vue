@@ -194,7 +194,7 @@ const submitOrder = async () => {
       const response = await axios.post('/api/v1/order', {
         shippingAddress: "string",
         billingAddress: "string",
-        paymentMethod: "string"
+        paymentMethod: paymentMethod.value
       })
       console.log("Ordine confermato:", response.data)
     } catch (error) {
@@ -344,7 +344,7 @@ h3 {
   margin-bottom: 1rem;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 768px) {
   .cart-item {
     flex-direction: row;
     gap: 1rem;

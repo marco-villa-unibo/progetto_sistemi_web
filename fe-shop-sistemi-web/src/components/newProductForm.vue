@@ -51,11 +51,10 @@ function uploadProduct() {
   const access_token = getToken()
   axios.post('http://localhost:8080/api/v1/product', formData, {
     headers: {
-      'Authorization': `Bearer ${access_token}`,
+      'Authorization': "Bearer "+ access_token,
       'Content-Type': 'multipart/form-data'
     }
-  })
-  .then(response => {
+  }).then(response => {
     statusMessage.value = 'Prodotto salvato con successo!'
     statusType.value = 'success'
 
@@ -74,28 +73,28 @@ function uploadProduct() {
 </script>
 
 <template>
-  <div class="profile-editor" style="display: flex; justify-content: center; align-items: center; flex-direction: row; padding-bottom: 50px;">
+  <div class="profile-editor">
     <div class="card">
       <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 100%; height: 100%;">
         <h2 style="color: black;">Crea Prodotto</h2>
       </div>
       <div style="    display: flex;    flex-direction: row;    justify-content: center;    align-items: center;    width: 90%;">
-        <div style="color: black;    display: flex;    width: 50%;    align-items: center;    justify-content: center;">
+        <div style="color: black;    display: flex;    width: 50%;    align-items: center;    justify-content: center;" class="hide">
           <img height="300" width="300" src="../assets/DALL·E-2025-03-22-16.32 (3).png" style="margin: 30px; padding: 20px;"/>
         </div>
-        <div  style="color:black; width:50%">
-          <form @submit.prevent="uploadProduct" style="font:black; padding: none; margin: none;">
+        <div class="formDiv">
+          <form @submit.prevent="uploadProduct" class="formStyle">
             <div class="form-group">
               <label for="title">Titolo</label>
-              <input id="title" v-model="form.title" required />
+              <input class="fontInput" id="title" v-model="form.title" required />
             </div>
             <div class="form-group">
               <label for="pDescription">Descrizione</label>
-              <textarea id="pDescription" v-model="form.pDescription" required></textarea>
+              <textarea class="fontInput" id="pDescription" v-model="form.pDescription" required></textarea>
             </div>
             <div class="form-group">
               <label for="category">Categoria</label>
-              <select id="category" v-model="form.category" required>
+              <select class="fontInput" id="category" v-model="form.category" required>
                 <option value="">Seleziona categoria</option>
                 <option value="ORTOFRUTTA">Ortofrutta</option>
                 <option value="SURGELATI">Surgelati</option>
@@ -106,17 +105,17 @@ function uploadProduct() {
             </div>
             <div class="form-group">
               <label for="price">Prezzo</label>
-              <input id="price" type="number" step="0.01" v-model.number="form.price" required />
+              <input class="fontInput" id="price" type="number" step="0.01" v-model.number="form.price" required />
             </div>
 
             <div class="form-group">
               <label for="quantity">Quantità</label>
-              <input id="quantity" type="number" v-model.number="form.quantity" required />
+              <input class="fontInput" id="quantity" type="number" v-model.number="form.quantity" required />
             </div>
           
             <div class="form-group">
               <label for="image">Immagine</label>
-              <input id="image" type="file" accept="image/*" @change="uploadImage" required />
+              <input class="fontInput" id="image" type="file" accept="image/*" @change="uploadImage" required />
             </div>
             <div v-if="statusMessage" :class="['status-message', statusType]">
                 {{ statusMessage }}
@@ -151,10 +150,16 @@ function uploadProduct() {
     display: flex;
     flex-direction: column;
     align-items: center;
-        width: 50%;
+    width: 50%;
     justify-content: center;
     transform: none;
   }
+
+.formStyle {
+    font:black; 
+    padding: none; 
+    margin: none;
+}
 
 .profile-editor {
     display: flex;
@@ -163,8 +168,14 @@ function uploadProduct() {
     margin: 0px;
     width: 100%;
     height: 100%;
+    padding-bottom: 50px;
     flex-direction: row;
   }
+
+.formDiv{
+  color:black; 
+  width:50%
+}
 .product-form {
   background-color: var(--bg-light);
   border-radius: var(--border-radius);
@@ -232,9 +243,39 @@ button:hover {
   transform: scale(1.03);
 }
 
-@media (max-width: 500px) {
+@media (max-width: 768px) {
+  .fontInput {
+    font-size: small;
+  }
+
+  .formStyle {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .formDiv{
+    width: 100%;
+  }
+
   .product-form {
     padding: 1rem;
+  }
+
+  .form-group {
+    margin-top: 0px !important;
+    width: 90% !important;
+  }
+
+  .hide{
+    display: none !important;
+  }
+  .card{
+    width: 90%;
+  }
+
+  .profile-editor {
+    padding:0px
   }
 }
 
