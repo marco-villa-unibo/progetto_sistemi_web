@@ -11,12 +11,24 @@
             <label for="username">Username</label>    
           </div>
           <div class="form-group">
+            <input type="text" id="name" placeholder="Nome" v-model="firstname" required>
+            <label for="name">Nome</label>    
+          </div>
+          <div class="form-group">
+            <input type="text" id="lastname" placeholder="Cognome" v-model="lasttname" required>
+            <label for="lastname">Cognome</label>    
+          </div>
+          <div class="form-group">
               <input type="text" id="email" placeholder="Email" v-model="email" required>
               <label for="email">Email</label>   
           </div>
           <div class="form-group">
-            <input type="tel" id="phone" placeholder="Phone" v-model="phone" required>
+            <input type="tel" id="phone" placeholder="Telefono" v-model="phone" required>
             <label for="phone">telefono</label>    
+          </div>
+          <div class="form-group">
+            <input type="text" id="address" placeholder="Indirizzo" v-model="address" required>
+            <label for="address">Indirizzo</label>    
           </div>
           <div class="form-group">
             <input type="password" id="password" placeholder="Password" v-model="password" required>
@@ -41,6 +53,13 @@
         </div>
       </form>
     </div>
+   <transition name="fade">
+  <div v-if="showErrorModal" class="modal-overlay" @click="showErrorModal = false">
+    <div  :class="['modal-content', 'badge', colorMessage.toLowerCase()]" @click.stop>
+      <p>{{ errorMessage }}</p>
+    </div>
+  </div>
+</transition>
   </template>
   
   <script>
@@ -58,6 +77,9 @@
         password: "",
         checkPassword: "",
         address:"",
+        errorMessage: "",
+        colorMessage: "",
+        showErrorModal: false,
       };
     },
     beforeMount() {
@@ -72,6 +94,7 @@
         return this.rememberMe === true;
       },
       register() {
+        this.errorMessage = "";
         axios
           .post("/api/v1/auth/register",
           {
@@ -79,9 +102,9 @@
               email: this.email,
               password: this.password,
               phone: this.phone,
-              firstName: "prova1",
-              lastName: "prova0",
-              address:"prova" 
+              firstName: this.firstname,
+              lastName: this.lastname,
+              address: this.address,
             
       },{
             headers: {
@@ -89,12 +112,30 @@
             },
           }, )
           .then(response => {
-            console.log(response.data)
-            console.log(response);
+              this.successMessage = "Registrazione avvenuta con successo!";
+              this.showSuccessModal = true;
+
+              setTimeout(() => {
+                this.showSuccessModal = false;
+                this.$router.push("/login"); // reindirizza al login
+              }, 3000)
           })
           .catch(err => {
-            console.log(err);
+            if (err.response && err.response.status >= 400) {
+              this.errorMessage = "Errore nella registrazione. username o email già in uso.";
+              this.colorMessage = "error";
+            } else {
+              this.errorMessage = "Registrazione avvenuta con successo.";
+              this.colorMessage = "success";
+            }
+            this.showErrorModal = true;
+
+          setTimeout(() => {
+            this.showErrorModal = false;
+          }, 3000) // chiudi dopo 3 secondi
+
           });
+
       },
       login() {
         console.log("andando al login")
@@ -115,7 +156,14 @@
     padding: 0;
     height: 100%;
   }
-  
+
+  .error{
+    color:red
+  }
+
+  .success{
+    color:green
+  }
   #sandbox {
     font-family: "Lato", sans-serif;
     display: -webkit-box;
@@ -226,7 +274,7 @@
   
   .register-wrapper {
     width: 800px;
-    height: 540px;
+    height: 700px;
     background-color: #fff;
     box-shadow: 0px 2px 50px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
@@ -243,6 +291,28 @@
     transition: all 770ms cubic-bezier(0.51, 0.04, 0.12, 0.99);
     overflow: hidden;
   }
+
+  .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 90%;
+}
   
   .register-left img {
     display: block;

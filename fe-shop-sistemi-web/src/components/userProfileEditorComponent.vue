@@ -1,59 +1,4 @@
-<template>
-  <div class="profile-editor" style="display: flex; justify-content: center; align-items: center; flex-direction: row; padding-bottom: 50px;">
-    <div class="card">
-      <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 100%; height: 100%;">
-        <h2 style="color: black;">Modifica Profilo</h2>
-      </div>
-      <div style="    display: flex;    flex-direction: row;    justify-content: center;    align-items: center;    width: 90%;">
-        <div style="color: black;    display: flex;    width: 50%;    align-items: center;    justify-content: center;">
-          <img height="300" width="300" src="../assets/DALL·E-2025-03-22-16.32 (3).png" style="margin: 30px; padding: 20px;"/>
-        </div>
-        <div  style="color:black; width:50%">
-          <form @submit.prevent="updateProfile">
-            <div class="form-group">
-              <input type="text" id="username" placeholder="Username" v-model="form.username" required>
-              <label for="username">Username</label>
-            </div>
-            <div class="form-group">
-              <input type="text" id="firstname" placeholder="Nome" v-model="form.firstName" required>
-              <label for="firstname">Nome</label>
-            </div>
-            <div class="form-group">
-              <input type="text" id="lastname" placeholder="Cognome" v-model="form.lastName" required>
-              <label for="lastname">Cognome</label>
-            </div>
-            <div class="form-group">
-              <input type="email" id="Email" placeholder="Email" v-model="form.email" required>
-              <label for="Email">Email</label>
-            </div>
-            <div class="form-group">
-              <input type="text" id="phone" placeholder="Telefono" v-model="form.phone" required>
-              <label for="phone">Telefono</label>
-            </div>
-            <div class="form-group">
-              <input type="text" id="address" placeholder="Telefono" v-model="form.address" required>
-              <label for="address">Indirizzo</label>
-            </div>
-            <div class="form-group">
-              <input type="password" id="newPassword" placeholder="Password" v-model="form.password" required>
-              <label for="newPassword">Nuova Password</label>
-            </div>
-            <div class="form-group">
-              <input type="password" id="checkPassword" placeholder="Controllo Password" v-model="checkPassword" required>
-              <label for="checkPassword">Controllo password</label>
-            </div>
-            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 20px;">
-              <button type="submit">💾 Salva Modifiche</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-  
-  
-  <script setup lang="ts">
+<script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
   import { getToken } from "../utils/auth";
@@ -68,6 +13,8 @@ interface DecodedToken {
   iat: number
   exp: number
 }
+
+const originalPasswordHash = ref('')
   const token = ref(getToken())
   const checkPassword = ref('')  
 
@@ -104,6 +51,7 @@ interface DecodedToken {
         ...res.data,
         password: ''
       }
+      originalPasswordHash.value = res.data.password
     } catch (err) {
       alert('Errore nel caricamento dei dati utente.')
       console.error(err)
@@ -115,9 +63,9 @@ interface DecodedToken {
         alert('La vecchia password non corrisponde alla nuova password.')
         return
       }
-        console.log(form.value)
-        console.log(form.value.username)
-        console.log(form.value.firstName)
+      if (form.value.password === '') {
+        form.value.password = originalPasswordHash.value
+      }
       await axios.put(`api/v1/user/${decoded.userId}`, form.value)
       alert('Profilo aggiornato con successo!')
     } catch (err) {
@@ -131,43 +79,231 @@ interface DecodedToken {
   })
   </script>
   
-  <style scoped>
-  .card{
+<template>
+  <div class="profile-editor">
+    <div class="card">
+      <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 100%; height: 100%;">
+        <h2 style="color: black;">Crea Prodotto</h2>
+      </div>
+      <div style="    display: flex;    flex-direction: row;    justify-content: center;    align-items: center;    width: 90%;">
+        <div style="color: black;    display: flex;    width: 50%;    align-items: center;    justify-content: center;" class="hide">
+          <img height="300" width="300" src="../assets/DALL·E-2025-03-22-16.32 (3).png" style="margin: 30px; padding: 20px;"/>
+        </div>
+        <div class="formDiv">
+          <form @submit.prevent="updateProfile" class="formStyle">
+            <div class="form-group">
+              <label for="title">Username</label>
+              <input type="text" class="fontInput" id="title" placeholder="Username" v-model="form.username" required />
+            </div>
+            <div class="form-group">
+              <label for="firstname">Nome</label>
+              <input type="text" class="fontInput" id="firstname" placeholder="Nome" v-model="form.firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastname">Cognome</label>
+              <input type="text" class="fontInput" id="lastname" placeholder="Cognome" v-model="form.lastName" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="fontInput" id="email" placeholder="Email" v-model="form.email" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Telefono</label>
+              <input class="fontInput" id="phone" type="text" v-model.number="form.phone" required />
+            </div>
+            <div class="form-group">
+              <label for="adddress">Indirizzo</label>
+              <input class="fontInput" id="address" type="text" v-model.number="form.address" required />
+            </div>
+            <div class="form-group">
+              <input class="fontInput" type="password" id="newPassword" placeholder="Password" v-model="form.password" required>
+              <label for="newPassword">Nuova Password</label>
+            </div>
+            <div class="form-group">
+              <input class="fontInput" type="password" id="checkPassword" placeholder="Controllo Password" v-model="checkPassword" required>
+              <label for="checkPassword">Controllo password</label>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 20px;">
+              <button type="submit">💾 Salva Modifiche</button>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 20px;">
+              <button type="submit" style="color:black">💾 Salva</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+:root {
+  --green: #5cb85c;
+  --green-dark: #3d8b3d;
+  --orange: #ffa726;
+  --bg-light: #fefcf6;
+  --text-dark: #2f2f2f;
+  --border-radius: 1rem;
+  --transition: all 0.3s ease;
+}
+.card{
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
+    padding: 16px;
+    margin: 16px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-        width: 50%;
+    width: 50%;
     justify-content: center;
     transform: none;
   }
 
-  .profile-editor {
-    display: flex
-;
+.formStyle {
+    font:black; 
+    padding: none; 
+    margin: none;
+}
+
+.profile-editor {
+    display: flex;
     justify-content: center;
     align-items: center;
     margin: 0px;
     width: 100%;
     height: 100%;
+    padding-bottom: 50px;
     flex-direction: row;
   }
-  
-  input {
-    display: block;
+
+.formDiv{
+  color:black; 
+  width:50%
+}
+.product-form {
+  background-color: var(--bg-light);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--green-dark);
+}
+
+input,
+textarea,
+select {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.6rem;
+  transition: var(--transition);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(92, 184, 92, 0.2);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button {
+  align-self: center;
+  background-color: var(--green);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background-color: var(--green-dark);
+  transform: scale(1.03);
+}
+
+@media (max-width: 768px) {
+  .fontInput {
+    font-size: small;
+  }
+
+  .formStyle {
     width: 100%;
-    margin-bottom: 1rem;
-    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-  
-  button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
+  .formDiv{
+    width: 100%;
   }
-  </style>
+
+  .product-form {
+    padding: 1rem;
+  }
+
+  .form-group {
+    margin-top: 0px !important;
+    width: 90% !important;
+  }
+
+  .hide{
+    display: none !important;
+  }
+  .card{
+    width: 90%;
+  }
+
+  .profile-editor {
+    padding:0px
+  }
+}
+
+.status-message {
+  margin: 1rem 0;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+</style>

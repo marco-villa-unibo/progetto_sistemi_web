@@ -1,5 +1,5 @@
 <template>
-  <div class="user-manager-wrapper">   <!-- Card del form sopra -->
+  <div class="user-manager-wrapper">
     <div v-if="showForm" class="form-card">
       <h3 style="color: black;">{{ selectedUser?.id ? 'Modifica Utente' : 'Nuovo Utente' }}</h3>
       <form @submit.prevent="saveUser">
@@ -22,7 +22,6 @@
       </form>
     </div>
 
-    <!-- Card lista utenti -->
     <div class="card" style="height: 90%;">
       <h2 style="margin-bottom: 1rem; color:black">Gestione Utenti</h2>
       <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
@@ -30,7 +29,7 @@
         <input v-model="searchTerm"  placeholder="🔍 Cerca utenti..."  class="search-input" />
       </div>
       <ul class="user-list">
-        <li v-for="user in filteredUsers" :key="user.id">
+        <li v-for="user in filteredUsers" :key="user.id" class="user-item">
           <div class="user-info">
             <strong>ID:</strong> {{ user.id }}<br />
             <strong>Username:</strong> {{ user.username }}<br />
@@ -54,6 +53,7 @@
   import { computed } from 'vue'
 
 const searchTerm = ref('')
+const originalPasswordHash = ref('')
 
 const filteredUsers = computed(() => {
   const term = searchTerm.value.toLowerCase()
@@ -125,24 +125,26 @@ const filteredUsers = computed(() => {
     selectedUser.value = null
   }
   const saveUser = async () => {
-    try {
-      if (selectedUser.value?.id) {
-        await axios.put(`api/v1/user/${selectedUser.value.id}`, form.value)
-      } else {
-        await axios.post('api/v1/auth/register', form.value).then(response => {
-            console.log(form.value)
-            axios.put(`api/v1/user/${response.data.id}`, form.value)
-        }).catch(err => {
-          alert(err);
-        });
+  try {
+    if (selectedUser.value?.id) {
+      if (!form.value.password) {
+        form.value.password = originalPasswordHash.value
       }
-      await fetchUsers()
-      closeForm()
-    } catch (err) {
-      alert('Errore durante il salvataggio utente.')
-      console.error(err)
+      await axios.put(`api/v1/user/${selectedUser.value.id}`, form.value)
+    } else {
+      await axios.post('api/v1/auth/register', form.value).then(response => {
+        axios.put(`api/v1/user/${response.data.id}`, form.value)
+      }).catch(err => {
+        alert(err)
+      });
     }
+    await fetchUsers()
+    closeForm()
+  } catch (err) {
+    alert('Errore durante il salvataggio utente.')
+    console.error(err)
   }
+}
   
   const deleteUser = async (userId: number) => {
     console.log(userId)
@@ -309,6 +311,23 @@ button.secondary:hover {
 }
 
 @media (max-width: 768px) {
+  .user-item{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-actions{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .user-list{
+    max-width: 100%; /* Altezza massima visibile su mobile */
+  }
+
   .form-card{
     width: 90%;
     top: 5%;
@@ -318,9 +337,8 @@ button.secondary:hover {
   .user-actions{
         display: flex
 ;
-    flex-direction: column;
-    /* align-content: flex-end; */
-    align-items: flex-end;
+    flex-direction: row;
+    
     justify-content: center;
   }
   .search-input {

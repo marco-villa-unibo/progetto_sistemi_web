@@ -203,7 +203,7 @@ import { before } from "node:test";
       display: flex; /* AGGIUNTO */
   flex-direction: row; /* layout orizzontale di default */
     width: 800px;
-    height: 540px;
+    height: 700px;
     background-color: #fff;
     box-shadow: 0px 2px 50px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
