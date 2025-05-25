@@ -5,7 +5,7 @@ import {
   modifyUser,
   removeUser,
 } from '../controllers/userController';
-import { authenticate } from '../middlewares';
+import { authenticate, isCustomer } from '../middlewares';
 import { isAdmin } from '../middlewares';
 
 export const userRouter = Router();
@@ -118,7 +118,7 @@ userRouter.put('/:id', authenticate, modifyUser);
  *        '500':
  *          $ref: '#/components/responses/InternalServerError'
  */
-userRouter.get('/:id', authenticate, isAdmin, getUserById);
+userRouter.get('/:id', authenticate, isCustomer, getUserById);
 
 /**
  * @openapi

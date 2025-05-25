@@ -44,28 +44,6 @@ export const getAllUsers = async (
   }
 };
 
-export const getUserById = async (
-  req: UserRequest,
-  res: Response<UserDTO>,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-
-    if (isNaN(+id) || +id <= 0) {
-      return next(new BadRequestError(`User ID must be positive integer`));
-    }
-
-    const u = await findUserById(+id);
-    if (!u) {
-      return next(new NotFoundError(`User not found for ID ${id}`));
-    }
-    res.status(200).send(u);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const removeUser = async (
   req: UserRequest,
   res: Response,
@@ -132,6 +110,45 @@ export const modifyUser = async (
     }
 
     const u = await updateUserById(+id, req.body);
+    if (!u) {
+      return next(new NotFoundError(`User not found for ID ${id}`));
+    }
+    res.status(200).send(u);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserById = async (
+  req: ModifyUserRequest,
+  res: Response<UserDTO>,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    if (isNaN(+id) || +id <= 0) {
+      return next(new BadRequestError(`User ID must be positive integer`));
+    }
+
+    if (!req.user) {
+      return next(
+        new ForbiddenError('User ID from token is missing or invalid')
+      );
+    }
+
+    const userIdFromToken = req.user.userId;
+    const userRoleFromToken = req.user.role;
+
+    if (userRoleFromToken !== 'ADMIN' && +id !== userIdFromToken) {
+      return next(
+        new ForbiddenError(
+          'You are not authorized to retrieve this user. Only admins can see other users.'
+        )
+      );
+    }
+
+    const u = await findUserById(+id);
     if (!u) {
       return next(new NotFoundError(`User not found for ID ${id}`));
     }
