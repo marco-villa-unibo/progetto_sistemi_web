@@ -26,7 +26,9 @@
           </div>
         </li>
       </ul>
-
+      <div v-if="items.length > 0" class="cart-total">
+        <h3>Totale: €{{ totalPrice.toFixed(2) }}</h3>
+      </div>
       <button class="primary" @click="showForm = true" v-if="items.length > 0">🧾 Procedi al Checkout</button>
     </div>
 
@@ -63,7 +65,15 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { getToken } from "../utils/auth"
+import { computed } from 'vue'
 
+const totalPrice = computed(() => {
+  return items.value.reduce((acc, item) => {
+    const price = item.product?.price || 0
+    const quantity = item.quantity || 0
+    return acc + price * quantity
+  }, 0)
+})
 
 const showForm = ref(false)
 
@@ -342,6 +352,14 @@ h3 {
 
 .product-info {
   padding: 1rem;
+}
+
+.cart-total {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  color: #2e7d32;
 }
 
 .product-info h4 {
