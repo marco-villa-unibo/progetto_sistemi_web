@@ -64,6 +64,8 @@ export class AuthApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         headerParameters['Content-Type'] = 'application/json';
+        headerParameters['Access-Control-Allow-Origin'] = '*';
+        
 
         const response = await this.request({
             path: `/auth/login`,
@@ -124,3 +126,12 @@ export class AuthApi extends runtime.BaseAPI {
     }
 
 }
+
+  
+  export function getToken(): string | null {
+    return localStorage.getItem('token')
+  }
+  
+  export function removeToken() {
+    localStorage.removeItem('token')
+  }
