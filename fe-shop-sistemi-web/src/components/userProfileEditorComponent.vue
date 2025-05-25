@@ -5,6 +5,8 @@
   import {jwtDecode} from 'jwt-decode'
 import { json } from 'stream/consumers';
 
+const errorMessage = ref('')
+
 interface DecodedToken {
   userId: number
   username: string
@@ -58,21 +60,31 @@ const originalPasswordHash = ref('')
     }
   }
   const updateProfile = async () => {
-    try {
-      if (form.value.password !== checkPassword.value ) {
-        alert('La vecchia password non corrisponde alla nuova password.')
-        return
-      }
-      if (form.value.password === '') {
-        form.value.password = originalPasswordHash.value
-      }
-      await axios.put(`api/v1/user/${decoded.userId}`, form.value)
-      alert('Profilo aggiornato con successo!')
-    } catch (err) {
-      alert('Errore durante l\'aggiornamento del profilo.')
-      console.error(err)
+  try {
+    if (form.value.password !== checkPassword.value) {
+      errorMessage.value = '❌ La nuova password e la conferma non coincidono.'
+      setTimeout(() => {
+        errorMessage.value = ''
+      }, 3000)
+      return
     }
+
+    if (form.value.password === '') {
+      form.value.password = originalPasswordHash.value
+    }
+
+    await axios.put(`api/v1/user/${decoded.userId}`, form.value)
+    alert('Profilo aggiornato con successo!')
+  } catch (err) {
+    errorMessage.value = '❌ Errore durante l\'aggiornamento del profilo.'
+    setTimeout(() => {
+      errorMessage.value = ''
+    }, 3000)
+    console.error(err)
   }
+}
+
+  
   
   onMounted(() => {
     fetchUserData()
@@ -90,6 +102,9 @@ const originalPasswordHash = ref('')
           <img height="300" width="300" src="../assets/DALL·E-2025-03-22-16.32 (3).png" style="margin: 30px; padding: 20px;"/>
         </div>
         <div class="formDiv">
+          <div v-if="errorMessage" class="status-message error">
+            {{ errorMessage }}
+          </div>
           <form @submit.prevent="updateProfile" class="formStyle">
             <div class="form-group">
               <label for="title">Username</label>
@@ -205,6 +220,16 @@ label {
   font-weight: 600;
   margin-bottom: 0.4rem;
   color: var(--green-dark);
+}
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 0.6rem;
+  padding: 0.8rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 input,

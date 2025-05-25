@@ -17,6 +17,12 @@
             <p>📝 {{ item.product?.pDescription }}</p>
             <p>💶 Prezzo: €{{ item.product?.price }}</p>
             <p>📦 Quantità: {{ item.quantity }}</p>
+          
+            <div class="cart-actions">
+              <button @click="increaseQuantity(item)">➕</button>
+              <button @click="decreaseQuantity(item)">➖</button>
+              <button @click="removeItem(item)">❌</button>
+            </div>
           </div>
         </li>
       </ul>
@@ -84,6 +90,42 @@ const items = ref<CartItem[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
+const increaseQuantity = async (item: CartItem) => {
+  try {
+    const response = await axios.put(`/api/v1/cart/items/${item.id}`, {
+      quantity: item.quantity + 1
+    })
+    item.quantity += 1
+  } catch (error) {
+    console.error('Errore nell\'aumentare la quantità:', error)
+  }
+}
+
+const decreaseQuantity = async (item: CartItem) => {
+  if (item.quantity <= 1) {
+    await removeItem(item)
+    return
+  }
+
+  try {
+    const response = await axios.put(`/api/v1/cart/items/${item.id}`, {
+      quantity: item.quantity - 1
+    })
+    item.quantity -= 1
+  } catch (error) {
+    console.error('Errore nel diminuire la quantità:', error)
+  }
+}
+
+const removeItem = async (item: CartItem) => {
+  try {
+    await axios.delete(`/api/v1/cart/items/${item.id}`)
+    items.value = items.value.filter(i => i.id !== item.id)
+  } catch (error) {
+    console.error('Errore nella rimozione del prodotto:', error)
+  }
+}
+
 const fetchCart = async () => {
   loading.value = true
   try {
@@ -94,29 +136,33 @@ const fetchCart = async () => {
       headers: { Authorization: `Bearer ${token}` }
     })
 
-    const cartItems = response.data?.cartItems
-    if (Array.isArray(cartItems)) {
-      items.value = cartItems
-    } else {
-      items.value = []
+    let cartItems = response.data?.cartItems || []
+
+    for (const item of cartItems) {
+      if (!item.product || item.product.quantity === 0) {
+        await axios.delete(`/api/v1/cart/items/${item.id}`)
+      }
     }
+
+    items.value = cartItems.filter((item: CartItem) => item.product && item.product.quantity > 0)
+
+    items.value.forEach(item => {
+      if (item.product) {
+        const rawPath = item.product.imageUrl
+        const cleanPath = rawPath.replace(/^public[\\/]+/, '').replace(/\\/g, '/')
+        item.product.imageUrl = `http://localhost:8080/${cleanPath}`
+      }
+    })
+
   } catch (e) {
     console.error('Errore durante il recupero del carrello:', e)
     error.value = 'Impossibile caricare il carrello.'
     items.value = []
   } finally {
-    items.value.forEach(item => {
-      if (item.product) {
-         const rawPath = item.product.imageUrl
-
-      const cleanPath = rawPath.replace(/^public[\\/]+/, '').replace(/\\/g, '/')
-
-      item.product.imageUrl = `http://localhost:8080/${cleanPath}`
-}
-    })
     loading.value = false
   }
 }
+
 const shipping = ref({
   name: '',
   address: '',
@@ -234,6 +280,25 @@ onMounted(() => {
   --text-dark: #333;
   --border-radius: 1rem;
   --transition: all 0.3s ease;
+}
+
+.cart-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.cart-actions button {
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.4rem;
+  border: none;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cart-actions button:hover {
+  background-color: #d5d5d5;
 }
 
 .cart-items {
