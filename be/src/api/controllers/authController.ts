@@ -4,7 +4,7 @@ import {
   login as loginService,
 } from '../../db/services/authService';
 import { UserInput } from '../../db/models/User';
-import { BadRequestError, UnauthorizedError } from '../error';
+import { UnauthorizedError, UnprocessableEntityError } from '../error';
 import { UserLoginDTO } from '../types';
 import { mailingService } from '@/src/utils/mail';
 
@@ -16,7 +16,7 @@ export const register = async (
   const userInput: UserInput = req.body;
   const newUser = await registerService(userInput);
   if (!newUser) {
-    return next(new BadRequestError(`User Already existing`));
+    return next(new UnprocessableEntityError(`User Already existing`));
   }
   // Send confirmation e-mail to the user
   // mailingService(
