@@ -3,15 +3,12 @@ import { RouterLink, RouterView } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { getToken, removeToken } from "./generated-sources/shop/apis/AuthApi"
 import { useRouter } from 'vue-router'
+import axios from "axios";
 
 const router = useRouter()
 
 const token = ref<string | null>(null)
 const isSidebarOpen = ref(false)
-
-const checkToken = () => {
-  token.value = getToken()
-}
 
 const role = computed(() => {
   if (token.value) {
@@ -24,6 +21,49 @@ const role = computed(() => {
   }
   return null
 })
+
+
+
+const checkToken = () => {
+  token.value = getToken()
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
+  if (!token.value) {
+    removeToken()
+    router.push('/login')
+  } else {
+    // Dispatch an event to notify other components about the token change
+    if (role.value == "CUSTOMER") {
+      console.log("Customer role detected")
+        axios.get('/api/v1/health/customer').then(() => {
+          console.log("Customer health check successful")
+        }).catch(() => {
+          console.log("Error in customer health check")
+            removeToken()
+            router.push('/login')
+        })
+    } else if (role.value == "EMPLOYEE") {
+        console.log("Employee role detected")
+        axios.get('/api/v1/health/employee').then(() => {
+          console.log("Employee health check successful")
+        }).catch(() => {
+          console.log("Error in employee health check")
+            removeToken()
+            router.push('/login')
+        })
+    } else if (role.value == "ADMIN") {
+      console.log("Admin role detected")
+    axios.get('/api/v1/health/admin').then(() => {
+      console.log("Admin health check successful")
+        }).catch(() => {
+          console.log("Error in admin health check")
+            removeToken()
+            router.push('/login')
+        })
+    }
+    window.dispatchEvent(new Event('token-changed'))
+  }
+}
+
 
 const username = computed(() => {
   if (token.value) {

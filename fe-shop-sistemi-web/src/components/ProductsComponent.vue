@@ -86,10 +86,6 @@ function closeDetails() {
   showId.value = null
 }
 
-function editProduct() {
-    edit.value = !edit.value
-
-}
 
 function remove() {
   quantity.value -= 1
@@ -165,51 +161,53 @@ function showNotification(message: string, type: 'success' | 'error') {
 
 
 async function saveProduct(id: number) {
-    console.log("Salva prodotto");
-    if (Products.value.find(p => p.id === id)?.name != form.title) {
-        Products.value.find(p => p.id === id).name = form.title
-    }
-    if (Products.value.find(p => p.id === id)?.description != form.pDescription) {
-        Products.value.find(p => p.id === id).description = form.pDescription
-    }
-    if (Products.value.find(p => p.id === id)?.price != form.price) {
-        console.log(form.price)
-        Products.value.find(p => p.id === id).price = form.price
-    }
-    if (Products.value.find(p => p.id === id)?.quantity != form.quantity) {
-        console.log(form.quantity)
-        Products.value.find(p => p.id === id).quantity = form.quantity
-    }
-    const response = await axios.put(`/api/v1/product/${id}`, {
-        title: Products.value.find(p => p.id === id)?.name,
-        pDescription: Products.value.find(p => p.id === id)?.description,
-        price: Products.value.find(p => p.id === id)?.price,
-        category: Products.value.find(p => p.id === id)?.category,
-        quantity: Products.value.find(p => p.id === id)?.quantity
-    }, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
-    console.log("Prodotto salvato:", response.data);
-    // Aggiorna la lista dei prodotti
-    const index = Products.value.findIndex(p => p.id === id);
-    if (index !== -1) {
-        Products.value[index] = {
-        ...Products.value[index],
-        ...response.data,
-        };
-    }
-    fetchProducts(); 
-    closeDetails(); 
-    edit.value = false; 
-    show.value = false; 
-    showId.value = null;
-    quantity.value = 0;
-    console.log("Prodotto salvato");
-    console.log(Products.value.find(p => p.id === id));
+  console.log("Salva prodotto");
 
+  const product = Products.value.find(p => p.id === id)
+  if (!product) return
+
+  // Usa i valori compilati nel form, altrimenti mantieni quelli originali
+  const updatedProduct = {
+    title: form.title?.trim() || product.name,
+    pDescription: form.pDescription?.trim() || product.description,
+    price: form.price !== null && form.price !== undefined && !isNaN(form.price) ? form.price : product.price,
+    quantity: form.quantity !== null && form.quantity !== undefined && !isNaN(form.quantity) ? form.quantity : product.quantity,
+    category: product.category  // Preservato (se non editabile dal form)
+  }
+
+  try {
+    const response = await axios.put(`/api/v1/product/${id}`, updatedProduct, 
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+
+    console.log("Prodotto salvato:", response.data)
+
+    // Aggiorna la lista dei prodotti localmente
+    const index = Products.value.findIndex(p => p.id === id)
+    if (index !== -1) {
+      Products.value[index] = {
+        ...Products.value[index],
+        ...updatedProduct
+      }
+    }
+
+    // Ripristina stato iniziale
+    fetchProducts()
+    closeDetails()
+    edit.value = false
+    show.value = false
+    showId.value = null
+    quantity.value = 0
+  } catch (error) {
+    console.error("Errore durante il salvataggio del prodotto:", error)
+    showNotification("Errore nel salvataggio del prodotto!", 'error')
+  }
 }
+
 
 interface ProductForm {
   title: string
@@ -226,6 +224,18 @@ const form = reactive<ProductForm>({
   price: 0,
   quantity: 0
 })
+
+function editProduct() {
+  const product = Products.value.find(p => p.id === showId.value)
+  if (product) {
+    form.title = product.name
+    form.pDescription = product.description
+    form.price = product.price
+    form.quantity = product.quantity
+    form.category = product.category
+  }
+  edit.value = !edit.value
+}
 
 function deleteProduct(id: number) {
     const response = axios.delete(`/api/v1/product/${id}`);

@@ -15,7 +15,7 @@
             <label for="name">Nome</label>    
           </div>
           <div class="form-group">
-            <input type="text" id="lastname" placeholder="Cognome" v-model="lasttname" required>
+            <input type="text" id="lastname" placeholder="Cognome" v-model="lastname" required>
             <label for="lastname">Cognome</label>    
           </div>
           <div class="form-group">
@@ -23,7 +23,7 @@
               <label for="email">Email</label>   
           </div>
           <div class="form-group">
-            <input type="tel" id="phone" placeholder="Telefono" v-model="phone" required>
+            <input type="text" id="phone" placeholder="Telefono" v-model="phone" required>
             <label for="phone">telefono</label>    
           </div>
           <div class="form-group">
@@ -43,7 +43,14 @@
           </div>
           <div style="display:flex; flex-direction:row; justify-content: space-between;">
               <div class="button-area">
-                  <button class="btn btn-primary pull-right center-icon" @click="register()" >Registrati</button>
+                <button
+                  class="btn btn-primary pull-right center-icon"
+                  @click="register()"
+                  :disabled="!isFormValid"
+                  :style="{ opacity: isFormValid ? 1 : 0.5, cursor: isFormValid ? 'pointer' : 'not-allowed' }"
+                >
+                  Registrati
+                </button>
               </div>
               <div>
                   <p>Hai già un'account?</p>
@@ -67,6 +74,21 @@
   export default {
     name: "RegisterForm",
     template: "#register-form",
+    computed: {
+       isFormValid() {
+        return (
+          this.username.trim() !== "" &&
+          this.firstname.trim() !== "" &&
+          this.lastname.trim() !== "" &&
+          this.email.trim() !== "" &&
+          this.phone.trim() !== "" &&
+          this.address.trim() !== "" &&
+          this.password !== "" &&
+          this.checkPassword !== "" &&
+          this.password === this.checkPassword
+        );
+      }
+    },
     data() {
       return {
         firstname:"",
@@ -121,9 +143,14 @@
               }, 3000)
           })
           .catch(err => {
-            if (err.response && err.response.status >= 400) {
-              this.errorMessage = "Errore nella registrazione. username o email già in uso.";
-              this.colorMessage = "error";
+            if (err.response) {
+              if (err.response.status == 422) {
+                this.errorMessage = "Errore nella registrazione. username o email già in uso.";
+                this.colorMessage = "error";
+              } else {
+                this.errorMessage = "Errore nella registrazione. Riprova più tardi.";
+                this.colorMessage = "error";
+              }
             } else {
               this.errorMessage = "Registrazione avvenuta con successo.";
               this.colorMessage = "success";
