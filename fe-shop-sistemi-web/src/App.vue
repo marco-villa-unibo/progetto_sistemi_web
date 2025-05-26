@@ -31,7 +31,6 @@ const checkToken = () => {
     removeToken()
     router.push('/login')
   } else {
-    // Dispatch an event to notify other components about the token change
     if (role.value == "CUSTOMER") {
       console.log("Customer role detected")
         axios.get('/api/v1/health/customer').then(() => {
@@ -105,10 +104,10 @@ const closeSidebar = () => {
 
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; height:100%; overflow: hidden;">
-    <!-- HEADER -->
+
     <div style="height: 70px; width: 100%; box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);">
       <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 70px; background-color: rgb(68 68 68); padding: 0 20px; box-sizing: border-box;">
-        <!-- Sinistra: Nome utente -->
+
         <div style="display: flex; flex-direction: row; align-items: center;">
           <div style="display: flex; gap: 15px; align-items: center;">
             <RouterLink to="/"><img src="./assets/DALL·E-2025-03-22-16.32 (3).png" alt="Logo" class="logo-img" style="width: 60px; height: 60px; border-radius: 50%;"></RouterLink>
@@ -122,7 +121,6 @@ const closeSidebar = () => {
           </div>
         </div>
       
-        <!-- Destra: Carrello -->
         <div v-if="token" class="editButton centerIcon">
           <RouterLink to="/cart" tag="button" class="rootButton fontButton">
             <P>🛒</P>
@@ -131,10 +129,8 @@ const closeSidebar = () => {
       </div>
     </div>
 
-    <!-- SIDEBAR OVERLAY -->
     <div v-if="isSidebarOpen" class="overlay" @click="closeSidebar"></div>
 
-    <!-- SIDEBAR -->
     <aside class="sidebar" :class="{ open: isSidebarOpen }">
       <button class="close-btn" @click="closeSidebar">&times;</button>
       <ul>
@@ -148,7 +144,6 @@ const closeSidebar = () => {
       </ul>
     </aside>
 
-    <!-- CONTENUTO -->
     <RouterView />
   </div>
 </template>
@@ -159,7 +154,7 @@ const closeSidebar = () => {
   display: none;
 }
 .editButton {
-  background-color: #4CAF50; /* Verde */
+  background-color: #4CAF50;
   border: none;
   padding: 10px 20px;
   text-align: center;
