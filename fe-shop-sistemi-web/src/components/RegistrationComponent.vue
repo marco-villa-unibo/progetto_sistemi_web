@@ -139,7 +139,7 @@
 
               setTimeout(() => {
                 this.showSuccessModal = false;
-                this.$router.push("/login"); // reindirizza al login
+                this.$router.push("/login");
               }, 3000)
           })
           .catch(err => {
@@ -159,7 +159,7 @@
 
           setTimeout(() => {
             this.showErrorModal = false;
-          }, 3000) // chiudi dopo 3 secondi
+          }, 3000)
 
           });
 

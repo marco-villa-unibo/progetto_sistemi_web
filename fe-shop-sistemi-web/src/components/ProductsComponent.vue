@@ -5,10 +5,9 @@ import { getToken } from "../utils/auth"
 import { reactive, watch, toRefs } from 'vue'
 import { CartItemFromJSON } from '@/generated-sources/shop'
 
-// Reattivi
 const searchQuery = ref('')
 const sortOrder = ref<'asc' | 'desc'>('asc')
-const Products = ref<any[]>([])  // Ora vuoto, verrà popolato via API
+const Products = ref<any[]>([])
 
 const token = ref<string | null>(null)
 
@@ -20,7 +19,6 @@ const edit = ref<boolean>(false)
 
 const initialCartQuantity = ref<number>(0)
 
-// Filtraggio e ordinamento
 const filteredProducts = computed(() => {
   return [...Products.value]
     .filter(product =>
@@ -30,12 +28,10 @@ const filteredProducts = computed(() => {
     .sort((a, b) => sortOrder.value === 'asc' ? a.price - b.price : b.price - a.price)
 })
 
-// Recupero token
 const checkToken = () => {
   token.value = getToken()
 }
 
-// Decodifica del ruolo da JWT
 const role = computed(() => {
   if (token.value) {
     try {
@@ -108,7 +104,7 @@ async function fetchProducts() {
       price: p.price,
       quantity: p.quantity,
       category: p.category,
-      image: p.imageUrl.replace(/public/g, "http://localhost:8080/"), // Assumendo che serva da lì
+      image: p.imageUrl.replace(/public/g, "http://localhost:8080/"),
     }));
   } catch (error) {
     console.error("Errore nel caricamento prodotti:", error);
@@ -166,13 +162,12 @@ async function saveProduct(id: number) {
   const product = Products.value.find(p => p.id === id)
   if (!product) return
 
-  // Usa i valori compilati nel form, altrimenti mantieni quelli originali
   const updatedProduct = {
     title: form.title?.trim() || product.name,
     pDescription: form.pDescription?.trim() || product.description,
     price: form.price !== null && form.price !== undefined && !isNaN(form.price) ? form.price : product.price,
     quantity: form.quantity !== null && form.quantity !== undefined && !isNaN(form.quantity) ? form.quantity : product.quantity,
-    category: product.category  // Preservato (se non editabile dal form)
+    category: product.category 
   }
 
   try {
@@ -186,7 +181,6 @@ async function saveProduct(id: number) {
 
     console.log("Prodotto salvato:", response.data)
 
-    // Aggiorna la lista dei prodotti localmente
     const index = Products.value.findIndex(p => p.id === id)
     if (index !== -1) {
       Products.value[index] = {
@@ -195,7 +189,6 @@ async function saveProduct(id: number) {
       }
     }
 
-    // Ripristina stato iniziale
     fetchProducts()
     closeDetails()
     edit.value = false
@@ -260,7 +253,7 @@ onMounted(() => {
           placeholder="Cerca un prodotto..."
           style="padding: 10px; width: 50%; border: 1px solid #ccc; border-radius: 4px;"
         />
-        <select v-model="sortOrder" style="margin-left: 10px; padding: 10px;">
+        <select v-model="sortOrder" class="priceSort">
           <option value="asc">Prezzo crescente</option>
           <option value="desc">Prezzo decrescente</option>
         </select>
@@ -355,7 +348,7 @@ onMounted(() => {
                     </div>
                     <div style="padding: 1rem; max-width: 500px; margin: 0 auto;">
                       <form style="display: flex; flex-direction: column;">
-                        <!-- Prezzo -->
+
                         <div class="form-group">
                           <label for="price" style="font-weight: bold;">Nuovo Prezzo</label>
                           <small style="display: block; color: gray;">Attuale: {{ Products.find(p => p.id === showId)?.price }} €</small>
@@ -368,7 +361,6 @@ onMounted(() => {
                           />
                         </div>
 
-                        <!-- Quantità -->
                         <div class="form-group">
                           <label for="quantity" style="font-weight: bold;">Nuova Quantità</label>
                           <small style="display: block; color: gray;">Attuale: {{ Products.find(p => p.id === showId)?.quantity }}</small>
@@ -382,7 +374,6 @@ onMounted(() => {
                         </div>
                       </form>
 
-                      <!-- Immagine -->
                       <div style="display: flex; justify-content: center; margin: 1rem 0;">
                         <img
                           :src="Products.find(p => p.id === showId)?.image"
@@ -397,8 +388,6 @@ onMounted(() => {
                         />
                       </div>
 
-
-                      <!-- Pulsanti -->
                       <div style="display: flex; justify-content: space-between;">
                         <button @click="saveProduct(showId)" style="flex: 1; padding: 0.75rem; background: #4CAF50; color: white; border: none; border-radius: 6px;">Salva</button>
                         <button @click="editProduct()" style="flex: 1; padding: 0.75rem; background: #ccc; color: black; border: none; border-radius: 6px;">Annulla</button>
@@ -430,8 +419,15 @@ onMounted(() => {
   align-items: center;
 }
 
+.priceSort {
+  margin-left: 10px; 
+  padding: 10px;
+}
+
 .headerSearch {
-  width: 100%; text-align: center; margin: 20px 0;
+  width: 100%; 
+  text-align: center; 
+  margin: 20px 0;
 }
 
 .showDetail {
@@ -455,7 +451,7 @@ onMounted(() => {
 }
 
 .editButton {
-  background-color: #4CAF50; /* Verde */
+  background-color: #4CAF50;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -468,7 +464,7 @@ onMounted(() => {
 }
 
 .editButton:disabled {
-  background-color: #ccc; /* Verde */
+  background-color: #ccc;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -497,7 +493,6 @@ onMounted(() => {
 }
 
 
-/* Stile per il popup */
 .details-popup {
   position: fixed;
   top: 50%;
@@ -575,7 +570,6 @@ onMounted(() => {
   color: #2f4f4f;
 }
 
-/* Input e Select migliorati */
 input[type="text"], select {
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -589,7 +583,6 @@ input[type="text"]:focus, select:focus {
   outline: none;
 }
 
-/* Bottone primario */
 .editButton {
   background-color: #4CAF50;
   border: none;
@@ -694,6 +687,24 @@ input[type="text"]:focus, select:focus {
   }
 }
 @media (max-width: 768px) {
+
+  .priceSort{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 0px;
+    padding: 3px;
+  }
+
+  .headerSearch{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 4px;
+  }
 
   .form-group {
     padding-top: 25px !important;

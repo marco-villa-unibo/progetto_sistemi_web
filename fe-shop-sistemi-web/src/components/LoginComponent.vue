@@ -34,12 +34,9 @@
   
   <script setup lang="ts">
   import axios from "axios";
-  import type {UserLogin} from "../generated-sources/shop/models/UserLogin";
-  import type { LoginRequest } from "../generated-sources/shop/apis/AuthApi";
   import { setToken, getToken, removeToken } from "../utils/auth";
   import { useRouter } from 'vue-router';
   import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { before } from "node:test";
 
   const router = useRouter();
   var setUsername:string
@@ -62,7 +59,7 @@ import { before } from "node:test";
   function login() {
 
 
-        axios.post("/api/v1/auth/login", { //Per problemi di cors impostato indirizzo backend nel file vite.config.ts
+        axios.post("/api/v1/auth/login", {
       username: setUsername,
       password: setPassword
     })
@@ -200,8 +197,8 @@ import { before } from "node:test";
   }
   
   .login-wrapper {
-      display: flex; /* AGGIUNTO */
-  flex-direction: row; /* layout orizzontale di default */
+      display: flex;
+  flex-direction: row;
     width: 800px;
     height: 700px;
     background-color: #fff;

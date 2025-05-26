@@ -459,7 +459,7 @@ h3 {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
   padding: 2rem;
-  width: 50%;
+  width: 100%;
 }
 
 .cart-list {

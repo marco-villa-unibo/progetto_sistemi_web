@@ -276,7 +276,7 @@ button.secondary:hover {
 }
 
 .user-manager-wrapper {
-  position: relative; /* serve per posizionare il form assoluto sopra */
+  position: relative;
   
 }
 
@@ -287,7 +287,7 @@ button.secondary:hover {
   padding: 2rem;
   width: 50%;
   font-family: 'Segoe UI', sans-serif;
-  max-height: 90vh; /* Limite massimo alla card intera */
+  max-height: 90vh;
 
   display: flex;
   flex-direction: column;
@@ -296,9 +296,9 @@ button.secondary:hover {
 .user-list {
   flex-grow: 1;
   overflow-y: auto;
-  max-height: 80%; /* Altezza massima visibile */
+  max-height: 80%;
   margin-top: 1rem;
-  padding-right: 0.5rem; /* spazio per scrollbar */
+  padding-right: 0.5rem;
 }
 
 .user-list::-webkit-scrollbar {
@@ -325,7 +325,7 @@ button.secondary:hover {
   }
 
   .user-list{
-    max-width: 100%; /* Altezza massima visibile su mobile */
+    max-width: 100%;
   }
 
   .form-card{
