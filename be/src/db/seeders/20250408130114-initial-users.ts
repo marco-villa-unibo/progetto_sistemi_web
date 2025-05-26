@@ -6,7 +6,7 @@ module.exports = {
     try {
       const usersToSeed = [
         {
-          username: '1',
+          username: 'Marco',
           firstName: 'Marco',
           lastName: 'Villa',
           email: 'test@example.com',
@@ -19,10 +19,23 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          username: '2',
+          username: 'Leo',
           firstName: 'Leonardo',
           lastName: 'Garuti',
           email: 'test2@example.com',
+          passwordHash:
+            '$2b$10$107d6FK6AqAtDmAyhRQ3DONAQ6v1L24y48wBPxrWvQgSXMXUuzh1q', // Password1!
+          phone: '333-7654321',
+          address: 'via Roma, 1 - Cesena',
+          userRole: 'ADMIN',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          username: 'Prof',
+          firstName: 'Chiara',
+          lastName: 'Ceccarini',
+          email: 'test3@example.com',
           passwordHash:
             '$2b$10$107d6FK6AqAtDmAyhRQ3DONAQ6v1L24y48wBPxrWvQgSXMXUuzh1q', // Password1!
           phone: '333-7654321',
