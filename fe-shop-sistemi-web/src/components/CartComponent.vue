@@ -442,7 +442,33 @@ h3 {
   .product-info {
     flex: 1;
   }
+  .cart-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
+    padding: 2rem;
+    width: 50%;
+  }
+
+  .form-card{
+    width: 40%;
+  }
 }
+
+@media (max-width: 768px) {
+  .cart-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
+    padding: 2rem;
+    width: 100%;
+  }
+
+  .form-card{
+    width: 90%;
+  }
+}
+
 
 .cart-wrapper {
   display: flex;
@@ -454,13 +480,6 @@ h3 {
     height: 100%;
 }
 
-.cart-card {
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
-  padding: 2rem;
-  width: 100%;
-}
 
 .cart-list {
   list-style: none;
@@ -540,7 +559,6 @@ button.secondary:hover {
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  width: 40%;
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);

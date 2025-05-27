@@ -123,7 +123,7 @@ const closeSidebar = () => {
       
         <div v-if="token" class="editButton centerIcon">
           <RouterLink to="/cart" tag="button" class="rootButton fontButton">
-            <P>🛒</P>
+            🛒
           </RouterLink>
         </div>
       </div>

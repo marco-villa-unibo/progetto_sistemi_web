@@ -262,13 +262,15 @@ onMounted(() => {
         <div v-for="product in filteredProducts" :key="product.id" class="product-card" style="overflow: auto">
           <button class="card" style="margin:10px; padding: 10px;" @click="selectItems(product.id)">
           <div class="nameSpace">{{ product.name }}</div>
-            <div class="imageSpace">
-              <img :src="product.image" height="150px" width="150px" />
+          <div class="innerCard">
+             <div class="imageSpace">
+              <img :src="product.image" class="product-img" />
             </div>
-            <div>Price: {{ product.price }}€</div>
+            <div><b>Price:</b> {{ product.price }}€</div>
             <div>
               <i class="fa fa-cart-plus" style="font-size:25px;"></i>
             </div>
+          </div>
           </button>
         </div>
         <div v-if="show" class="details-popup font" style="border: 4px solid green"> 
@@ -419,6 +421,14 @@ onMounted(() => {
   align-items: center;
 }
 
+.product-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
 .priceSort {
   margin-left: 10px; 
   padding: 10px;
@@ -463,6 +473,14 @@ onMounted(() => {
   cursor: pointer;
 }
 
+.innerCard{
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .editButton:disabled {
   background-color: #ccc;
   border: none;
@@ -487,11 +505,13 @@ onMounted(() => {
 }
 
 .imageSpace {
+  width: 100%;
+  height: 150px;
   display: flex;
   justify-content: center;
-  padding-bottom: 7px;
+  align-items: center;
+  overflow: hidden;
 }
-
 
 .details-popup {
   position: fixed;
@@ -687,6 +707,7 @@ input[type="text"]:focus, select:focus {
   }
 }
 @media (max-width: 768px) {
+
 
   .priceSort{
     display: flex;
