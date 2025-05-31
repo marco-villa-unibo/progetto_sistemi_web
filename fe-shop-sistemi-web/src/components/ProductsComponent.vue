@@ -3,7 +3,6 @@ import { ref, computed, onMounted } from 'vue'
 import axios from "axios"
 import { getToken } from "../utils/auth"
 import { reactive, watch, toRefs } from 'vue'
-import { CartItemFromJSON } from '@/generated-sources/shop'
 
 const searchQuery = ref('')
 const sortOrder = ref<'asc' | 'desc'>('asc')
@@ -296,14 +295,14 @@ onMounted(() => {
                     <div style="width: 70%; height: 100%; display: flex;align-items: flex-start; justify-content: center;">
                         <p><b class="fontTitleDescription">Prezzo:</b></p>
                     </div>
-                    <div style="width: 70%; display: flex;">
+                    <div style="width: 70%; display: flex; justify-content: center;">
                         <p> {{ Products.find(p => p.id === showId)?.price }}€</p>
                     </div>
                 </div>
-                <div style="display: flex; flex-direction:row;  justify-content: center;">
+                <div v-if="token" style="display: flex; flex-direction:row;  justify-content: center;">
                     <div style="padding-right:10px">
                         <button @click="remove()"  :disabled="quantity <= 0">
-                            <i class="fa fa-minus">‌-</i>
+                            <i class="fa fa-minus">➖</i>
                         </button>
                     </div>
                     <div>
@@ -311,20 +310,20 @@ onMounted(() => {
                     </div>
                     <div style="padding-left:10px">
                         <button @click="add()">
-                            <i class="fa fa-plus">‌+</i>
+                            <i class="fa fa-plus">➕</i>
                         </button>
                     </div>
                 </div>
-                <div class="buttonsSection">
-                    <button @click="addToCart()" class="editButton" :disabled="quantity == 0">
+                <div v-if="token" class="buttonsSection">
+                    <button @click="addToCart()" class="button-color-add editButton" :disabled="quantity == 0">
                         ‌Aggiungi al carrelo
                     </button>
-                    <button @click="removeFromCart()" class="editButton" :disabled="initialCartQuantity === 0">
+                    <button @click="removeFromCart()" class="button-color-remove editButton" :disabled="initialCartQuantity === 0">
                         Rimuovi dal carrello
                     </button>
                 </div>
                 <div v-if="token && role !== 'CUSTOMER'">
-                    <button @click="editProduct()" class="editButton">Edit Product</button>
+                    <button @click="editProduct()" class="editButton button-color-add">Edit Product</button>
                 </div>
               </div>
             </div>
@@ -461,7 +460,6 @@ onMounted(() => {
 }
 
 .editButton {
-  background-color: #4CAF50;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -479,6 +477,14 @@ onMounted(() => {
     width: 80%;
     align-items: center;
     justify-content: space-between;
+}
+
+.button-color-remove{
+  background-color: red;
+}
+
+.button-color-add{
+  background-color: #4CAF50;
 }
 
 .editButton:disabled {
@@ -603,20 +609,12 @@ input[type="text"]:focus, select:focus {
   outline: none;
 }
 
-.editButton {
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  padding: 10px 20px;
-  margin: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.button-color-add:hover {
+  background-color: #388e3c;
 }
 
-.editButton:hover {
-  background-color: #388e3c;
+.button-color-remove:hover {
+  background-color: #991010;
 }
 
 .editButton:disabled {

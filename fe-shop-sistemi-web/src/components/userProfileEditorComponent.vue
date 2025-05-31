@@ -95,7 +95,7 @@ const originalPasswordHash = ref('')
   <div class="profile-editor">
     <div class="card">
       <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 100%; height: 100%;">
-        <h2 style="color: black;">Crea Prodotto</h2>
+        <h2 style="color: black;">Profilo</h2>
       </div>
       <div style="    display: flex;    flex-direction: row;    justify-content: center;    align-items: center;    width: 90%;">
         <div style="color: black;    display: flex;    width: 50%;    align-items: center;    justify-content: center;" class="hide">
@@ -139,11 +139,9 @@ const originalPasswordHash = ref('')
               <label for="checkPassword">Controllo password</label>
             </div>
             <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 20px;">
-              <button type="submit">💾 Salva Modifiche</button>
+              <button type="submit" style="color:black">💾 Salva Modifiche</button>
             </div>
-            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 20px;">
-              <button type="submit" style="color:black">💾 Salva</button>
-            </div>
+
           </form>
         </div>
       </div>
