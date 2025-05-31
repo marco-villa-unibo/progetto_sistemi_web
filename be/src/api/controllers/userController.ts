@@ -7,8 +7,9 @@ import {
 } from '../../db/services/userService';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../error';
 import { UserDTO, UserRoleDTO } from '../types';
-import { UserOutput } from '../../db/models/User';
+import { UserInput, UserOutput } from '../../db/models/User';
 import { IUserNoSensibleData } from '../interfaces';
+import { passwordHasher } from '../../utils/helpers';
 
 interface UserRequest extends Request {
   body: UserDTO;
@@ -68,7 +69,7 @@ export const removeUser = async (
 };
 
 interface ModifyUserRequest extends Request {
-  body: { userDTO: UserDTO; userRole: UserRoleDTO };
+  body: { userDTO: UserDTO; userRole: UserRoleDTO; password: string };
   params: { id: string };
 }
 
@@ -109,7 +110,15 @@ export const modifyUser = async (
       );
     }
 
-    const u = await updateUserById(+id, req.body);
+    const passwordHash = await passwordHasher(req.body.password);
+
+    const ui: Partial<UserInput> = {
+      ...req.body.userDTO,
+      passwordHash,
+      userRole: req.body.userRole,
+    };
+
+    const u = await updateUserById(+id, ui);
     if (!u) {
       return next(new NotFoundError(`User not found for ID ${id}`));
     }

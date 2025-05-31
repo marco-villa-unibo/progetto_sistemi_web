@@ -4,8 +4,7 @@ import User, { UserInput, UserOutput } from '../models/User';
 import { generateToken } from '../../utils/jwt';
 import { IUserJwtPayload } from '../../api/interfaces';
 import { UserLoginDTO, UserRegisterDTO } from '../../api/types';
-
-const SALT_ROUNDS = 10;
+import { passwordHasher } from '../../utils/helpers';
 
 export const register = async (
   registerDto: UserRegisterDTO
@@ -18,7 +17,7 @@ export const register = async (
   });
   if (existingUser) return null;
 
-  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  const passwordHash = await passwordHasher(password);
 
   // User can register only with CUSTOMER role (it can be later updated by an admin)
   const newUser = await User.create({
