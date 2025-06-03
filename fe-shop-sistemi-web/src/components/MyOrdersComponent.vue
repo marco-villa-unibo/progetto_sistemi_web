@@ -5,6 +5,7 @@ import { getToken } from "../utils/auth"
 
 const orders = ref<any[]>([])
 const searchUserId = ref('')
+const searchDate = ref('')
 
 const access_token = getToken()
 axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
@@ -20,7 +21,11 @@ async function fetchOrders() {
 
 const filteredOrders = computed(() => {
   return orders.value
-    .filter(order => searchUserId.value === '' || order.UserId.toString().includes(searchUserId.value))
+    .filter(order => {
+      const matchesUser = searchUserId.value === '' || order.UserId.toString().includes(searchUserId.value)
+      const matchesDate = searchDate.value === '' || new Date(order.orderDate).toISOString().split('T')[0] === searchDate.value
+      return matchesUser && matchesDate
+    })
     .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime())
 })
 
@@ -33,12 +38,8 @@ onMounted(() => {
   <div class="order-manager-wrapper">
     <div class="card">
       <h2 style="margin-bottom: 1rem; color:black">📦 I Miei Ordini</h2>
-      <input
-        v-model="searchUserId"
-        placeholder="🔍 Cerca per User ID"
-        class="search-input"
-      />
-
+      <input v-model="searchUserId" placeholder="🔍 Cerca per User ID" class="search-input" style="display: none;"/>
+      <input v-model="searchDate" type="date" placeholder="📅 Cerca per Data" class="search-input" />
       <div class="order-list desktop-only">
         <table class="orders-table">
           <thead>
@@ -203,6 +204,7 @@ onMounted(() => {
 
   .mobile-only {
     display: block;
+    overflow: auto;
   }
 }
 </style>
