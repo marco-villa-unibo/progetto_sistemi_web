@@ -138,7 +138,7 @@ const closeSidebar = () => {
         <li v-if="role !== 'CUSTOMER'"><RouterLink to="/CreateProduct" @click="closeSidebar">Crea Prodotto</RouterLink></li>
         <li v-if="role !== 'CUSTOMER' && role !== 'EMPLOYEE'"><RouterLink to="/Users" @click="closeSidebar">Gestione Utenti</RouterLink></li>
         <li v-if="token"><RouterLink to="/MyOrders" @click="closeSidebar">I miei Ordini</RouterLink></li>
-        <li v-if="token && role !== 'CUSTOMER'"><RouterLink to="/Orders" @click="closeSidebar">Gestione Ordini</RouterLink></li>
+        <li v-if="token && role !== 'CUSTOMER' && role !== 'EMPLOYEE'" ><RouterLink to="/Orders" @click="closeSidebar">Gestione Ordini</RouterLink></li>
         <li><RouterLink to="/" @click="closeSidebar">Prodotti</RouterLink></li>
         <li><button @click="logout" style="background:none; border:none; color:white; cursor:pointer;">Logout</button></li>
       </ul>

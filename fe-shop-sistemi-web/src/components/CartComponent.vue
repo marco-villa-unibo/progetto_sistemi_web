@@ -259,12 +259,15 @@ const submitOrder = async () => {
     successMessage.value = 'Ordine effettuato con successo! 🎉'
     items.value = []
     await axios.delete('/api/v1/cart')
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    showForm.value = false
   } catch (err) {
     console.error('Errore nel checkout:', err)
   } finally {
     submitting.value = false
   }
 }
+
 
 
 onMounted(() => {

@@ -29,6 +29,11 @@
           </div>
         </div>
       </form>
+      <div v-if="showError" class="modal-overlay" @click="showError = false">
+        <div  :class="['modal-content', 'badge', colorMessage.toLowerCase()]" @click.stop>
+          <p>{{ errorMessage }}</p>
+        </div>
+      </div>
     </div>
   </template>
   
@@ -37,6 +42,10 @@
   import { setToken, getToken, removeToken } from "../utils/auth";
   import { useRouter } from 'vue-router';
   import { ref, computed, onMounted, onUnmounted } from 'vue'
+
+  const showError = ref(false);
+  var errorMessage : string
+  var colorMessage : string
 
   const router = useRouter();
   var setUsername:string
@@ -59,7 +68,7 @@
   function login() {
 
 
-        axios.post("/api/v1/auth/login", {
+    axios.post("/api/v1/auth/login", {
       username: setUsername,
       password: setPassword
     })
@@ -69,9 +78,25 @@
       const userInfo = response.data.user;
       router.push('/')
     }).catch(err => {
-            alert(err);
-          });
+        if (err.response) {
+              if (err.response.status == 401) {
+                errorMessage = "Username o Password errati.";
+                colorMessage = "error";
+              } else {
+                errorMessage = "Errore nel login. Riprova più tardi.";
+                colorMessage = "error";
+              }
+            } else {
+              errorMessage = "Registrazione avvenuta con successo.";
+              colorMessage = "success";
+            }
+             showError.value = true;
+
+          setTimeout(() => {
+             showError.value = false;
+          }, 3000)
       }
+    )}
     
   </script>
   
@@ -87,6 +112,20 @@
     padding: 0;
     height: 100%;
   }
+
+  .error-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #e74c3c;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+  font-weight: bold;
+  user-select: none;
+}
   
   #sandbox {
     font-family: "Lato", sans-serif;
@@ -106,7 +145,36 @@
     background: linear-gradient(243.87deg, #22bf64 30.6%, #371933 130.6%);
     overflow: hidden;
   }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .error{
+    color:red
+  }
+
+  .success{
+    color:green
+  }
   
+  .modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 90%;
+  }
   input {
     font-family: inherit;
     -webkit-appearance: none;
